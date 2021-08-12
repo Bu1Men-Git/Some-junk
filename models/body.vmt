@@ -1,0 +1,21 @@
+VertexlitGeneric
+{
+$basetexture "models/josephthekp/amongdrip/amongdrip_body_d"
+$bumpmap "models/josephthekp/amongdrip/amongdrip_body_n"
+
+$phong 1
+$phongboost 0.05
+$phongexponent 1
+$phongfresnelranges "[2 3 4]"
+$phongtint "[0.925 0.925 0.9]"
+
+$normalmapalphaenvmapmask 1
+
+$rimlight 1
+$rimlightexponent 50
+$rimlightboost 0.2
+
+$selfillum 1
+$envmap "env_cubemap"
+$envmaptint "[.04 .01.01]"
+}
