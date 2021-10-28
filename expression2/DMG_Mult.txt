@@ -1,0 +1,40 @@
+@name DMG Mult
+@persist [Wp Wp1]:array Wc K L I O:entity  WM W H HH
+interval(100)
+if(first()){
+Wc=0
+Wp=array()
+O=owner()
+O:stripWeapons()
+O:giveWeapon("re_hands")
+}
+if(changed(O:isAlive()) && O:isAlive()){L=1
+O:setMaxHealth(465)
+H=O:health()
+I=randint(100,175)/100
+printColor(vec(225,50,50),"Your take DMG Mult: "+I*100+"%")
+O:plyJumpPower(200)
+O:stripWeapons()
+O:giveWeapon("re_hands")
+
+WM=0
+}
+if(O:health()<=50 && WM>6*O:health() || O:health()>50 && WM>300){WM-=10}
+if(O:health()<=50 && changed(O:health()) || O:health()<=50 && changed(WM)){
+O:plyJumpPower(2*O:health()-WM)
+O:plyRunSpeed(1.5*O:health()-WM)
+O:plyWalkSpeed(1.5*O:health()-WM)
+O:plyCrouchWalkSpeed(2*O:health()-WM)
+}
+elseif(O:health()>50 && changed(O:health()) || O:health()>50 && changed(WM)){
+O:plyJumpPower(200.1-WM)
+O:plyRunSpeed(250.1-WM)
+O:plyWalkSpeed(150.1-WM)
+O:plyCrouchWalkSpeed(100.1-WM)
+}
+if(O:getDamage() && O:getDamageType()!="fall"){HH=H-O:health() O:takeDamage(HH*(I-1)) H=O:health()}
+##elseif(O:health()>H){H=O:health()}
+
+
+
+

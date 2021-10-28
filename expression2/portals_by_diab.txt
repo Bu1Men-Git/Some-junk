@@ -1,0 +1,37 @@
+@name portals
+@persist T:entity
+interval(10)
+ if(first()){T=findPlayerByName("Dia")}
+    if(owner():weapon():type() == "none"){
+if(owner():keyAttack1()&&changed(owner():keyAttack1())){
+    holoCreate(1,owner():aimPos())
+    holoModel(1,"models/props_phx/construct/metal_plate1_tri.mdl")
+ # holoPos(1,entity():toWorld(vec(50,0,0)))
+    holoAng(1,entity():toWorld(ang(0,180,0)))
+}
+  if(owner():keyAttack2()&&changed(owner():keyAttack2())){  
+    holoCreate(2,owner():aimPos())
+    holoModel(2,"models/props_phx/construct/metal_plate1_tri.mdl")
+ # holoPos(2,entity():toWorld(vec(-50,0,0)))
+    holoAng(2,entity():toWorld(ang(0,0,0)))
+}
+
+
+
+
+}
+if(owner():pos():distance(holoEntity(1):pos()) <= 60){
+    owner():teleport(holoEntity(2):toWorld(vec(-80,0,0)))
+    
+}
+
+if(owner():pos():distance(holoEntity(2):pos()) <= 60){
+    owner():teleport(holoEntity(1):toWorld(vec(-80,0,0)))
+   
+}
+ if(T:pos():distance(holoEntity(1):pos()) <= 60){
+    T:teleport(holoEntity(2):toWorld(vec(-80,0,0)))
+}
+ if(T:pos():distance(holoEntity(2):pos()) <= 60){
+    T:teleport(holoEntity(1):toWorld(vec(-80,0,0)))
+}

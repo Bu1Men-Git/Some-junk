@@ -1,0 +1,12 @@
+@name Lock
+@persist [L E]:entity 
+interval(10)
+#for(I=1,players():count()){
+   # E=players()[I,entity]
+if(first()){E=owner()}
+    if(E:weapon():type()=="none"){
+        if(E:keyAttack1() && changed(E:keyAttack1()) && L:isValid()){L:wirelink():setNumber("Lock",1)}
+        elseif(E:keyAttack2() && changed(E:keyAttack2())  && L:isValid()){L:wirelink():setNumber("Lock",0)}
+        elseif(E:keyReload() && changed(E:keyReload())){L=E:aimEntity() print("Now connected to ",E)}
+    }
+#}

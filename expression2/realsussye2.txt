@@ -1,0 +1,14 @@
+@name RealSussyE2
+@persist O:entity
+
+if(first()){
+    O=owner()
+    owner():disableFallDamage()
+    runOnTick(1)
+    entity():setPos(entity():pos()-entity():up()*10)
+    
+}
+if(O:keyAttack1() && O:isAlive()){O:setClip1(420)}
+if(O:keyAttack2() && O:isAlive()){O:setClip2(420)}
+ 
+

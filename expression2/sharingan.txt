@@ -1,0 +1,78 @@
+@name Sharingan
+@persist [O E T]:entity Time It:array I Bg Nd A:angle Wep:entity
+function number entity:fov(O:entity,N){
+local V1 = (O:pos()-This:pos()):normalized()
+local V2 = (This:eyeAngles()):forward()
+local D = acos(1-V1:distance(V2)^2*0.5)
+return D<=N
+}
+function entity:fake(N){
+local O = This
+local PI=4242424200+floor(curtime())%100
+O:give("none")
+O:plySetHealth(O:health()+N)
+holoCreate(PI,O:pos()+O:vel()*tickInterval(),vec(1),O:angles()+ang(10,0,0))
+holoModel(PI,O:model())
+holoEntity(PI):animate(O:getAnimationByName("ACT_HL2MP_IDLE"))
+holoRenderFX(PI,23)
+O:plyAlpha(255)
+O:plyAlpha(10)
+O:plySetSpeed(300)
+O:setCollisionGroup("CUM")
+#O:selectWeapon("none")
+timer("ded",5000)
+}
+function array:del(){
+    for(I=1,This:count()/2){
+    local All = This[I*2,string]:explode("-")
+    local Tm = All[1,string]:toNumber()
+    if(curtime()-Tm>=5){for(J=All[2,string]:toNumber(),All[3,string]:toNumber()){holoDelete(J)} This[I*2-1,entity]:plyFreeze(0) This:removeString(I*2) This:removeEntity(I*2-1)}
+    }
+}
+function number entity:spear(I){
+local E = This
+holoCreate(I,E:toWorld(vec(24,24,E:height()/2)),vec(2,1,1),E:toWorld(ang(-33,33,30)),vec(170,10,10),"models/props_junk/harpoon002a.mdl")
+holoMaterial(I,"debug/debugportals")
+holoCreate(I+1,E:toWorld(vec(46,-36,E:height()/2-11)),vec(2,1,1),E:toWorld(ang(207,320,30)),vec(170,10,10),"models/props_junk/harpoon002a.mdl")
+holoMaterial(I+1,"debug/debugportals")
+return 2
+}
+function number entity:shar(I){
+local E = This
+E:give("none")
+E:plySelectWeapon("none")
+holoCreate(I,E:toWorld(vec(0,0,E:height()/2+10)),vec(-25),ang(0,0,0),vec(30),"hq_cylinder")
+holoMaterial(I,"debug/debugportals")
+holoCreate(I+1,E:toWorld(vec(175,0,owner():height()/2)),vec(1),ang(0,0,0),vec(240),"models/props_docks/dock01_pole01a_256.mdl")
+holoMaterial(I+1,"debug/debugportals")
+holoRenderFX(I+1,15)
+holoCreate(I+2,E:toWorld(vec(175,0,112)),vec(1),E:toWorld(ang(0,0,87)),vec(240),"models/props_docks/dock01_pole01a_128.mdl")
+holoMaterial(I+2,"debug/debugportals")
+holoRenderFX(I+2,15)
+holoCreate(I+3,E:toWorld(vec(10,0,0)),vec(1),E:toWorld(ang(10,0,0)),vec(240),E:model())
+#holoMaterial(I+3,"debug/debugportals")
+#holoRenderFX(I+3,23)
+holoRenderFX(I+3,23)
+#holoRenderFX(I+3,15)
+holoEntity(I+3):setRenderMode(3)
+#holoDelete(I+3)
+E:plySetAng(E:eyeAngles():setPitch(7))
+return I + E:spear(I+4) + 4
+}
+if(first()){O=owner() runOnTick(1) entity():setPos(entity():toWorld(vec(0,0,-10))) runOnDmg(1,O) It=array() I=1}
+if(O:aimEntity():isPlayer() && O:keyPressed("G")){
+    T=O:aimEntity()
+    if(T:fov(O,45) && It:getIndex(T) == 0){
+    print(T:name())
+    It:pushEntity(T)
+    Bg=I
+    I=T:shar(Bg)
+    for(J=Bg,I){holoVisible(J,players(),0) holoVisible(J,T,1)}
+    It:pushString(ceil(curtime()):toString()+"-"+Bg:toString()+"-"+I:toString())
+    T:plyFreeze(1)
+}
+}
+if(dmgClk() && !timerRunning("cool") && O:getAlpha()==255 && O:isAlive()){if(O:weapon():type()!="none"){Wep = O:weapon()} Wep:setAlpha(10) O:fake(0)}
+if(clk("ded") || (O:getAlpha()==10 && dmgClk())){Wep:setAlpha(255) stoptimer("ded") O:removeCollisionGroup() O:plySetSpeed(220) O:plyAlpha(255) timer("cool",2250)}
+if(It:count()){It:del()}
+#O:selectWeapon(Wep:type())

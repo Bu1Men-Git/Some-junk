@@ -1,0 +1,9 @@
+@name aaa
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+E=entity():isWeldedTo()
+E:animate(1337)
+print(E:getAnimation())

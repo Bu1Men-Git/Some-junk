@@ -1,0 +1,16 @@
+@name BulMen_Access_1_3_Polaya_Piramida
+@persist X Y Z R I G H
+interval(100)
+R=9-(Z*2)
+while(R>=0 & perf(1)){
+holoCreate((I),entity():pos()+vec(12*(X+Z),12*(Y+Z),12*Z+10))
+G=(G+((360/R)*(1-sin(G)+sin(H))))%360
+H=(H+((360/R)*(1-sin(H)+sin(G))))%360
+I++
+#X+=(ceil(sin(G)))*(1-sin(G)+sin(H))
+#Y+=(ceil(sin(H)))*(1-sin(H)+sin(G))
+X+=sin(G)^(1/101)
+Y+=cos(G)^(1/101)
+Z+=max(1-(X+Y),0)
+}
+

@@ -1,0 +1,45 @@
+@name The World
+@persist O:entity [Ply]:array Cld Frz
+function array:printToArr(S:string){
+    for(I=1,This:count()){
+        #This[I,entity]:chatPrint(S)
+    }
+}
+function array:frz(N){
+    for(I=1,This:count()){
+        This[I,entity]:plyFreeze(N)
+    }
+}
+if(first()){
+    runOnTick(1)
+    runOnLast(1)
+#entity():setPos(entity():toWorld(vec(0,0,-10)))
+O=owner()
+Cld=2
+Frz=2
+holoCreate(1,entity():pos(),vec(0))
+holoColor(1,vec(100),200)
+holoModel(1,"models/hunter/misc/sphere375x375.mdl")
+holoMaterial(1,"debug/debugportals")
+findIncludeClass("Player")
+findExcludeEntity(O)
+holoVisible(1,O,0)
+}
+if(O:keyPressed("B") && changed(O:keyPressed("B"))){
+    if(!timerRunning("cld") && !timerRunning("frz")){
+    holoScaleUnits(1,-vec(177.9375*25/4))
+    findInSphere(O:toWorld(vec(0,0,O:height()/2)),177.9375*25/4)
+    holoPos(1,O:attachmentPos("chest"))
+    Ply=findToArray()
+    Ply:frz(1)
+    #chatPrint("Za Warudo! Toki wo tomare!")
+    if(Ply:count()){hint(Ply:count():toString()+" players affected",100)}
+    timer("frz",Frz*1000)
+    holoVisible(1,O,1)
+}
+else{hint(round(timerTimeLeft("cld")/1000+timerTimeLeft("frz")/1000,1):toString()+" sec.",100)}
+}
+if(timerRunning("frz")){Ply:frz(1)}
+if(clk("frz")){Ply:frz(0) holoScaleUnits(1,vec(0)) timer("cld",Cld*1000) holoVisible(1,O,0) holoPos(1,entity():pos())}
+if(O:plyIsFrozen()){O:plyFreeze(0)}
+if(last()){Ply:frz(0)}

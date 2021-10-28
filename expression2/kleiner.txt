@@ -1,0 +1,5 @@
+@name Kleiner
+@persist E:entity V:vector
+if(first()){runOnTick(1) V=entity():pos() E:setPos(vec(0,0,-12000)) E=npcSpawn("npc_kleiner",V+randvec(vec(-1,-1,0),vec(1,1,0)):normalized()*550) runOnDmg(1,E)}
+if(E:isValid() && E:health()<=0){E:admPropDelete() E=npcSpawn("npc_kleiner",V+randvec(vec(-1,-1,0),vec(1,1,0)):normalized()*550) E:npcSetTarget(lastDamage():getAttacker()) runOnDmg(1,E) E:npcGiveWeapon("357") E:npcRelationship("player","hate",999)}                                              
+if(!E:isValid()){selfDestruct()}

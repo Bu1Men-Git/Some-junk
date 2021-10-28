@@ -1,0 +1,168 @@
+@name Particles
+
+@persist Idx StartIdx Tickrate LastTick MaxHolos
+@persist
+
+if(first() | duped()) {
+    #include "bigbrain/iterator"
+    #include "bigbrain/autocpu"
+    
+    Idx = 42000
+    MaxHolos = 200
+    Tickrate = 1000/60
+    StartIdx = Idx
+        
+    function void boomboom(Pos:vector, Damage, Radius) {
+        #ifdef boom(vector, number, number) 
+            boom(Pos, Damage, Radius)
+        #else 
+            propSpawn("models/props_phx/mk-82.mdl", Pos, 1):propBreak()
+        #endif
+    }
+    
+    function void boomboom2(Pos:vector) {
+        propSpawn("models/props_phx/mk-82.mdl", Pos, 1):propBreak()
+    }
+    
+    function table table:createTempParticle(Size, Pos:vector, Vel:vector, Life) {
+        local Particle = table("Pos" = Pos, "Vel" = Vel, "Size" = Size, "Index" = Idx, "Life" = Life)
+        This:pushTable(Particle)
+        Idx++
+        
+        return Particle
+    }
+    
+    function table table:createParticle(Size, Pos:vector, Vel:vector) {
+        return This:createTempParticle(Size,Pos,Vel,-1)
+    }
+    
+    function table table:setID(Index) { 
+        This["Index", number] = Index
+        return This
+    }
+    
+    function number table:getID() {
+        return This["Index", number]
+    }
+    
+    function table table:setEnt(Ent:entity) { 
+        This["Ent", entity] = Ent
+        return This
+    }
+    
+    function entity table:getEnt() {
+        return This["Ent", entity]
+    }
+    
+    function table table:setPos(Pos:vector) {
+        This["Pos", vector] = Pos
+        return This
+    }
+    
+    function vector table:getPos() { 
+        return This["Pos", vector]
+    }
+    
+    function table table:setVel(Vel:vector) {
+        This["Vel", vector] = Vel
+        return This
+    }
+    
+    function vector table:getVel() { 
+        return This["Vel", vector]
+    }
+    
+    function table table:setSize(Size:number) {
+        This["Size", number] = Size
+        return This
+    }
+    
+    function number table:getSize() { 
+        return This["Size", number]
+    }
+    
+    function table table:setLife(Life:number) {
+        This["Life", number] = Life
+        return This
+    }
+    
+    function number table:getLife() { 
+        return This["Life", number]
+    }
+    
+    function void table:setLastUpdate() { 
+        This["LastTick", number] = curtime() 
+    }
+    
+    function number table:getLastUpdate() { 
+        return This["LastTick", number]
+    }
+    
+    function number table:shouldUpdate() { 
+        return (curtime() - This["LastTick", number]) * 1000 > Tickrate
+    }
+    
+    function void table:onParticleUpdate() {
+        
+    }
+    
+    function void table:onParticleDie() {
+        
+    }
+    
+    function void table:updateParticles() { 
+        if((curtime() - LastTick)*1000 >= Tickrate) {
+            LastTick = curtime()
+            
+            for(I = This:count(), 1, -1) { 
+                local Particle = This[I, table]
+                local Index = Particle["Index", number]
+                local Life = Particle["Life", number] 
+                
+                if(Life == 0) {
+                    Particle:onParticleDie()
+                    Idx--
+                    This:removeTable(I)
+                } else {
+                    Particle:onParticleUpdate()
+                }
+            }
+        }
+    }
+    
+    function void table:controlledUpdate() {
+        if(This:count()) {
+            local I = This:iterate(1)
+            local Particle = This[I, table]        
+            
+            local Index = Particle["Index", number]
+            local Life = Particle["Life", number]
+            local LastUpdate = Particle["LastTick", number]
+            
+            if((curtime() - LastUpdate) * 1000 >= Tickrate) {
+                if(Life == 0) {
+                    Particle:onParticleDie()
+                    holoDelete(Index)
+                    This:removeTable(I)
+                } else {
+                    Particle:onParticleUpdate()
+                }
+                
+                Particle:setLastUpdate()
+            }
+        }
+    }
+       
+    
+    function vector vector:reflect(Normal:vector){
+        return 2*(This:dot(Normal))*Normal-This
+    }
+    
+   #[ function void table:updateParticles() {
+        if(clk("tickrate")) {
+            
+        } elseif(!timerRunning("tickrate")) {
+            timer("tickrate", Tickrate)
+        }
+    }]#
+}

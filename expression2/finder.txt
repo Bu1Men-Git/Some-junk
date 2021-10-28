@@ -1,0 +1,16 @@
+@name Finder
+@persist [O EO E NO]:entity Ar:array I D:vector
+if(first()){
+runOnTick(1)
+O=owner()
+EO=entity()
+NO=players()[2,entity]
+}
+findInSphere(O:pos(),100)
+findClipToClass("rpg_missile")
+Ar=findToArray()
+if(changed(Ar:count()) && Ar:count()!=0){E=find() }
+if(E:name()!=""){
+    D=NO:pos()+NO:velL()-owner():pos()-O:velL()
+    E:setVel(vec(0))
+}

@@ -1,0 +1,33 @@
+@name wall walker
+@inputs 
+@persist    Poopie:array  Fats:ranger O:entity E:entity G:vector
+@trigger 
+@outputs 
+#@model models/hunter/misc/sphere1x1.mdl
+
+if(first() | duped()) {
+    #Ent2=propSpawn("models/hunter/plates/plate.mdl",vec(),2)
+      #propNotSolid(1)
+   # Ent2:propNotSolid(1)
+   # Ent1:propDraw(0)
+   # Ent2:propDraw(0)
+    O=owner()
+    #E=entity()
+    Poopie = array( owner() , entity(
+    ))
+    rangerFilter( Poopie )
+    runOnTick(1) runOnLast(1)
+    holoCreate(1,vec(0),vec(0.2))
+    holoModel(1,"hq_sphere")
+    #E:gravityHull(vec(0,0,-1),0,0,gravity())
+}
+rangerFilter(players())
+#R = rangerOffset(O:height()*10,O:attachmentPos("eyes")+O:vel()*tickInterval(),O:eye()) #:setZ(0)
+#holoPos(1, R:position() )
+if(O:keyUse() && changed(O:keyUse())){
+    G=-O:aimNormal()
+    O:plySetGravity(0)
+}
+R=rangerOffsetHull(O:height()/2+1,O:toWorld(vec(0,0,O:height()/2)),G,vec(16))
+O:plyApplyForce(sqrt(O:mass()*2)*G*(!R:hitWorld()) - O:vel()*tickInterval()*(R:hitWorld()) + O:plyGetJumpPower()*G*(O:keyJump() && R:hitWorld()))
+if(last()){O:plySetGravity(gravity())}

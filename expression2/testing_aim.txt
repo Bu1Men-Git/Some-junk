@@ -1,0 +1,26 @@
+@name testing aim
+@persist [E O]:entity [V V1 V2]:vector N Png
+function entity near(A:array){
+    EE=owner()
+    for(I=1,A:count()){
+        if(EE==owner() || EE:pos():distance(owner():pos())>A[I,entity]:pos():distance(owner():pos()) && A[I,entity]!=owner()){EE=A[I,entity]}
+    }
+    return EE
+}
+if(first()){
+E=findPlayerByName("bot")
+O=owner()
+runOnTick(1)
+timer("sh",1)
+}
+#E=near(players())
+#D=(O:ping()-E:ping())/1000
+Png=(O:ping()-E:ping())/1000*2
+#print(1/N)
+V1=O:shootPos()+O:vel()*(1+O:ping()/1000)*tickInterval()
+V2=E:attachmentPos("anim_attachment_head")+E:vel()*(1+O:ping()/1000)*tickInterval()
+#V=E:attachmentPos("anim_attachment_head")+vec(0,0,2)-E:velL()*(1+Png)*tickInterval()-O:shootPos()-O:velL()*(1-Png)*tickInterval()
+V=V2-V1
+O:plySetAng((V):toAngle())
+#if(O:aimEntity()==E){O:plyDoAttack1(1) timer("sh",200)}
+#if(clk("sh")){O:plyDoAttack1(0)}

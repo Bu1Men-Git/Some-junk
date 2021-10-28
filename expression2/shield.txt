@@ -1,0 +1,29 @@
+@name shield
+@outputs Toggle Key
+@persist P1:entity
+
+if(first() | duped()){
+    propSpawnEffect(0)
+    runOnTick(1)
+}
+
+Key = owner():keyPressed("x")
+
+if(changed(Key) && Key){
+    Toggle=!Toggle
+    propDeleteAll()
+    concmd("pac_event attack 2")
+}
+
+if(Toggle){  
+    if(!P1){ 
+        P1 = propSpawn("models/hunter/blocks/cube2x2x2.mdl",owner():toWorld(vec(0,0,100)),ang(0,0,0),1)
+        P1:setAlpha(0)
+        P1:setAlpha(0)
+    }
+    P1:setPos(owner():toWorld(vec(0,0,30)))
+    
+}else{
+    propDeleteAll()
+}
+

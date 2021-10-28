@@ -1,0 +1,77 @@
+@name auto armor merged
+@inputs 
+@outputs 
+@persist O:entity LastShotTime:number
+
+if(O:isAlive()){
+    O=owner()
+    owner():disableFallDamage()
+    runOnTick(1)
+    #entity():setPos(entity():pos()-entity():up()*10)
+    
+}
+if(O:keyAttack1() && O:isAlive()){O:plySetClip1(min(O:weapon():clip1()+1,42))}
+if(O:keyAttack2() && O:isAlive()){O:plySetClip2(min(O:weapon():clip2()+1,42))
+    
+    }
+ 
+if (first()) {
+    runOnTick(1)
+    O = owner()
+
+    holoCreate(1)
+    holoAlpha(1, 0)
+    holoParentAttachment(1, O, "anim_attachment_rh")
+    holoPos(1, O:attachmentPos("anim_attachment_rh") + O:eye() * 30)
+}
+
+if (O:keyAttack1() & curtime() > LastShotTime) {
+  if(O:weapon():type() == "weapon_shotgun"){
+
+    LastShotTime = curtime() + 0.5 # half of a second
+owner():applyPlayerForce( owner():eye() * -800 )
+    holoEntity(1):turretShoot(O:eye(), 5, #[ spread ]# 0.080, 0, #[ how many bullets ]# 100, 6)
+        holoEntity(1):turretShoot(O:eye(), 5, #[ spread ]# 0.080, 0, #[ how many bullets ]# 100, 6)
+            holoEntity(1):turretShoot(O:eye(), 5, #[ spread ]# 0.080, 0, #[ how many bullets ]# 100, 6)
+                holoEntity(1):turretShoot(O:eye(), 5, #[ spread ]# 0.080, 0, #[ how many bullets ]# 100, 6)
+}
+
+}
+
+
+
+
+if (O:keyAttack2() & curtime() > LastShotTime) {
+  if(O:weapon():type() == "weapon_shotgun"){
+
+    LastShotTime = curtime() + 0.5 # half of a second
+owner():applyPlayerForce( owner():eye() * -1600 )
+    holoEntity(1):turretShoot(O:eye(), 10, #[ spread ]# 0.080, 0, #[ how many bullets ]# 100, 6)
+        holoEntity(1):turretShoot(O:eye(), 10, #[ spread ]# 0.080, 0, #[ how many bullets ]# 100, 6)
+            holoEntity(1):turretShoot(O:eye(), 10, #[ spread ]# 0.080, 0, #[ how many bullets ]# 100, 6)
+                holoEntity(1):turretShoot(O:eye(), 10, #[ spread ]# 0.080, 0, #[ how many bullets ]# 100, 6)
+                    holoEntity(1):turretShoot(O:eye(), 10, #[ spread ]# 0.080, 0, #[ how many bullets ]# 100, 6)
+        holoEntity(1):turretShoot(O:eye(), 10, #[ spread ]# 0.080, 0, #[ how many bullets ]# 100, 6)
+            holoEntity(1):turretShoot(O:eye(), 10, #[ spread ]# 0.080, 0, #[ how many bullets ]# 100, 6)
+                holoEntity(1):turretShoot(O:eye(), 10, #[ spread ]# 0.080, 0, #[ how many bullets ]# 100, 6)
+                    holoEntity(1):turretShoot(O:eye(), 10, #[ spread ]# 0.080, 0, #[ how many bullets ]# 100, 6)
+        holoEntity(1):turretShoot(O:eye(), 10, #[ spread ]# 0.080, 0, #[ how many bullets ]# 100, 6)
+            holoEntity(1):turretShoot(O:eye(), 10, #[ spread ]# 0.080, 0, #[ how many bullets ]# 100, 6)
+                holoEntity(1):turretShoot(O:eye(), 10, #[ spread ]# 0.080, 0, #[ how many bullets ]# 100, 6)
+                    holoEntity(1):turretShoot(O:eye(), 10, #[ spread ]# 0.080, 0, #[ how many bullets ]# 100, 6)
+        holoEntity(1):turretShoot(O:eye(), 10, #[ spread ]# 0.080, 0, #[ how many bullets ]# 100, 6)
+            holoEntity(1):turretShoot(O:eye(), 10, #[ spread ]# 0.080, 0, #[ how many bullets ]# 100, 6)
+                holoEntity(1):turretShoot(O:eye(), 10, #[ spread ]# 0.080, 0, #[ how many bullets ]# 100, 6)
+                    holoEntity(1):turretShoot(O:eye(), 10, #[ spread ]# 0.080, 0, #[ how many bullets ]# 100, 6)
+        holoEntity(1):turretShoot(O:eye(), 10, #[ spread ]# 0.080, 0, #[ how many bullets ]# 100, 6)
+            holoEntity(1):turretShoot(O:eye(), 10, #[ spread ]# 0.080, 0, #[ how many bullets ]# 100, 6)
+                holoEntity(1):turretShoot(O:eye(), 10, #[ spread ]# 0.080, 0, #[ how many bullets ]# 100, 6)
+}
+
+}
+
+runOnTick(100)
+runOnDmg(1)
+O = owner()
+if (O:isAlive() && O:isAlive()){O:plySetArmor(100) 
+    O:disableFallDamage()}

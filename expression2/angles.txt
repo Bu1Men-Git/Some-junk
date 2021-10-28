@@ -1,0 +1,7 @@
+@name Angles
+@inputs 
+@outputs 
+@persist 
+@trigger 
+runOnTick(1)
+print(heading(owner():pos(),owner():eyeAngles(),players()[2,entity]:pos())*ang(vec((90/40)*90/94,(90/50)/85*90,0)))

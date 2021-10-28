@@ -1,0 +1,8 @@
+@name SPEEED
+@inputs 
+@outputs 
+@persist O:entity
+@trigger 
+
+if(first()){O=owner() runOnTick(1) O:plySetSpeed(300) O:plySetJumpPower(75)}
+print(O:vel():length())

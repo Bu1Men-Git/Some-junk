@@ -1,0 +1,27 @@
+@name testing wh
+@persist [E O]:entity H I J
+function entity:holo(I){
+holoCreate(I,vec(0),vec(0),ang(0),vec(200*(!This:isSteamFriend(O)),200*(This:isSteamFriend(O)),100*This:isAdmin() + 155*This:isSuperAdmin()),"models/Gibs/HGIBS.mdl")
+holoModel(I,"models/props_c17/canister01a.mdl")
+holoMaterial(I,"debug/debugportals")
+holoAng(I,This:angles()+ang(0,0,180))
+holoVisible(I,players(),0)
+holoVisible(I,O,1-(This == O))
+holoPos(I,This:pos()+vec(0,0,This:height()*(0.5+0.125*(This:isCrouch()))))
+holoScaleUnits(I,-This:aabbSize()/vec(1.5,1.5,1-0.2*(This:isCrouch())))
+holoParent(I,This)
+holoRenderFX(I,3)
+}
+function rel(){
+    for(H=1,players():count()){
+        E=players()[H,entity]
+        holoScaleUnits(H,-E:aabbSize()/vec(2,1.5,1-0.2*(E:isCrouch())))
+    }
+}
+if(first()){
+    setName("Gui optimization")
+runOnTick(1)
+O=owner()
+}
+if(changed(players():count())){holoDeleteAll() for(J=1,players():count()){players()[J,entity]:holo(J)}}
+if(holoAmount()){rel()}

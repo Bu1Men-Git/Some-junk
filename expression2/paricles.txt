@@ -1,0 +1,23 @@
+@name Paricles
+@inputs 
+@outputs 
+@persist 
+@trigger 
+interval(1)
+Mat=array("effects/gunshipmuzzle")
+function particle(T:array,V:vector,Vel:vector,G:vector,Dur,Siz:vector2,Alp:vector2,Col:vector){
+    particleSetMaterialList(T)
+    particleSetPosition(V)
+    #particleSetPitch(toRad(90))
+    particleSetVelocity(Vel)
+    particleGravity(G)
+    particleSetDuration(Dur)
+    particleSetStartSize(Siz:x())
+    particleSetEndSize(Siz:y())
+    particleSetStartAlpha(Alp:x())
+    particleSetEndAlpha(Alp:y())
+    particleSetColor(Col)
+    particleCreate()
+}
+for(I=1,2){particle(Mat,owner():toWorld(vec(0,0,owner():height()/3*I)),owner():vel(),vec(0),15,vec2(60),vec2(240,80),vec(255,255,25))}
+#particle(Mat,entity():pos(),entity():up()*450,vec(0,0,-600),10,vec2(15,2),vec2(255,100),vec(255))

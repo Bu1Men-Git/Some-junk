@@ -1,0 +1,12 @@
+@name findInSPhere
+@persist It:array [E O]:entity
+if(first()){runOnTick(1) O=owner()}
+if(O:weapon():toString():find("missile")){
+findByClass("lunasflightschool_missile")
+It=findToArray()
+}
+if(It:count()){
+for(I=1,It:count()){E=It[I,entity]
+    E:setAng((owner():aimPos()-E:pos()):toAngle())
+}
+}

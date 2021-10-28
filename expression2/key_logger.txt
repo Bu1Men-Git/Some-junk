@@ -1,0 +1,5 @@
+@name Key logger
+@persist E:entity
+
+if(first()){E=owner() runOnKeys(E,1)}
+if(keyClk(E)==1){print(keyClkPressed())}

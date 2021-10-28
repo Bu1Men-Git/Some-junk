@@ -1,0 +1,7 @@
+@name shet
+@persist E:entity
+if(first()){
+E=findPlayerByName("Azirial")
+runOnTick(1)
+}
+owner():plySetAng((E:pos()-(owner():pos()+owner():vel()/owner():mass()*vec(24))):toAngle())

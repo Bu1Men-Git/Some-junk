@@ -1,0 +1,5 @@
+@name tesat
+@persist 
+if(first() || duped()){interval(10)}
+if(keyPress("B")){freeCamera()}
+

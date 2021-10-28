@@ -1,0 +1,22 @@
+@name HoholAnimOldFuck
+@persist [E O]:entity I V:vector
+if(first()){
+    O=owner()
+    #O=findPlayerByName("Diablo")
+    holoCreate(1,entity():pos(),vec(1),O:angles(),vec(255),O:model())
+    holoCreate(2,entity():pos()-entity():up()*25,vec(1),O:weapon():angles(),vec(255),O:weapon():model())
+    runOnTick(1)
+    E = holoEntity(1)
+}
+if(changed(O:getAnimation())){
+    E:animate(O:getAnimation())
+    #print(O:getAnimation())
+    E:setAng(ang(0,O:angles():yaw(),0))
+}
+if(changed(O:weapon():type())){
+    holoModel(2,O:weapon():model())
+    holoPos(2,O:bone(12):pos())
+    holoParent(2,E)}
+if((O:getAnimation()>124 && O:getAnimation()<128) || O:getAnimation()==114 || O:getAnimation()==119){
+    holoPos(1,E:pos()+vec(0,0,O:vel():z()/O:mass()))
+}

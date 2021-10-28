@@ -1,0 +1,7 @@
+@name Bhop
+@persist R:ranger O:entity
+if(first()){O=owner() runOnTick(1) runOnLast(1) rangerFilter(O)}
+R=rangerOffset(50,O:pos()+O:vel()*tickInterval(),-O:up())
+if(R:distance()<=20){O:plyDoJump(1) timer("jm",120)}
+if(clk("jm")){O:plyDoJump(0)}
+if(last()){O:plyDoJump(0)}

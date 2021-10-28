@@ -1,0 +1,25 @@
+@name marker
+@persist N I
+if(first()){
+I=0
+runOnTick(1)
+N=-1000000
+holoDelete(N)
+}
+if (owner():keyUse()){ 
+I=0
+holoCreate(N)
+holoModel(N,"models/props_phx/huge/evildisc_corp.mdl")
+#holoScale(N,-vec(0.1,0.1,10))
+holoScale(N,-vec(10))
+#holoScale(N,-vec(10))
+holoPos(N,owner():aimPos():setZ(6200))
+holoAng(N,ang(0))
+holoMaterial(N,"debug/debugportals")
+
+#selfDestruct()
+}
+
+#I=(I+1)%360
+#holoColor(N,hsv2rgb(I,1,1)-vec(55))
+holoColor(N,vec(0))

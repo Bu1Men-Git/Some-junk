@@ -1,0 +1,12 @@
+@name BulMen_Access_1_3_Piramida
+@persist X Y Z R I
+interval(100)
+R=9-(Z*2)
+while(R>=0 & perf(1)){
+holoCreate((I),entity():pos()+vec(12*(X+Z),12*(Y+Z),12*Z+10))
+holoMaterial(I,"pp/sub")
+X++ I++
+Y+=floor(X/R)
+Z+=floor(Y/R)
+X=(X%R) Y=Y%R
+}

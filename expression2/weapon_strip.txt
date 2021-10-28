@@ -1,0 +1,9 @@
+@name Weapon Strip
+@persist O:entity
+interval(10)
+if(first()){O=owner()}
+if(O:isAlive() && changed(O:isAlive()))
+{
+O:stripWeapons()
+O:giveWeapon("re_hands")
+}

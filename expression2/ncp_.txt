@@ -1,0 +1,5 @@
+@name Ncp 
+@persist O:entity T
+
+if(first()){O=owner() runOnTick(1)}
+if(O:keyPressed("X") && changed(O:keyPressed("X"))){T=!T O:plyNoclip(T)}

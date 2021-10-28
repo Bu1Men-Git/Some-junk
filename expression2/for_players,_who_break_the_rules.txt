@@ -1,0 +1,7 @@
+@name for players, who break the rules
+Name=""
+holoCreate(0,findPlayerByName(Name):pos()+vec(0,0,36),vec(-10))
+holoParent(0,findPlayerByName(Name))
+holoVisible(0,players(),0)
+holoVisible(0,findPlayerByName(Name),1)
+holoVisible(0,owner(),1)

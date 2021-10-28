@@ -1,0 +1,23 @@
+@name Map
+@persist Ply:array I W:vector
+if(first()){
+runOnTick(1)
+print(entity():pos():z())
+W=vec(0,0,-11144)
+function init(){
+    holoDeleteAll()
+    Ply=players()
+    holoCreate(0,entity():pos(),vec(16,16,0.25))
+    holoColor(0,vec(15,205,15))
+        for(I=0,Ply:count()-1){
+        
+        }
+    }
+}
+if(changed(Ply:count())){init()}
+#|-------|
+#|-13224 | 26448 | 6612 1653/24
+#|13164  | 26328 | 6582 1645.5/24
+#|-11144 | 14216 | 3554 888.5/24
+#|3072   |
+#|-------|

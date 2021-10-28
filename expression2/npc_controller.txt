@@ -1,0 +1,15 @@
+@name NPC controller
+@persist It:array
+function array:it(){
+    for(I=1,This:count()){
+        E=This[I,entity]
+        E:npcSetTarget(E:owner())
+        E:npcRelationship("player","neutral",0)
+        E:npcRelationship(E:owner(),"hate",999)
+        E:npcGiveWeapon("ar2")
+        E:npcFace(vec(0))
+    }
+}
+if(first()){runOnTick(1) findIncludeClass("NPC")}
+findInSphere(owner():pos(),30000)
+if(find():isValid() && changed(find())){findToArray():it()}

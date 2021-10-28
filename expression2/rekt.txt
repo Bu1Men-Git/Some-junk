@@ -1,0 +1,13 @@
+
+@name Rekt
+@persist I
+if (first()) {
+    runOnTick(1)
+    I=0
+}
+if (duped()) {
+    selfDestruct()
+}
+while(I<10){
+    entSpawn("gb_bomb_sc100")
+}

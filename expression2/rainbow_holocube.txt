@@ -1,0 +1,14 @@
+@name Rainbow holoCube
+@persist I O:entity
+if(first()){I=0
+    runOnTick(1)
+    O=owner():weapon() #holoCreate(0,entity():pos()+vec(0,0,owner():height()*3/4))
+}
+if(changed(owner():weapon())){
+O:setColor(vec(255))
+O:setModel(owner():weapon():model())
+O=owner():weapon()
+}
+O:setColor(hsv2rgb(I,1,1))
+beamColor(hsv2rgb(I,1,1))
+I=(I+5)%360

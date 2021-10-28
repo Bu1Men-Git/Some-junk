@@ -1,0 +1,13 @@
+@name Rnager camera
+@persist Sz:vector2 [W E]:entity X:wirelink I Op:vector
+function wirelink:render(S:vector2,N,Opos:vector){
+    local X = N%S:x()
+    local Y = floor(N/S:x())
+rangerOffsetHull(1024,)
+}
+if(first()){E=entity() runOnTick(1) W=spawnEgp("models/hunter/plates/plate2x2.mdl",E:toWorld(vec(0,0,48)),E:angles()+ang(90,0,180),1) X=W:wirelink() W:parentTo(E)
+    Sz=vec2(64) Op=W:pos()+W:aabbSize()*vec(90)
+}
+if(!W:isValid()){selfDestruct()}
+X:render(Sz,I)
+I=(I+1)%360

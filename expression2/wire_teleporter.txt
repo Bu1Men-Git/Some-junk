@@ -1,0 +1,13 @@
+@name WIre teleporter
+@persist [O EV]:entity X:wirelink
+if(first()){
+X=entity():isWeldedTo():wirelink()
+X:setNumber("Jump",0)
+findIncludeClass("prop_vehicle")
+findInSphere(entity():pos(),25)
+EV=findResult(1)
+runOnTick(1)
+}
+if(changed(EV:driver()) && EV:driver():isPlayer()){O=EV:driver()}
+if(O:isPlayer() && O:keyJump() && changed(O:keyJump())){X:setVector("TargetPos",O:aimPos()+vec(0,0,EV:height()/2)) X:setNumber("Jump",1) timer("1",100)}
+if(clk("1")){X:setNumber("Jump",0)}

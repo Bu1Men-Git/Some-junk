@@ -1,0 +1,8 @@
+@name BlAcK
+@persist 
+
+holoCreate(1)
+holoScale(1,vec(-25))
+holoModel(1,"models/props_phx/huge/evildisc_corp.mdl")
+#holoPos(1,entity():toWorld(vec(0,0,holoEntity(1):height()/2*25)))
+holoMaterial(1,"debug/debugportals")

@@ -1,0 +1,52 @@
+@name holo amin requiem
+@persist [O E]:entity V:vector N I [St Cr CAn]:string
+if(first()){runOnTick(1) runOnKeys(O,1) St="ACT_HL2MP_" O=owner() E=propSpawn(O:model(),entity():pos(),O:angles(),1) N=25 for(I=1,0){holoCreate(I,vec(0),-vec(0.4)) holoModel(I,"tetra") holoMaterial(I,"debug/debugportals") holoEntity(I):parentToBone(O,I) holoPos(I,O:bonePos(I))}}
+#if(O:keyPressed("G") && changed(O:keyPressed("G"))){
+#    for(I=1,N){V=E:toWorld(O:toLocal(O:bonePos(I))-E:toLocal(E:bonePos(I))) E:manipulateBonePos(I,E:bone(I):toLocal(V))} #vec(V:y(),V:z(),V:x())
+#print(O:getAnimationByName("ACT_HL2MP_WALK"))
+
+#}
+if(O:keyDuck()){Cr="_CROUCH"} else{Cr=""}
+switch(O:keyDuck()*1000+O:keySprint()*100+O:keyJump()*10+O:keyWalk()){
+    case(0),
+    if(round(O:vel():length()*tickInterval())>0){
+        CAn=St+"IDLE"+Cr
+    }
+    else{
+        CAn=St+"WALK"+Cr
+    }
+    break,
+    
+    case(1000),
+    CAn=St+"IDLE"+Cr
+    break,
+    
+    case(1),
+    CAn=St+"WALK"+Cr
+    break,
+    
+    case(1001),
+    CAn=St+"WALK"+Cr
+    break,
+    
+    case(100),
+    CAn=St+"RUN"
+    break,
+    
+    case(10),
+    CAn=St+"JUMP_SMG"
+    break,
+    
+    case(110),
+    CAn=St+"JUMP"
+    break,
+}
+if(changed(CAn)){E:animate(O:getAnimationByName(CAn)) print(O:weapon():name())}
+#for(I=1,23){holoCreate(I,E:pos()+O:bonePos(I)-O:pos()),vec(0.1)}
+#if(!E:isValid()){selfDestruct()}
+#else{
+#V+=O:vel()*tickInterval()
+#for(I=1,N){holoPos(I,V+O:bonePos(I)-O:pos()) holoAng(I,O:boneAngles(I))}
+#for(I=1,23){E:manipulateBoneAng(I,O:boneAngles(I)) V=(O:bonePos(I)-O:pos())-(E:bonePos(I)-E:pos()) E:manipulateBonePos(I,V)}
+#}
+#  

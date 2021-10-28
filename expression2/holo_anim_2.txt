@@ -1,0 +1,35 @@
+@name Holo anim 2
+@persist [E O WepAttachHolo]:entity I V:vector
+if(first()){
+    #O=owner()
+    O=findPlayerByName("dia")
+    holoCreate(1,entity():pos(),vec(1),O:angles(),vec(255),O:model())
+    holoCreate(2,entity():pos()-entity():up()*25,vec(1),O:weapon():angles(),vec(255),O:weapon():model())
+    runOnTick(1)
+    E = holoEntity(1)
+
+holoCreate(3)
+WepAttachHolo = holoEntity(3)
+holoPos(3, E:attachmentPos("anim_attachment_RH"))
+holoAng(3, E:attachmentAng("anim_attachment_RH"))
+holoParentAttachment(3, E,"anim_attachment_RH")
+holoScale(3, vec(0))
+
+holoCreate(4)
+holoPos(4, WepAttachHolo:pos())
+holoAng(4, WepAttachHolo:angles())
+holoParent(4, WepAttachHolo)
+}
+if(changed(O:getAnimation())){
+    E:animate(O:getAnimation())
+    #print(O:getAnimation())
+    E:setAng(ang(0,O:angles():yaw(),0))
+}
+if(changed(O:weapon():type())){
+    holoModel(2,O:weapon():model())
+    holoModel(4,O:weapon():model())
+    holoPos(2,O:bone(12):pos())
+    holoParent(2,E)}
+if((O:getAnimation()>124 && O:getAnimation()<128) || O:getAnimation()==114 || O:getAnimation()==119){
+    holoPos(1,E:pos()+vec(0,0,O:vel():z()/O:mass()))
+}

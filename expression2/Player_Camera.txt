@@ -1,0 +1,28 @@
+@name Player Camera
+@persist O:entity [TV]:array R I Show
+if(first()){
+interval(100)
+O=owner()
+dPanel("Camera System",vec2(1060,30),vec2(190,130))
+dTabHolder("TV","Camera System",vec2(5,25),vec2(180,100))
+dLabel("Choose player and press the button","TV",vec2(5))
+dDropBox("Players","TV",vec2(10,20),160)
+dButton("Watch","TV",vec2(10,45),vec2(75,45))
+dButton("UnWatch","TV",vec2(95,45),vec2(75,45))
+dShow("Camera System",1)
+TV=players()
+Show=0
+}
+for(I=0,players():count()){ 
+    if(players()[I,entity]){
+        initCamera(players()[I,entity]:pos()+vec(0,0,60),players()[I,entity]:eyeAngles(),players()[I,entity],1)
+        #cameraParent(I,players()[I,entity])
+        TV:pushString(I+"."+players()[I,entity]:type())
+        dArray("Players",TV)
+    }
+    else{
+        freeCamera()
+    }
+#holoPos(I,players()[I,entity]:pos()+vec(0,0,35))
+#holoVisible(I,players(),0)
+}

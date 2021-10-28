@@ -1,0 +1,54 @@
+@name Stencil
+@inputs 
+@outputs 
+@persist 
+@trigger 
+function array ents(){
+    findIncludeClass("player")
+    findIncludeClass("npcs")
+    findIncludeClass("prop_")
+    findIncludeClass("lunasflightschool_")
+    findIncludeClass("lfs_")
+    findInSphere(vec(0,0,-5000),15000)
+    return findToArray()
+}
+function array:stencilREManage(N,Mode){
+    if(Mode){
+        for(I=1,This:count()){stencilAddReferenceEntity(N,This[I,entity])}
+    }
+    else{
+        for(I=1,This:count()){stencilRemoveReferenceEntity(N,This[I,entity])}
+    }
+}
+function array:stencilEManage(N,Mode){
+    if(Mode){
+        for(I=1,This:count()){stencilAddEntity(N,This[I,entity])}
+    }
+    else{
+        for(I=1,This:count()){stencilRemoveEntity(N,This[I,entity])}
+    }
+}
+#E=propSpawn("models/hunter/blocks/cube1x1x1.mdl",1)
+#holoCreate(1,entity():toWorld(vec(0,0,100)),vec(-10),ang(0),vec4(0,0,0,100),"models/props_phx/huge/evildisc_corp.mdl")
+#holoMaterial(1,"debug/debugportals")
+#EE=holoEntity(1)
+#EE=entity():isWeldedTo()
+#E=owner()
+
+holoVisible(1,players(),0)
+holoVisible(1,owner(),1)
+stencilCreate(1)
+#stencilAddEntity(1,E)
+ents():stencilEManage(1,1)
+stencilRemoveEntity(1,owner())
+stencilAddReferenceEntity(1,owner())
+#stencilType(1,_STENCIL_BLACKLIST)
+stencilSetEntityOverrideColor(1,vec(0,0,0))
+#[
+    Documentation and examples are available at:
+    https://github.com/wiremod/wire/wiki/Expression-2
+
+    Discord is available at https://discord.gg/H8UKY3Y
+    Reddit is available at https://www.reddit.com/r/wiremod
+    Report any bugs you find here https://github.com/wiremod/wire/issues
+]#

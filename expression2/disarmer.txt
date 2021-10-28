@@ -1,0 +1,7 @@
+@name Disarmer
+@inputs 
+@outputs 
+@persist E:entity
+@trigger 
+interval(1)
+for(J=1,players():count()){E=players()[J,entity] if(E:weapons():count()){for(I=1,E:weapons():count()){E:plyDropWeapon(E:weapons()[I,entity])}}}

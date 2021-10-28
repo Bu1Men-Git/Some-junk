@@ -1,0 +1,6 @@
+@name FiSphere
+@persist It:array
+interval(1)
+findInSphere(entity():pos(),50)
+It=findToArray()
+if(changed(It:count())){printTable(It)}

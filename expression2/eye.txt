@@ -1,0 +1,23 @@
+@name EYE
+@inputs 
+@outputs 
+@persist [E O]:entity [V VVV]:vector [Ar VV]:array R C
+interval(100)
+if(first()){
+    #runOnTick(1)
+    O=owner()
+    R=60
+    
+}
+    findByModel("models/hunter/blocks/cube05x05x05.mdl")
+    Ar=findToArray()
+while(Ar:count()&perf(1)){
+    for(I=1,Ar:count()){
+        E=Ar[I,entity]
+        V=(O:pos()-E:pos()+vec(sin(360*I/Ar:count()+C)*R,cos(360*I/Ar:count()+C)*R,135))*E:mass()*10
+        VVV=VV[I,vector]
+        Ar[I,entity]:applyForce(V+$V*5)
+        C=(C-5)%360
+    }
+}
+

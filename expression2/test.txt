@@ -1,0 +1,21 @@
+@name Test
+@inputs W:wirelink
+@persist I [O E]:entity V2:vector2 [F D]:vector [A R]:angle X Y Z Sc
+runOnTick(1)
+if(first()){O=owner() Sc=5
+    dPanel("1",vec2(0),vec2(Sc*2))
+    R=ang(vec((90/42),(90/47.5),0))
+}
+E=players()[2,entity]
+D=(E:pos()-O:pos())
+A=heading(O:pos(),O:eyeAngles(),E:pos())*R
+#Z=-sin(vec(A):x())*scrH()/2
+#X=sin(vec(A):y())*scrW()/2
+Z=(vec(A):x()/45-sin(vec(A):x()))*scrH()/2
+X=(vec(A):y()/45-sin(vec(A):y()))*scrW()/2
+V2=vec2(scrW()/2+X-Sc,scrH()/2-Z-Sc)
+print(V2)
+dPos("1",V2)
+
+
+#O:eyeAngles() F=A:forward()

@@ -1,0 +1,42 @@
+@name Radar
+@persist [O E T]:entity I R [D F V OV]:vector
+function void ply(){O=owner()
+    if(I==1){holoDeleteAll()}
+    for(I=1,players():count()){
+        T=players()[I,entity]
+        if(T!=O){
+            D=E:pos()-O:pos()
+        holoCreate(I,(O:pos()+vec(0,0,O:height()*88.75/100))+(25*D/D:length()),vec(0.75),ang(vec(0)),vec(255,10,10),"cylinder")
+        holoVisible(I,players(),0)
+        holoVisible(I,O,1)
+    }
+    }
+}
+function void reload(){O=owner()
+    for(R=1,players():count()){
+        T=players()[R,entity]
+        if(T!=O){
+            if(!O:isCrouch()){
+                F=(T:pos()-O:pos())
+            V=(25*F/F:length())
+            OV=O:vel()*tickInterval()*7.936# + T:vel()*tickInterval()*7.936
+            holoPos(R,(O:pos()+vec(0,0,O:height()*87.75/100))+ (OV+$OV*5) +(V+$V*5))
+            #holoColor(R,vec(255,10,10)-vec(max(0,F:length()/50),0,0))
+            holoScale(R,vec(max(0.01,0.75/(max(F:length()/250,1)))))
+            holoScale(R,holoScale(R)*vec(0.5,0.5,1))
+            holoAlpha(R,min(225,75*(1+F:length()/1000)))
+            }
+            else{
+            holoPos(R,(O:pos()+vec(0,0,O:height()*77.75/100))+OV+$OV*5+(V+$V*5))
+            #holoColor(R,vec(255,10,10)-vec(max(0,F:length()/50),0,0))
+            holoScale(R,vec(max(0.01,0.75/(max(F:length()/250,1)))))
+            holoAlpha(R,min(225,50*(1+F:length()/2000)))    
+            }
+        }
+    }
+}
+if(first()){runOnTick(1) holoCreate(0) holoScale(0,vec(1.5)) holoModel(0,"models/beer/wiremod/gate_e2.mdl")}
+
+if(changed(players():count())){ ply()}
+reload()
+setName(toString(random(1000000000,9999999999),36))

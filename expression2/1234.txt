@@ -1,0 +1,11 @@
+@name 1234
+@persist I
+interval(100)
+findInSphere(entity():pos(),10)
+E=findResult(2)
+if(E:type()!=""){print(E:health())}
+if(E:isNPC()){E:setHealth(12456)}
+#for(I=1,players():count()){
+#players()[I,entity]:giveWeapon("weapon_medkit")
+
+#}

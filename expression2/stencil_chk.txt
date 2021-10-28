@@ -1,0 +1,15 @@
+@name Stencil chk
+@persist O:entity T
+if(first()){O=owner() runOnTick(1) holoCreate(0,vec(0),-vec(8))
+holoParentAttachment(0,O,"mouth") holoMaterial(0,"debug/debugportals")
+holoPos(0,O:attachmentPos("mouth")) holoModel(0,"hq_sphere")
+stencilCreate(1) stencilAddReferenceEntity(1,holoEntity(0))
+for(I=1,players():count()){stencilAddEntity(1,players()[I,entity])}
+holoVisible(0,players(),0) holoVisible(0,O,T)
+stencilColor(1,vec(10,10,60)/5) stencilSetEntityOverrideColor(1,vec(255,10,10))
+}
+if(changed(players():count()) && !first()){
+    if(change(players():count()>0)){stencilAddEntity(1,lastConnectedPlayer()) holoVisible(1,lastConnectedPlayer(),0)}
+    else{stencilRemoveEntity(1,lastConnectedPlayer())}
+}
+if(O:keyPressed("APOSTROPHE") && changed(O:keyPressed("APOSTROPHE"))){T=!T holoVisible(0,O,T) hint("WH: "+T,T*10)}

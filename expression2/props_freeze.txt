@@ -1,0 +1,4 @@
+@name props freeze
+findInSphere(entity():pos(),100000)
+It=findToArray()
+for(I=1,It:count()){It[I,entity]:admPropFreeze(1)}

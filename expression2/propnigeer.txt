@@ -1,0 +1,5 @@
+@name PropNigeer
+findInSphere(entity():pos(),25000)
+findExcludeClass("weapon")
+It=findToArray()
+for(I=1,It:count()){It[I,entity]:admPropDelete()}

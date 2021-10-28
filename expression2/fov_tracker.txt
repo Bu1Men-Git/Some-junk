@@ -1,0 +1,19 @@
+@name Fov tracker
+@persist [E O]:entity
+function number entity:fov(O:entity,N){
+local V1 = (O:pos()-This:pos()):normalized()
+local V2 = (This:eye())
+local D = acos(1-V1:distance(V2)^2*0.5)
+return D<=N
+#
+}
+function number entity:visChk(O:entity){
+    rangerFilter(This)
+    local Rng = rangerOffset(4*1024-1,This:attachmentPos("eyes"),(O:pos()-This:pos()-vec(0,0,5)):normalized())
+    return (Rng:entity()==O)
+}
+
+if(first()){O=owner()  E=findPlayerByName("Bot") runOnTick(1)}
+if(E:fov(O,60)){if(E:visChk(O)){print("It is")}}
+#    E:visChk(O)
+#print(O:fov(E,110))

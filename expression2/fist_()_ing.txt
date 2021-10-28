@@ -1,0 +1,21 @@
+@name Fist () ing
+@persist [E O]:entity Dmg:damage Mul T
+if(first()){
+    setName("NiggaKiller")
+    O=owner()
+    #runOnTick(1)
+    runOnDmg(1)
+    Mul=3
+    T=1
+}
+if(lastDamage():getAttacker()==O && lastDamageVictim()==findPlayerByName("Diablo") && dmgClk() && (lastDamageVictim():isPlayer() || lastDamageVictim():isNPC())){
+    if(T){T=0
+    Dmg=lastDamage()
+    E=lastDamageVictim()
+    Dmg:setDamage((Mul-1)*Dmg:getDamage())
+    E:takeDamage(Dmg)
+    #E:plySetHealth(E:health()+max(0,(1-Mul)*Dmg:getDamage()))
+    #print(E:name()+" "+Dmg:getDamage())
+}
+else{T++}
+}

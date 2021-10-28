@@ -1,0 +1,7 @@
+@name DMG
+@persist I:entity
+
+if(first()){I=propSpawn("models/props_c17/FurnitureFridge001a.mdl",1) runOnDmg(1,I) runOnTick(1)}
+I:takeDamage(1)
+I:takeDamage(1)
+I:takeDamage(1)

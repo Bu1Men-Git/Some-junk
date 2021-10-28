@@ -1,0 +1,5 @@
+@name Weapon weight finder
+@persist E:entity
+#if(first()){E=propSpawn("1.mdl",1)}
+interval(1)
+if(changed(owner():weapon())){E:propDelete() E=propSpawn(owner():weapon():model(),1) print(E:mass())}

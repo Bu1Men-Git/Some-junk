@@ -1,0 +1,22 @@
+@name Killer Queen
+@persist X:wirelink T [O E P OE Tar]:entity [Name BcL WhL]:string
+if(first()){O=owner() runOnTick(1)
+P=propSpawn("killer_queen.mdl",1) P:setAlpha(0)
+#BcL=""    WhL="Bul"   
+Tar=owner()#findPlayerByName("Diablo")  
+}
+findIncludeClass("gb_")
+findInSphere(Tar:pos(),27500)
+findClipFromSphere(Tar:pos(),1500)
+if(BcL:length()){findIncludePlayerProps(findPlayerByName(BcL))}
+if(WhL:length()){findExcludePlayerProps(findPlayerByName(WhL))}
+if(!E:isValid()){OE:printPlayer("Killer Queen has already touched that "+Name:explode("_")[3,string]+" "+Name:explode("_")[2,string])  E=findResult(1) OE=E:owner() Name = E:type()}
+if(E:isValid() && !T){
+if(E:type():left(3)=="gb_"){T=1
+X=E:wirelink()
+X:setNumber("Arm",1)
+#X:setNumber("Launch",1)
+timer("3",10)}
+else{findExcludeEntity(E)}}
+if(clk("3")){X:setNumber("Detonate",1) T=0}
+if(!P:isValid()){selfDestruct()}

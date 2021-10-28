@@ -1,0 +1,14 @@
+@name Time Stop Core
+@persist [W E]:entity It:array
+if(first()){entity():setPos(entity():toWorld(vec(0,0,-10))) runOnTick(1) W=spawnEgpHud(entity():pos(),entity():angles(),1) timer("upd",100)}
+if(clk("upd")){It=getEntitiesByTag("TimeSeal") timer("upd",100)}
+if(changed(It:count())){
+for(I=1,It:count()){
+    E=It[I,entity]
+    if(E:isPlayer()){E:plyFreeze(1) W:egpHUDSetPlayer(E) E:plyGod(1)}
+    if(E:isNPC()){E:npcStop() E:plyFreeze(1)}
+    if(E:isSolid()){E:propStatic(1)}
+}
+}
+if(!W:isValid()){selfDestruct()}
+if(changed(W)){W:wirelink():egpBox(0,vec2(0),vec2(12048)) W:wirelink():egpColor(0,vec(0))}

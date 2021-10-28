@@ -1,0 +1,46 @@
+@name administrate tool
+@persist [O E EW]:entity Ply:array I X:wirelink D T C
+@model models/hunter/blocks/cube025x025x025.mdl
+if(first()){
+    entity():setNoCollideAll()
+    entity():setPos(entity():pos()-entity():up()*15)
+    runOnTick(1)
+    O=owner()
+    #findByModel("models/bull/dynamicbutton.mdl")
+    #findClipToPlayerProps(O)
+    #EW=findResult(1)
+    #X=EW:wirelink()
+    #if(EW:isExist()){hint("Da",100)}
+    EW=spawnEgpHud(entity():pos()-entity():up()*10,entity():angles(),1)
+    if(EW:type()!=""){hint("Da",100)}
+    X=EW:wirelink()
+    T=0
+}
+function rel(){
+    Ply=players()
+    C=Ply:count()
+    X:egpClear()
+    for(I=1,Ply:count()){
+        E=Ply[I,entity]
+        D=E:pos():distance(O:pos())
+        X:egp3DTracker(I,vec(0))
+        X:egpParent(I,E)
+        X:egpBoxOutline(I+C,X:egpPos(I)-vec2(0,20000/D),vec2(20000/D,48000/D*E:height()/72))
+        X:egpParent(I+C,I)
+        X:egpText(I+2*C,E:name():left(3),X:egpPos(I+C)-vec2(0,60000/D*E:height()/72)-vec2(1.5*10,15))
+        X:egpParent(I+2*C,I)
+    }
+}
+function upd(){
+    for(I=1,Ply:count()){
+        E=Ply[I,entity]
+        D=E:pos():distance(O:pos())
+        X:egpSize(I+C,vec2(20000/D,48000/D*E:height()/72))
+        X:egpPos(I+C,X:egpPos(I)-vec2(0,20000/D))
+        #X:egpPos(I+2*C,X:egpPos(I)-vec2(7000*E:name():length()/D,75000/D*E:height()/72))
+    }
+}
+if(changed(players():count())){rel()}
+if(changed(O:keyPressed("T")) && O:keyPressed("T")){T=!T X:egpHudToggle() hint(T:toString(),100)}
+upd()
+if(EW:type()==""){selfDestruct()}

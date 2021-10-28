@@ -1,0 +1,15 @@
+@name Door Control
+@inputs Lock OC1 OC2
+#@outputs 
+@persist E:entity Lock OC1 OC2
+
+if(first()){
+    runOnTick(1)
+    findIncludeClass("prop_door_rotating")
+    findInSphere(entity():pos(),25)
+}
+if(find():isValid() && changed(find())){E=findResult(1) print(E)}
+if(Lock){#E:unlock()
+    if(OC1 && changed(OC1) || OC2 && changed(OC2)){E:use()}
+}
+else{E:lock()}

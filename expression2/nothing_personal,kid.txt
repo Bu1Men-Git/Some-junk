@@ -1,0 +1,46 @@
+@name Nothing personal,Kid
+@persist [E O Rag]:entity Ply:array [V V1 V2]:vector Png D:damage
+
+if(first()){
+    runOnDmg(1)
+    O=owner()
+    O:plySetSpeed(225)
+    runOnTick(1)
+    O:plyGive("arccw_melee_knife")
+    D=damage()
+    D:setDamage(75)
+    D:setInflictor(O:weapon("arccw_melee_knife"))
+    D:setAttacker(O)
+    entity():setPos(entity():toWorld(vec(0,0,-10)))
+}
+if(O:aimingAt():count() && !timerRunning("cld")){
+    #O:plySelectWeapon("arccw_melee_knife")
+    Ply=O:aimingAt()
+    for(I=1,Ply:count()){
+        E=Ply[I,entity]
+        V=E:toWorld(vec(-42,0,0))
+        if(!pointHasContent(V,"solid") && !pointHasContent(V-O:aabbSize():setZ(0)/2,"solid") && !pointHasContent(V+O:aabbSize()/vec(2,2,1),"solid")){
+            if(Rag:isValid() && timerTimeLeft("decoy")<3950){Rag:propDelete()}
+            if(timerTimeLeft("decoy")<3950){Rag=propSpawn(O:model(),O:pos(),O:angles(),0)}
+            Rag:setVelocity(O:vel())
+            O:propSetVelocity(vec(0))
+            stoptimer("decoy")
+            timer("decoy",4000)
+            O:teleport(E:toWorld(vec(-42,0,0)))
+            Png=abs(O:ping()-E:ping())/1000
+            V1=O:shootPos()+O:vel()*(1+Png)*tickInterval()
+            V2=E:attachmentPos("anim_attachment_head")+E:vel()*(1+Png)*tickInterval()
+            O:plySetAng((V2-V1):toAngle())
+            timer("cld",750)
+            O:plyDoAttack1(1)
+            timer("key",250)
+            O:plyApplyForce((E:pos()-O:pos())*O:mass()-O:vel())
+            break
+        }
+    }
+}
+if(clk("key")){O:plyDoAttack1(0)}
+if(timerRunning("key")){O:teleport(E:toWorld(vec(-42,0,0)))}
+if(clk("cld") || dmgClk() && timerRunning("cld")){if(!dmgClk()){E:takeDamage(D)}else{stoptimer("cld")}}
+if(clk("decoy") && Rag:isValid()){Rag:propDelete()}
+if(timerRunning("decoy")){Rag:setAngVel(ang(0))}

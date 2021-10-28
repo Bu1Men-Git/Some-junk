@@ -1,0 +1,16 @@
+@name Vehicle
+@persist [E EE O OE]:entity I
+if(first()){
+    O=owner()
+    runOnTick(1)
+}
+OE=O:vehicle()
+for(I=1,players():count()){
+    E=players()[I,entity]
+    if(E:vehicle():isExist()){
+        EE=E:vehicle()
+        if(EE:velL():length()>750 && EE!=OE){
+            print(EE:velL():length())
+        }
+    }
+}

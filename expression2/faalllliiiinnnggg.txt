@@ -1,0 +1,9 @@
+@name Faalllliiiinnnggg
+@inputs 
+@outputs 
+@persist E:entity
+@trigger 
+if(first()){E=findPlayerByName("Dia")}
+interval(1)
+E:teleport(E:toWorld(vec(0,0,1)))
+E:plyApplyForce(vec(0,0,-1337))

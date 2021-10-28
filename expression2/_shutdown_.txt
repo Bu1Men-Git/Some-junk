@@ -1,0 +1,52 @@
+@name Kesu Kesu no mi
+@persist [E O Temp]:entity M [D]:damage [Stat Map Weak]:table N Lt Mode DmgM W:wirelink
+@model models/sprops/geometry/sphere_12.mdl
+
+if(first()){runOnTick(1) runOnUse(1) runOnLast(1)
+    #include "TagsFix"
+    #include "Logia_abilities"
+    O=noentity()
+    Stat=table(4194304,"Kesu",56,0,8,vec(25,24,27),table(),table(0.7,0.6,0.2))
+    E=entity()
+    findByModel("models/Gibs/HGIBS.mdl")
+    findClipToClass("gmod_wire_expression2")
+    W=find():wirelink()
+    Map=W:table("Map")
+    E=Stat:fruit(Map[1,vector2],Map[2,vector2],Map[3,number])
+    Weak=Stat[7,table]
+}
+if(O:isValid()){
+if(O:weapon():type()=="none" && O:keyAttack1() && changed(O:keyAttack1()) && !M && !timerRunning("cld")){O:laser(Stat)}
+    O:plyGod(!M)
+if(dmgClk() && !M){
+    D=lastDamage()
+    N=D:getType()
+    if(Weak:getIndexNum(N)>0){O:setHealth(O:health()-D:getDamage())}
+    if(D:getAttacker():rev():hasTag("BHaki")){D:setDamage(D:getDamage()/2.5) O:setHealth(O:health()-D:getDamage())}
+    if(O:health()<1 && O:isAlive()){O:plyGod(0) M=1 O:takeDamage(D) M=0
+    O:mode(0,table(),Stat[6,vector],0) O:rev():removeTag("fruit") Mode=0 O=noentity() E=Stat:fruit(Map[1,vector2],Map[2,vector2],Map[3,number])
+    }
+    
+}
+
+if(pointHasContent(O:toWorld(vec(0,0,O:height()/2)),"water,slime")){M=1 timer("watr",2500) runOnDmg(0,O)}else{M=0 stoptimer("watr")  runOnDmg(1,O)}
+
+if(clk("watr")){O:takeDamage(3,world(),world()) O:mode(0,table(),Stat[6,vector],0) Mode = 0 if(!O:isAlive()){O:rev():removeTag("fruit") O=noentity() E=Stat:fruit(Map[1,vector2],Map[2,vector2],Map[3,number])}else{timer("watr",500)}}
+
+if(changed(M)){O:plyDucking(M)}
+
+if(Mode && changed(O:keyPressed("8")) && O:keyPressed("8")  && !timerRunning("cld")){DmgM=!DmgM timer("cld",1650*(!DmgM)+1250)}
+
+if(M){O:plyDoJump(0) O:plyApplyForce(O:up()*(-1000)*O:keyJump())}
+
+O:plySetSpeed(max((!M*180+20)*((Stat[8,table][1,number]-1)*Mode+1),20))
+
+if(last()){O:plyGod(0) O:plyDucking(0) O:rev():removeTag("fruit") O:mode(0,table(),Stat[6,vector],0) O:ver():removeTag("fruit")}
+
+if(changed(O:keyPressed("7")) && O:keyPressed("7") && !M && !timerRunning("cld")){Mode=!Mode timer("cld",2250*(!Mode)+500) O:mode(Stat[1,number],Stat[8,table],Stat[6,vector],Mode)}
+}
+elseif(useClk():isValid() && !timerRunning("dmgclk")){timer("dmgclk",250) O=useClk() E:setPos(E:pos():setZ(Map[3,number]+100)) E:admPropFreeze(1) runOnDmg(1,O) if(O:rev():hasTag("fruit")){O:kill() O:rev():removeTag("fruit")}else{O:rev():addTag("fruit")}}
+if(clk("dec")){holoDelete(0) Temp:admPropDelete()}
+if(Mode && DmgM && !timerRunning("dmgclk")){timer("dmgClk",250) findInSphere(O:pos()+vec(0,0,O:height()/2) ,25) findClipFromEntity(O) It=findToArray()
+    if(It:count()){for(I=1,It:count()){if(It[I,entity]:isValid()){It[I,entity]:admAttack(Stat[3,number]/25,O,O,Stat[1,number])}}}
+}

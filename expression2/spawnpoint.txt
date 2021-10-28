@@ -1,0 +1,11 @@
+@name SpawnPoint
+@model models/props_combine/combine_mine01.mdl
+@persist O:entity
+if(first()){
+    entity():setPos(entity():toWorld(vec(0,0,-8))) 
+    O=findPlayerByName("Bot")
+    setName(O:name()+" SpawnPoint")
+    runOnTick(1)
+}
+if(O:isAlive() && changed(O:isAlive()) || O:pos():distance(entity():pos())>=1250){owner():weapon():setClip1(6) O:plyGod(0) O:setMaterial("") O:teleport(entity():toWorld(vec(0,0,10)))}
+if(O:health()<=50){O:setHealth(100)}

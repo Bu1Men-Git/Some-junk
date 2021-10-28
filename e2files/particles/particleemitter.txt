@@ -1,0 +1,62 @@
+@name ParticleEmitter
+@persist LastEmit
+
+if(first() | duped()) { 
+    #include "particles/particles"
+    
+    function table createParticleEmitter(Size, Pos:vector, Vel:vector, Life, Rate, Max) { 
+        local Emitter = table("Size" = Size, "Pos" = Pos, "Vel" = Vel,
+                             "Life" = Life, "Max" = Max, "Rate" = Rate, 
+                            "Particles" = table())
+        return Emitter
+    }
+    
+    function number table:getMaxParticles() { 
+        return This["Max", number]
+    }
+    
+    function table table:getParticles() {
+        return This["Particles", table]
+    }
+    
+    function void table:setRate(Rate) { 
+        This["Rate", number] = Rate
+    }
+    
+    function number table:getRate() { 
+        return This["Rate", number]
+    }
+    
+    function void table:emitParticle() { 
+        # doShit()
+    }
+    
+    function void table:updateEmitter(ShouldEmit, ShouldUpdate) { 
+        
+        
+        if(This:getParticles():count() < This:getMaxParticles() & (curtime() - LastEmit) * 1000 >= This:getRate() & ShouldEmit) { 
+            This:emitParticle()
+            LastEmit = curtime()
+        }
+        
+        if(ShouldUpdate) {
+            This:getParticles():updateParticles()
+        }
+    }
+    
+    function void table:controlledUpdateEmitter(ShouldEmit, ShouldUpdate) { 
+        if(This:getParticles():count() < This:getMaxParticles() & (curtime() - LastEmit) * 1000 >= This:getRate() & ShouldEmit) { 
+            This:emitParticle()
+            #[I = AvailableHolos:shiftNumber()
+            V = entity():pos()
+            holoPos(I,V)]#
+            LastEmit = curtime()
+        }
+        
+        if(ShouldUpdate) {
+            This:getParticles():controlledUpdate()
+        }
+    }
+}
+
+

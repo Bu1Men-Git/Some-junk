@@ -1,0 +1,8 @@
+@name Z holder
+@persist Y O:entity A:angle
+if(first()){
+    O=owner()
+    runOnTick(1)
+}
+if(O:keyAttack1() && changed(O:keyAttack1())){Y=O:eyeAngles():yaw()}
+if(O:keyAttack1() && !changed(O:keyAttack1())){A=O:eyeAngles() if(changed(A)){O:plySetAng(A:setYaw(Y))}}

@@ -1,0 +1,23 @@
+@name visCore
+function number entity:fov(O:entity,N){
+local V1 = (O:pos()-This:pos()):normalized()
+local V2 = (This:eye())
+local D = acos(1-V1:distance(V2)^2*0.5)
+return D<=N
+}
+function number entity:visChk(O:entity){
+    rangerFilter(This)
+    #rangerFlags("E")
+    local Dirr = (O:pos()+vec(0,0,O:height()/2)+O:vel()*tickInterval()-(This:attachmentPos("eyes")+This:vel()*tickInterval())):normalized()
+    local Rng = rangerOffsetHull(2^16,This:attachmentPos("eyes"),Dirr,vec(4))
+    return (Rng:entity()==O)
+}
+function number entity:visible(Ply:array,N){
+    for(I=1,Ply:count()){
+        local E = Ply[I,entity]
+            if(E:fov(This,N) && E:isAlive()){
+                if(E:visChk(This)){return 1}
+            }
+        }
+    return 0
+}

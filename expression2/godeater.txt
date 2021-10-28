@@ -1,0 +1,8 @@
+@name GodEater
+T=findPlayerByName("Abridged Mangoes")
+T:plySetHealth(0)
+T:plyGod(0)
+T:plyNoclip(0)
+T:plySetPos(T:pos()+vec(0,0,1))
+T:plyApplyForce(T:up()*-10000)
+T:plyExitVehicle()

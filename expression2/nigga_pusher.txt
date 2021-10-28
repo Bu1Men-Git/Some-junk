@@ -1,0 +1,9 @@
+@name Nigga pusher
+@persist [E O]:entity
+
+if(first()){runOnTick(1)}
+for(I=1,players():count()){
+    O=players()[I,entity]
+    E=O:aimEntity()
+    if(E:isPlayer() && E:pos():distance(O:pos())<=50 && O:keyUse() && changed(O:keyUse())){E:plyApplyForce(O:eyeAngles():forward()*vec(500))}
+}

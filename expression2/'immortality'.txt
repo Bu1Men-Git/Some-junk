@@ -1,0 +1,11 @@
+@name 'Immortality'
+@persist [O E]:entity HH CH H MH RR C
+interval(10)
+if(first()){O=owner() H=O:health() MH=O:maxHealth() C=10 RR = (5) / (C) timer("RC",2500)}
+if(O:isAlive()&&changed(O:isAlive())){H=O:health() MH=O:maxHealth()}
+if(O:getDamage()){H-=(HH-O:health()) stoptimer("RC") timer("RC",2500)}
+if(clk("RC")){H=min(H+RR,MH) timer("RC",1000 / (C))}
+HH=O:health()
+O:setArmor(H)
+if(H<=0){E = O:playerRagdoll()}
+if(H==MH && E:isExist()){O:playerRagdoll()}

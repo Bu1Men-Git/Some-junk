@@ -1,0 +1,16 @@
+@name holoBlinder
+@inputs 
+@outputs 
+@persist 
+@trigger 
+N=-400000000
+At="eyes"
+#holoDelete(N)
+E=findPlayerByName("Diab")
+holoCreate(N)
+holoModel(N,"hq_sphere")
+holoParentAttachment(N,E,At)
+holoPos(N,E:attachmentPos(At)-E:eyeAngles():forward()*5)
+holoAng(N,E:attachmentAng(At))
+holoScale(N,vec(-2))
+#holoMaterial(N,"debug/debugportals")

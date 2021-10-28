@@ -1,0 +1,21 @@
+@name rus letters to url format
+Tx="- -П-и з д е ц   " 
+It=array(32,45)
+function string unicode(S:string){
+    St=""
+    I=1
+    while(I<=S:length()){
+        if(97<=toByte(S[I]) && toByte(S[I])<=122 || 65<= toByte(S[I]) && toByte(S[I])<=90 || It:getIndex(toByte(S[I]))){Ch=S[I]
+            #print(Ch)
+            St+=Ch
+            I++
+        }
+        else{Ch=S:sub(I,I+1)
+            St+="%"+toByte(Ch,1):toString(16)+"%"+toByte(Ch,2):toString(16)
+            I+=2
+        }
+    }
+    return St
+}
+print(unicode(Tx))
+#print(toByte(" "))

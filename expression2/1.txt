@@ -1,0 +1,9 @@
+@name 1
+@persist O:entity
+if(first() || duped()){
+O=owner()
+runOnTick(1)
+holoCreate(0,entity():pos()+vec(0,0,25))
+holoColide(0)
+}
+if(O:keyPressed("B")){holoPos(0,holoEntity(0):pos()+vec(0,0,100))}

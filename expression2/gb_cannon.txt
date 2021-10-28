@@ -1,0 +1,11 @@
+@name GB Cannon
+@persist AT:table [E O Seat]:entity F:vector A:angle
+if(first()){runOnTick(1)
+    Seat = seatSpawn("models/nova/jeep_seat.mdl",1)
+    AT = table("gb_bomb_sc100","gb_bomb_sc250","","gb_bomb_cbu")
+    holoCreate(0,Seat:toWorld(vec(25,40,40)),vec(1),Seat:angles()+ang(0,90,0),vec(30),"models/props_phx/box_amraam.mdl")
+}
+if(Seat:driver():isValid() && changed(Seat:driver())){O=Seat:driver()}
+elseif(!Seat:driver():isValid()){O=noentity()}
+if(!Seat:isValid()){selfDestruct()}
+if(O:isValid()){holoAng(0,O:eyeAngles())}

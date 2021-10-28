@@ -1,0 +1,6 @@
+@name wire
+@persist
+E=entity():isWeldedTo()
+#weld(E,entity())
+E:wirelink():setEntity("Entity",owner())
+E:wirelink():setNumber("Activate",1)

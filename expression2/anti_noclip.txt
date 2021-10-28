@@ -1,0 +1,4 @@
+@name Anti noclip
+@persist It:array E:entity
+if(first()){E=entity():isWeldedTo() runOnTick(1)}
+if(changed(players():count())){It=players() It:pushEntity(owner())}

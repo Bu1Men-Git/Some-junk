@@ -1,0 +1,8 @@
+@name kill
+@inputs 
+@outputs 
+@persist E:entity
+@trigger 
+
+if(first()){E=findPlayerByName("Joe") runOnTick(1)}
+E:killSilent()

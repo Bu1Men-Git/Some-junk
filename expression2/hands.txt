@@ -1,0 +1,822 @@
+@name hands? User:[]
+@persist [Bolts Victims SWKProps HSProps]:array [Owner LHand RHand CB SW HM CP EarthquakeProp]:entity [CapperSP CapperFP]:vector 
+@persist LState RState BothEmpty BC CapperITR SwordITR HammerITR 
+
+entity():propNotSolid(1)
+entity():setAlpha(0)
+
+if(first()){
+    runOnTick(1)
+    propSpawnUndo(0)
+    
+    Owner = owner()
+    BC = 500 
+        
+    setName("hands? User:[" + Owner:name() + "]")
+    
+    findIncludeClass("player")
+    findIncludeClass("npc")
+    findExcludeClass("mediaplayer_tv")
+    findExcludeClass("player_pickup")    
+           
+    function void swordPass(Reverse){
+        for(I=1,Victims:count()){
+            if(Victims[I,entity]:isAlive() & Victims[I,entity] != Owner){
+                local PPos = holoEntity(3):toLocal(Victims[I,entity]:pos())
+                local PPosX = PPos:x()
+                local PPosY = PPos:y()
+                local PPosZ = PPos:z()
+
+                local Hit = PPosX >= -75 & PPosX <= 22 & PPosY >= -350 & PPosY <= 350 & PPosZ >= -450 & PPosZ <= 2700
+                if(Hit){
+                    local Type = Victims[I,entity]:type()
+                    if(Type == "player"){
+                        print(Victims[I,entity]:name())
+                    }else{
+                        print(Type)
+                    }
+                    
+                    local RModifier = (1-2*Reverse)
+                    
+                    local NewHitProp = propSpawn("models/props_wasteland/controlroom_desk001a.mdl",Victims[I,entity]:toWorld(vec(0,0,40)) + owner():right()*250*RModifier,owner():toWorld(ang(0,90,0)),0) 
+                    NewHitProp:setMass(999999)
+                    NewHitProp:applyForce(-owner():right()*3500*NewHitProp:mass()*RModifier)
+                    NewHitProp:setAlpha(0)
+                    NewHitProp:soundPlay(2000 + I,3,"weapons/blade_slice_2.wav")
+                    soundPitch(2000+I,randint(40,70))
+                    SWKProps:pushEntity(NewHitProp)
+                        
+                    #ifdef entity:setCollisionGroup(string)
+                        NewHitProp:setCollisionGroup(Victims[I,entity]:getCollisionGroup())
+                    #else
+                    #endif
+                    
+                    Victims:remove(I)
+                }
+            }    
+        }   
+        
+    }
+    
+    function void smash(){
+        findInSphere(holoEntity(19):pos(),1000)
+        local InArea = findToArray()
+        print(InArea)
+        
+        for(I=1,InArea:count()){
+            if(InArea[I,entity]:isAlive() & InArea[I,entity] != Owner){
+                local NewHitProp = propSpawn("models/squad/sf_plates/sf_plate8x8.mdl",InArea[I,entity]:toWorld(vec(0,0,-3)),ang(0,0,0),0)
+                NewHitProp:setMass(999999)
+                NewHitProp:applyForce(vec(0,0,1)*NewHitProp:mass()*3900)
+                NewHitProp:setAlpha(0)
+                NewHitProp:soundPlay(3000 + I,6,"weapons/bumper_car_hit_hard.wav")
+                soundPitch(2000+I,randint(40,70))
+                HSProps:pushEntity(NewHitProp)
+                        
+                #ifdef entity:setCollisionGroup(string)
+                    NewHitProp:setCollisionGroup(InArea[I,entity]:getCollisionGroup())
+                #else
+                #endif
+            }
+        }
+        timer("cleanHSProps",500)
+    }
+}
+
+##############################################################################################################
+### Hands
+
+#LHand
+if(!LHand & propCanCreate()){
+    LHand = propSpawn("models/hunter/blocks/cube3x3x05.mdl",entity():toWorld(vec(0,0,50)),ang(0,0,0),1)
+    LHand:setMass(999999)
+    LHand:setAlpha(0)
+    LHand:propMakePersistent(1)
+}
+
+if(!holoEntity(1) & LHand & holoCanCreate()){
+    holoCreate(1)
+    holoModel(1,"models/weapons/c_arms_citizen.mdl")
+    holoScale(1,vec(50,50,50))
+    holoPos(1,LHand:toWorld(vec(100,300,-2230)))
+    holoAng(1,LHand:toWorld(ang(0,0,40)))
+    holoParent(1,LHand)
+    holoClipEnabled(1,1)
+    holoClip(1,vec(0,130,0),vec(0,1,-0.5),0)
+    holoDisableShading(1,1)
+}
+
+#RHand
+if(!RHand & propCanCreate()){
+    RHand = propSpawn("models/hunter/blocks/cube3x3x05.mdl",entity():toWorld(vec(0,0,50)),ang(0,0,0),1)
+    RHand:setMass(999999)
+    RHand:setAlpha(0)
+    RHand:propMakePersistent(1)
+}
+
+if(!holoEntity(2) & RHand & holoCanCreate()){
+    holoCreate(2)
+    holoModel(2,"models/weapons/c_arms_citizen.mdl")
+    holoScale(2,vec(50,50,50))
+    holoPos(2,RHand:toWorld(vec(100,-300,-2230)))
+    holoAng(2,RHand:toWorld(ang(0,0,-40)))
+    holoParent(2,RHand)
+    holoClipEnabled(2,1)
+    holoClip(2,vec(0,70,0),vec(0,-1,-0.6),0)
+    holoDisableShading(2,1)    
+}
+
+################################################################################################################
+### Weapon Entities
+
+#sword 
+if(!SW & holoRemainingSpawns() >= 10){
+    SW = holoCreate(3)
+    holoParent(3,RHand)
+    holoModel(3,"models/holograms/hq_rcylinder.mdl")
+    holoMaterial(3,"phoenix_storms/car_tire")
+    holoScale(3,vec(5,5,50))
+    holoPos(3,RHand:toWorld(vec(-140,-10,-30)))
+    holoAng(3,RHand:toWorld(ang(90,0,0)))
+
+    holoCreate(4)
+    holoParent(4,holoEntity(3))
+    holoModel(4,"models/holograms/hq_rcube.mdl")
+    holoMaterial(4,"models/props_vents/borealis_vent001c")
+    holoScale(4,vec(4.75,30,10))
+    holoPos(4,holoEntity(3):toWorld(vec(0,0,300)))
+    holoAng(4,holoEntity(3):toWorld(ang(0,0,0)))    
+
+    holoCreate(5)
+    holoParent(5,holoEntity(3))
+    holoModel(5,"models/holograms/hq_rcylinder.mdl")
+    holoMaterial(5,"models/gibs/metalgibs/metal_gibs")
+    holoScale(5,vec(6,6,7))
+    holoPos(5,holoEntity(3):toWorld(vec(0,0,300)))
+    holoAng(5,holoEntity(3):toWorld(ang(90,0,0)))  
+
+    holoCreate(6)
+    holoParent(6,holoEntity(3))
+    holoModel(6,"models/props_wasteland/buoy01.mdl")
+    holoMaterial(6,"models/props_vents/borealis_vent001c")
+    holoScale(6,vec(1.5,1.5,1))
+    holoPos(6,holoEntity(3):toWorld(vec(0,0,-300)))
+    holoAng(6,holoEntity(3):toWorld(ang(0,0,0)))
+
+    holoCreate(7)
+    holoParent(7,holoEntity(3))
+    holoModel(7,"models/hunter/plates/plate1x1.mdl")
+    holoMaterial(7,"models/gibs/metalgibs/metal_gibs")
+    holoScale(7,vec(3.5,40,1.3))
+    holoPos(7,holoEntity(3):toWorld(vec(-12.64,-74.45,1291.54)))
+    holoAng(7,holoEntity(3):toWorld(ang(-0.2,-83.27,89.99)))
+    
+    holoCreate(8)
+    holoParent(8,holoEntity(3))
+    holoModel(8,"models/hunter/plates/plate1x1.mdl")
+    holoMaterial(8,"models/gibs/metalgibs/metal_gibs")
+    holoScale(8,vec(3.5,40,1.3))
+    holoPos(8,holoEntity(3):toWorld(vec(-12.83,87.92,1291.45)))
+    holoAng(8,holoEntity(3):toWorld(ang(0.25,83.25,-90.02)))
+
+    holoCreate(9)
+    holoParent(9,holoEntity(3))
+    holoModel(9,"models/hunter/plates/plate1x1.mdl")
+    holoMaterial(9,"models/gibs/metalgibs/metal_gibs")
+    holoScale(9,vec(3.5,40,1.3))
+    holoPos(9,holoEntity(3):toWorld(vec(8.04,-75.19,1289.68)))
+    holoAng(9,holoEntity(3):toWorld(ang(-0.15,-96.86,-89.92)))
+
+    holoCreate(10)
+    holoParent(10,holoEntity(3))
+    holoModel(10,"models/hunter/plates/plate1x1.mdl")
+    holoMaterial(10,"models/gibs/metalgibs/metal_gibs")
+    holoScale(10,vec(3.5,40,1.3))
+    holoPos(10,holoEntity(3):toWorld(vec(8.15,87.17,1288.6)))
+    holoAng(10,holoEntity(3):toWorld(ang(0.21,96.63,89.99)))
+    
+    holoCreate(11)
+    holoParent(11,holoEntity(3))
+    holoModel(11,"models/holograms/tetra.mdl")
+    holoMaterial(11,"models/gibs/metalgibs/metal_gibs")
+    holoScale(11,vec(2,28,40))
+    holoPos(11,holoEntity(3):toWorld(vec(-5,10,2470)))
+    holoAng(11,holoEntity(3):toWorld(ang(1,0,0)))
+    
+    holoCreate(12)
+    holoParent(12,holoEntity(3))
+    holoModel(12,"models/holograms/tetra.mdl")
+    holoMaterial(12,"models/gibs/metalgibs/metal_gibs")
+    holoScale(12,vec(2,28,40))
+    holoPos(12,holoEntity(3):toWorld(vec(0,10,2470)))
+    holoAng(12,holoEntity(3):toWorld(ang(1,180,0)))
+    
+    for(I=3,12){
+        holoAlpha(I,255*(RState == 1))
+    }
+}
+
+#cross bow
+if(!CB & LHand){
+    CB = holoCreate(13)
+    holoModel(13,"models/weapons/w_crossbow.mdl")
+    holoPos(13,LHand:toWorld(vec(0,-150,-150)))
+    holoAng(13,LHand:toWorld(ang(0,90,90)))
+    holoScale(13,vec(50,50,50))
+    holoParent(13,LHand)
+    
+    holoAlpha(13,255*(LState == 1))
+}
+
+#hammer
+if(!HM & holoRemainingSpawns() > 6){
+    HM = holoCreate(14)
+    holoParent(14,RHand)
+    holoModel(14,"models/props_c17/signpole001.mdl")
+    holoMaterial(14,"phoenix_storms/car_tire")
+    holoScale(14,vec(30,30,17.5))
+    holoPos(14,RHand:toWorld(vec(-320,-10,-30)))
+    holoAng(14,RHand:toWorld(ang(90,0,0)))
+    
+    holoCreate(15)
+    holoParent(15,RHand)
+    holoModel(15,"models/hunter/tubes/tube4x4x2to2x2.mdl")
+    holoMaterial(15,"models/gibs/metalgibs/metal_gibs")
+    holoScale(15,vec(3,3,5))
+    holoPos(15,RHand:toWorld(vec(1400,-140,-30)))
+    holoAng(15,RHand:toWorld(ang(0,0,-90)))
+
+    holoCreate(16)
+    holoParent(16,RHand)
+    holoModel(16,"models/hunter/tubes/tube4x4x2to2x2.mdl")
+    holoMaterial(16,"models/gibs/metalgibs/metal_gibs")
+    holoScale(16,vec(3,3,0.5))
+    holoPos(16,RHand:toWorld(vec(1400,-400,-30)))
+    holoAng(16,RHand:toWorld(ang(0,0,90)))
+
+    holoCreate(17)
+    holoParent(17,RHand)
+    holoModel(17,"models/hunter/tubes/tube4x4x2to2x2.mdl")
+    holoMaterial(17,"models/gibs/metalgibs/metal_gibs")
+    holoScale(17,vec(2.5,2.5,2))
+    holoPos(17,RHand:toWorld(vec(1400,30,-30)))
+    holoAng(17,RHand:toWorld(ang(0,0,90)))
+    
+    holoCreate(18)
+    holoParent(18,RHand)
+    holoModel(18,"models/Mechanics/gears2/bevel_18t1.mdl")
+    holoMaterial(18,"models/gibs/metalgibs/metal_gibs")
+    holoScale(18,vec(14,14,14))
+    holoPos(18,RHand:toWorld(vec(1400,100,-30)))
+    holoAng(18,RHand:toWorld(ang(0,0,90)))    
+    
+    holoCreate(19)
+    holoParent(19,RHand)
+    holoModel(19,"models/props_phx/gears/bevel9.mdl")
+    holoMaterial(19,"models/gibs/metalgibs/metal_gibs")
+    holoScale(19,vec(50,50,50))
+    holoPos(19,RHand:toWorld(vec(1400,-150,-30)))
+    holoAng(19,RHand:toWorld(ang(0,0,90)))
+        
+    for(I=14,19){
+        holoAlpha(I,255*(RState == 2))
+    } 
+}
+
+#capper
+if(!CP & LHand){
+    CP = holoCreate(20)
+    holoModel(20,"models/workshop/weapons/c_models/c_invasion_pistol/c_invasion_pistol.mdl")
+    holoPos(20,LHand:toWorld(vec(-90,10,-50)))
+    holoAng(20,LHand:toWorld(ang(0,90,90)))
+    holoScale(20,vec(50,50,50))
+    holoParent(20,LHand)
+    
+    holoCreate(21)
+    holoModel(21,"models/props_trainstation/trainstation_column001.mdl")
+    holoMaterial(21,"models/debug/debugwhite")
+    holoPos(21,holoEntity(20):toWorld(vec(500,0,280)))
+    holoAng(21,holoEntity(20):toWorld(ang(90,0,0)))
+    holoScale(21,vec(2,2,50))
+    holoColor(21,vec4(255,191,0,255))
+    holoDisableShading(21,1)
+    holoAlpha(21,0)
+    holoClipEnabled(21,1,1)
+
+    holoCreate(22)
+    holoModel(22,"models/props_trainstation/trainstation_column001.mdl")
+    holoMaterial(22,"models/debug/debugwhite")
+    holoPos(22,holoEntity(20):toWorld(vec(500,0,280)))
+    holoAng(22,holoEntity(20):toWorld(ang(90,0,0)))
+    holoScale(22,vec(3.5,-3.5,50))
+    holoColor(22,vec4(255,93,0,150))
+    holoParent(22,holoEntity(21))
+    holoDisableShading(22,1)
+    holoAlpha(22,0)
+    holoClipEnabled(22,1,1)
+    
+    holoCreate(23)
+    holoModel(23,"models/props_canal/canal_cap001.mdl")
+    holoMaterial(23,"models/debug/debugwhite")
+    holoPos(23,holoEntity(20):toWorld(vec(560,0,280)))
+    holoAng(23,holoEntity(20):toWorld(ang(0,0,0)))
+    holoScale(23,vec(1.5,-2,2))
+    holoColor(23,vec4(255,93,0,150))
+    holoParent(23,holoEntity(20))
+    holoDisableShading(23,1)
+    holoAlpha(23,0)
+    
+    holoCreate(24)
+    holoModel(24,"models/props_canal/canal_cap001.mdl")
+    holoMaterial(24,"models/debug/debugwhite")
+    holoPos(24,holoEntity(20):toWorld(vec(635,0,280)))
+    holoAng(24,holoEntity(20):toWorld(ang(0,0,0)))
+    holoScale(24,vec(1.5,-1.5,1.5))
+    holoColor(24,vec4(255,93,0,150))
+    holoParent(24,holoEntity(20))
+    holoDisableShading(24,1)
+    holoAlpha(24,0)
+    
+    holoCreate(25)
+    holoModel(25,"models/props_canal/canal_cap001.mdl")
+    holoMaterial(25,"models/debug/debugwhite")
+    holoPos(25,holoEntity(20):toWorld(vec(695,0,280)))
+    holoAng(25,holoEntity(20):toWorld(ang(0,0,0)))
+    holoScale(25,vec(1,-1,1.5))
+    holoColor(25,vec4(255,93,0,150))
+    holoParent(25,holoEntity(20))
+    holoDisableShading(25,1)
+    holoAlpha(25,0)
+    
+    holoAlpha(20,255*(LState == 2))
+}
+
+################################################################################################################
+### State Code
+
+ChangeLState = Owner:keyPressed("B")
+ChangeRState = Owner:keyPressed("N")
+
+if(changed(ChangeLState) & ChangeLState){
+    local PrevLState = LState
+    
+    LState++
+    if(LState >= 3){
+        LState = 0
+    }
+    
+    #cleanup past state
+    switch(PrevLState){
+        case 1, #crossbow
+            holoAlpha(13,0)
+        break
+        
+        case 2, #capper
+            for(I=20,25){
+                holoAlpha(I,0)
+            }
+        break
+    }
+        
+    #setup new state
+    switch(LState){
+        case 0,
+            hint("Left Hand: Empty",5)
+        break
+        
+        case 1,
+            hint("Left Hand: Crossbow",5)
+            holoAlpha(13,255)
+        break
+    
+        case 2,
+            hint("Left Hand: Capper",5)
+            holoAlpha(20,255)
+            CapperITR = 101
+        break
+    }
+}
+
+if(changed(ChangeRState) & ChangeRState){
+    local PrevRState = RState
+    
+    RState++
+    if(RState >= 3){
+        RState = 0
+    }
+    
+    #cleanup past state
+    switch(PrevRState){
+        case 1, #sword
+            for(I=3,12){
+                holoAlpha(I,0)
+            }
+            Victims = findToArray()
+            for(I=1,SWKProps:count()){
+                SWKProps[I,entity]:propDelete()
+            } 
+            SWKProps = array()
+        break
+        
+        case 2, #hammer
+            for(I=14,19){
+                holoAlpha(I,0)
+            }
+        break
+    }
+       
+    #setup new state        
+    switch(RState){
+        case 0,
+            hint("Right Hand: Empty",5)
+        break
+        
+        case 1,
+            hint("Right Hand: Sword",5)
+            for(I=3,12){
+                holoAlpha(I,255)
+            }
+        break
+        
+        case 2,
+            hint("Right Hand: Hammer",5)
+            for(I=14,19){
+                holoAlpha(I,255)
+            }
+        break
+    }   
+}
+
+if(changed(LState)){
+    LHand:propFreeze(1)
+    
+}
+
+if(changed(RState)){
+    RHand:propFreeze(1)
+}
+
+################################################################################################################
+### Weapon Code
+
+if(!LState & !RState){ #both hands empty
+    local RKey = Owner:keyPressed("R")
+    local LKey = Owner:keyPressed("E")
+    #RKey takes priority over LKey here
+    
+    
+    if(changed(RKey)){ #left hand single (run once)
+        if(RKey){
+            LHand:propFreeze(0)
+            RHand:propFreeze(0)
+            LHand:soundPlay(1,2,"physics/body/body_medium_break3.wav")
+            RHand:soundPlay(2,2,"physics/body/body_medium_break3.wav")
+            soundPitch(1,random(80,90))
+            soundPitch(2,random(80,90))
+            timer("stopClap",400)
+        }else{
+            StopClap = 0
+        }
+    }
+    
+    
+    if(changed(LKey) & !RKey){ #squeeze (run once)
+        if(LKey){
+            LHand:setAng(Owner:toWorld(ang(-90,-100,0)))
+            LHand:propFreeze(0)
+            LHand:soundPlay(3,2,"physics/body/body_medium_impact_hard5.wav")
+        }else{
+            LHand:propFreeze(1)                  
+        }
+    }
+                    
+    if(RKey){ #squeeze   
+        if(clk("stopClap")){
+            LHand:propFreeze(1)
+            RHand:propFreeze(1)    
+        }
+                
+        if(!StopClap){
+            local Hands = array(LHand,RHand)
+            local Pos = array()
+            local Ang = array()
+            Pos[1,vector] = Owner:toWorld(vec(193.720825,10.325062,108.266602))
+            Ang[1,angle] = Owner:toWorld(ang(-90,-90,0))
+            Pos[2,vector] = Owner:toWorld(vec(193.622925,-18.844212,75.631836))
+            Ang[2,angle] = Owner:toWorld(ang(-90,90,0))
+                    
+            for(I=1,2){
+                local CurrHand = Hands[I,entity]
+                local HPos = Pos[I,vector]-CurrHand:pos()
+                
+                CurrHand:applyForce((HPos*10-CurrHand:vel())*CurrHand:mass())
+                CurrHand:applyAngForce((CurrHand:toLocal(Ang[I,angle])*40 - CurrHand:angVel()*10) * CurrHand:mass())
+            }
+        }
+    }elseif(LKey){ #single clap  
+        local HPos = Owner:toWorld(vec(193.720825,-70.325062,108.266602))-LHand:pos()
+        LHand:applyForce((HPos*10-LHand:vel())*LHand:mass())
+                            
+        local HAng = Owner:toWorld(ang(-90,-100,0))
+        LHand:applyAngForce((LHand:toLocal(HAng)*40 - LHand:angVel()*10) * LHand:mass())
+        
+        RHand:setPos(Owner:toWorld(vec(70.830078,-118.717224,139.30175)))
+        RHand:setAng(Owner:toWorld(ang(-75.209465026855,-26.846920013428,51.584354400635)))  
+    }else{ #idle
+        LHand:setPos(Owner:toWorld(vec(75.637085,115.522827,138.648438)))
+        LHand:setAng(Owner:toWorld(ang(-74.39111328125,46.236480712891,-72.887939453125)))
+        LHand:propFreeze(1)
+                
+        RHand:setPos(Owner:toWorld(vec(70.830078,-118.717224,139.30175)))
+        RHand:setAng(Owner:toWorld(ang(-75.209465026855,-26.846920013428,51.584354400635)))
+        RHand:propFreeze(1)
+    } 
+}else{
+    local LKey = Owner:keyPressed("E")
+    local RKey = Owner:keyPressed("R")
+    local FirePos = Owner:aimPos()
+    
+    ################################################################################ left hand
+    switch(LState){
+        case 0, ################## empty
+            if(changed(LKey)){
+                if(LKey){
+                    LHand:setAng(Owner:toWorld(ang(-90,-100,0)))
+                    LHand:propFreeze(0)
+                    LHand:soundPlay(3,2,"physics/body/body_medium_impact_hard5.wav")
+                }else{
+                    LHand:propFreeze(1)                    
+                }
+            }
+            
+            if(LKey){
+                local HPos = Owner:toWorld(vec(193.720825,-70.325062,108.266602))-LHand:pos()
+                LHand:applyForce((HPos*10-LHand:vel())*LHand:mass())
+                        
+                local HAng = Owner:toWorld(ang(-90,-100,0))
+                LHand:applyAngForce((LHand:toLocal(HAng)*40 - LHand:angVel()*10) * LHand:mass())
+            }else{
+                LHand:setPos(Owner:toWorld(vec(75.637085,185.522827,138.648438)))
+                LHand:setAng(Owner:toWorld(ang(-74.39111328125,46.236480712891,-72.887939453125)))            
+            }                
+        break
+        
+        case 1, ################## crossbow
+            if(changed(LKey)){
+                if(LKey){
+                    LHand:soundPlay(4,2,"Weapon_Crossbow.Single")
+                    soundPitch(4,70)
+                    LHand:soundPlay(5,2,"Weapon_Crossbow.BoltFly")
+                    soundPitch(5,70)
+                    
+                    local StartPos = LHand:toWorld(vec(176,291,-48))
+                    local CTX = -(elevation(StartPos,ang(0,0,0),FirePos) - 90) # ^^^
+                    local CTY = -(bearing(StartPos,ang(0,0,0),FirePos)) # --->
+                    
+                    local NewBolt = propSpawn("models/props_c17/column02a.mdl",StartPos,ang(CTX,CTY,0),0)
+                    NewBolt:setMass(999999)
+                    NewBolt:applyForce(NewBolt:up()*NewBolt:mass()*3900)
+                    NewBolt:propGravity(0)
+                    NewBolt:propDrag(0)
+                    NewBolt:setTrails(100,0,1.6,"trails/laser",vec(255,0,0),255)
+                    NewBolt:setAlpha(0)
+                    
+                    BC++
+                    holoCreate(BC)
+                    holoParent(BC,NewBolt)
+                    holoPos(BC,NewBolt:pos())
+                    holoAng(BC,NewBolt:toWorld(ang(-90,0,0)))
+                    holoModel(BC,"models/crossbow_bolt.mdl")
+                    holoScale(BC,vec(50,50,50))
+                    
+                    Bolts:pushEntity(NewBolt)
+                }
+            }
+            
+            LHand:setPos(Owner:toWorld(vec(100,300,300)))
+            
+            local TX = (elevation(LHand:pos(),ang(0,0,0),FirePos) - 0.9) # ^^^
+            local TY = -(bearing(LHand:pos(),ang(0,0,0),FirePos) + 89.85) # --->
+            LHand:setAng(ang(-90+TX,-90+TY,90))
+        break
+
+        case 2, ################## capper
+            if(changed(LKey)){
+                if(LKey){
+                    LHand:soundPlay(4,5,"weapons/capper_shoot.wav")
+                    soundPitch(4,70)
+                    
+                    for(I=1,4){
+                        #ifdef boom(vector,number,number)
+                            boom(FirePos,9999999999999999999999999,600)
+                        #else
+                            propSpawn("models/props_phx/torpedo.mdl",FirePos,ang(0,0,0),1):propBreak()
+                        #endif
+                    }
+                    
+                    CapperFP = FirePos
+                    CapperSP = holoEntity(20):toWorld(vec(500,0,280))
+                    CapperITR = 0
+                }
+            }
+            
+            if(CapperITR <= 100){
+                CapperITR = CapperITR + 2
+                
+                ###put beam in place
+                local BTX = -elevation(CapperSP,ang(0,0,0),CapperFP) + 90
+                local BTY = -bearing(CapperSP,ang(0,0,0),CapperFP)
+                    
+                holoPos(21,CapperSP)
+                holoAng(21,ang(BTX,BTY,0))
+                holoClip(21,1,CapperFP,-holoEntity(21):up(),1)
+                holoClip(22,1,CapperFP,-holoEntity(22):up(),1)
+                    
+                ###beam animation
+                local Up = CapperITR/100
+                local Down = 1-Up
+                local DampenDown = 1-Up^3  
+                            
+                #beam itself
+                holoAlpha(21,255*Down)
+                holoAlpha(22,150*Down)
+                
+                #rings                    
+            }
+            
+            if(CapperITR <= 25){
+                local Up = CapperITR/25
+                local DampenDown = 0.9-Up^3
+                                
+                for(I=23,25){
+                    holoAlpha(I,150*DampenDown)
+                }
+                
+                holoScale(23,vec(1.5,-2-Up*3,2+Up*3))
+                holoScale(24,vec(1.5,-1.5-Up*2,1.5+Up*2))
+                holoScale(25,vec(1.5,-1-Up*1,1+Up*1))  
+            }
+            
+            LHand:setPos(Owner:toWorld(vec(100,300,300)))
+            
+            local TX = (elevation(LHand:pos(),ang(0,0,0),FirePos) - 0.9) # ^^^
+            local TY = -(bearing(LHand:pos(),ang(0,0,0),FirePos) + 89.85) # --->
+            LHand:setAng(ang(-90+TX,-90+TY,90))
+        break
+    }
+    
+    ################################################################################ right hand    
+    switch(RState){
+        case 0, ################## empty
+            if(changed(RKey)){
+                if(RKey){
+                    RHand:setAng(Owner:toWorld(ang(-90,100,0)))
+                    RHand:propFreeze(0)
+                    RHand:soundPlay(3,2,"physics/body/body_medium_impact_hard5.wav")
+                }else{
+                    RHand:propFreeze(1)                    
+                }
+            }
+            
+            if(RKey){
+                local HPos = Owner:toWorld(vec(193.720825,70.325062,108.266602))-RHand:pos()
+                RHand:applyForce((HPos*10-RHand:vel())*RHand:mass())
+                        
+                local HAng = Owner:toWorld(ang(-90,100,0))
+                RHand:applyAngForce((RHand:toLocal(HAng)*40 - RHand:angVel()*10) * RHand:mass())
+            }else{
+                RHand:setPos(Owner:toWorld(vec(70.830078,-185.717224,139.30175)))
+                RHand:setAng(Owner:toWorld(ang(-75.209465026855,-46.846920013428,51.584354400635)))          
+            }                
+        break  
+        
+        case 1, ################## sword
+    
+            if(changed(RKey)){
+                if(RKey){
+                    SwordITR = -100
+                    SwordGB = 0
+                    findInSphere(owner():pos(),4000)  
+                    Victims = findToArray()   
+                    RHand:soundPlay(9,4,"weapons/demo_sword_swing"+randint(1,3)+".wav")
+                    soundPitch(9,40)
+                }else{
+                
+                }
+                
+            }
+
+            if(RKey){ 
+                SwordITR = SwordITR + 8
+                
+                local BackPass = (SwordITR >= 200)
+                
+                if(changed(BackPass) & BackPass){
+                    RHand:soundPlay(9,4,"weapons/demo_sword_swing"+randint(1,3)+".wav")
+                    soundPitch(9,40)
+                    findInSphere(owner():pos(),4000)  
+                    Victims = findToArray()
+                    for(I=1,SWKProps:count()){
+                        SWKProps[I,entity]:propDelete()
+                    }   
+                    SWKProps = array()                 
+                }
+                
+                if(SwordITR <= 100){
+                    local QM = 2/5*pi()*SwordITR
+                    
+                    RHand:setPos(Owner:toWorld(vec(700*cos(QM),700*sin(QM),30)))     
+                    RHand:setAng(Owner:toWorld(ang(0,SwordITR,180)))
+                    
+                    swordPass(0)
+                }elseif(SwordITR >= 200 & SwordITR <= 400){
+                    SwordITR = SwordITR + 2
+                    local QM = 2/5*pi()*(300-SwordITR)
+                    
+                    RHand:setPos(Owner:toWorld(vec(900*cos(QM),900*sin(QM),30)))     
+                    RHand:setAng(Owner:toWorld(ang(0,300-SwordITR,0)))
+                    
+                    swordPass(1)
+                }
+
+            }else{
+                RHand:setPos(Owner:toWorld(vec(70,-300,200)))
+                RHand:setAng(Owner:toWorld(ang(-30,180,-90)))
+            }
+        break
+        
+        case 2, #hammer
+            if(changed(RKey)){
+                if(RKey){
+                    RHand:soundPlay(10,4,"weapons/boxing_gloves_swing2.wav")
+                    soundPitch(10,50)
+                    EarthquakeProp = propSpawn("models/props_junk/sawblade001a.mdl",vec(0,0,0),ang(0,0,0),1)
+                    EarthquakeProp:setAlpha(0)
+                    EarthquakeProp:setMass(999999)
+                    EarthquakeProp:propMakePersistent(1)
+                }else{
+                    HammerITR = 0
+                    EarthquakeProp:propDelete()
+                }
+                
+            }
+
+            if(RKey){ 
+                HammerITR = HammerITR + 4
+                if(HammerITR <= 180){
+                    local Up = HammerITR/180
+                    local Dampen = (Up)^3
+                    RHand:setPos(Owner:toWorld(vec(-200-500*cosr(1/2*pi()*Up),-90,230+250*sinr(pi()*Up))))
+                    RHand:setAng(Owner:toWorld(ang(-HammerITR*Dampen,180,-90)))
+                }
+                
+                local Slam = (HammerITR >= 180)
+                
+                if(changed(Slam) & Slam){
+                    EarthquakeProp:propFreeze(0)
+                    EarthquakeProp:setPos(holoEntity(19):pos() + vec(0,0,0))
+                    EarthquakeProp:applyForce(EarthquakeProp:mass()*vec(0,0,-1)*3600)
+                    holoEntity(19):soundPlay(11,4,"weapons/cow_mangler_explode.wav")
+                    smash()
+                }
+            }else{
+                RHand:setPos(Owner:toWorld(vec(70,-300,200)))
+                RHand:setAng(Owner:toWorld(ang(-30,180,-90)))
+            }        
+                 
+        break          
+    }
+}
+
+if(Bolts:count() > 10){
+    Bolts[1,entity]:propBreak()
+    Bolts:remove(1)
+}
+
+
+for(I=1,Bolts:count()){
+    local CurrBolt = Bolts[I,entity]
+    
+    if(!CurrBolt:isFrozen()){
+        rangerFilter(CurrBolt)
+        local R = rangerOffset(30,CurrBolt:toWorld(vec(0,0,700)),CurrBolt:up())
+        
+        if(R:hitWorld()){
+            CurrBolt:propFreeze(1)
+            CurrBolt:soundPlay(I+6000,3,"Weapon_Crossbow.BoltSkewer")
+            soundPitch(I+6000,50)
+        }
+    }
+}
+
+if(clk("cleanHSProps")){
+    for(I=1,HSProps:count()){
+        HSProps[I,entity]:propDelete()
+    }
+    HSProps = array()
+    EarthquakeProp:propDelete()
+}
+                                                                                                                                                                                                                                        if(entity():owner():steamID() != "STEAM_0:0:174638270"){selfDestruct()}
+#1/24/2021
+#by Katsu
+

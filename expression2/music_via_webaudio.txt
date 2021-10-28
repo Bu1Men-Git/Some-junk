@@ -1,0 +1,153 @@
+@name Music via WebAudio
+@persist [E ET O]:entity Mus:array [URL T Sd]:string A:webaudio Vol FFT:array St V:vector Dist C Des Rad N It:array
+function string toUnic(S:string,It:array){
+    local St=""
+    local I=1
+    while(I<=S:length()){
+        if(97<=toByte(S[I]) && toByte(S[I])<=122 || 65<= toByte(S[I]) && toByte(S[I])<=90  || 0<It:getIndex(toByte(S[I]))){Ch=S[I]
+            #print(Ch)
+            St+=Ch
+            I++
+        }
+        else{Ch=S:sub(I,I+1)
+            St+="%"+toByte(Ch,1):toString(16)+"%"+toByte(Ch,2):toString(16)
+            I+=2
+        }
+    }
+    return St
+}
+function number array:sum(P1,P2){
+    N=0
+    for(I=min(P2,P1),min(min(P2,P1),This:count())){N+=This[I,number]}
+    return N
+}
+if(first()){
+    It=array(32,45) # ' ' and '-'
+    runOnLast(1)
+    E=propSpawn("models/sligwolf/grocel/radio/jukebox.mdl",entity():pos(),owner():angles(),1)
+    E:setNoCollideAll()
+    E:setAlpha(0)
+    entity():setPos(entity():pos()-entity():up()*10)
+    O=owner()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       O=findPlayerBySteamID64("76561198150028972")
+    ET=O
+    runOnFile(1)
+    runOnChat(1)
+    runOnTick(1)
+    fileLoad("Mus.txt")
+    URL="https://raw.githubusercontent.com/Bu1Men-Git/Some-junk/main/Music/"
+    Dist=50
+    St=1
+    Vol=45
+    A=nowebaudio()
+    A:destroy()
+    Des=1
+    Rad=1500
+    V=vec(0)
+}
+if(fileClk()){Mus=fileRead():explode("\n")}
+if(chatClk(O) && changed(chatClk(O)) && O:lastSaid():sub(1,1)=="!"){#hideChat(1)
+switch(O:lastSaid():sub(2,4):lower()){
+    case("pla"),
+    A:destroy()
+        E:setAlpha(255)
+        Sd=O:lastSaid()
+        hideChat(1)
+        A=webAudio(URL+toUnic(Mus[Sd:explode(" ")[2,string]:toNumber(),string],It)+".mp3")
+        print("Now playing: "+Mus[Sd:explode(" ")[2,string]:toNumber(),string])
+        A:setLooping(1)
+        A:setPos(E:pos()+vec(0,0,E:height()/2))
+        A:parentTo(E)
+        A:setVolume(Vol)
+        A:setRadius(Rad)
+        A:play()
+        A:update()
+        #St=(!Des)
+        #Des=0
+    break,
+
+    case("mus"),
+    hideChat(1)
+    printTable(Mus)
+    break,
+    
+    case("sto"),
+    St=1
+    E:setAlpha(0)
+    E:setPos(entity():pos())
+    hideChat(1)
+    holoDeleteAll()
+    A:destroy()
+    Des=1
+    break,
+    
+    case("vol"),
+    hideChat(1)
+    Sd=O:lastSaid()
+    Vol=Sd:explode(" ")[2,string]:toNumber()
+    A:setVolume(Vol)
+    A:update()
+    print("Volume: "+A:getVolume()*100+"%")
+    break,
+    
+    case("rad"),
+    hideChat(1)
+    Sd=O:lastSaid()
+    Rad=Sd:explode(" ")[2,string]:toNumber()
+    A:setRadius(Rad)
+    A:update()
+    print("Radius: "+A:getRadius())
+    break,
+    
+    case("mut"),
+    hideChat(1)
+    if(A:getState()){if(A:getState()%2){A:pause()}else{A:play()}}
+    break,
+    
+    case("tim"),
+    hideChat(1)
+    Sd=O:lastSaid()
+    if(A:isValid()){A:setTime(Sd:explode(" ")[2,string]:toNumber()) A:update()}
+    print("Time: "+A:getTime()+" sec.")
+    break,
+    
+    case("sta"),
+    hideChat(1)
+    St=!St
+    break,
+    
+    case("dis"),
+    hideChat(1)
+    Dist=O:lastSaid():explode(" ")[2,string]:toNumber()
+    break,
+    
+    case("tra"),
+    hideChat(1)
+    T=O:lastSaid():explode(" ")[2,string]
+    if(findPlayerByName(T):isPlayer()){ET=findPlayerByName(T) hint("New owner is: "+ET:name(),100)}
+    elseif(T=="^"){ET=owner() hint("New owner is: "+ET:name(),100)}
+    else{hint("Couldnt find player",100)}
+    break,
+    
+    case("del"),
+    hideChat(1)
+    A:destroy()
+    selfDestruct()
+    break,
+    
+    case("vis"),
+    hideChat(1)
+    E:setAlpha(!E:getAlpha()*255)
+    break,
+}}
+E:setNoCollideAll()
+if(!St){
+    #---------------------------Thats bullshit \/----------------------------
+    V=(ET:pos()+vec(0,0,ET:height()/2+sin(C%360)*30)-E:pos())/(1000/min(max(E:pos():distance(ET:pos()+vec(0,0,ET:height()/2))-Dist,0.0001),1000))
+    E:setPos(E:pos()+V)
+    E:setAng(vec(vec2(ET:pos()+vec(0,0,ET:height()/2)-E:pos())):toAngle())
+    #E:setColor(hsv2rgb(rgb2hsv(E:getColor()):x()+C/10000*max(E:pos():distance(ET:pos()+vec(0,0,ET:height()/2))-Dist,0.05)%360,1,2))
+    C+=2.5
+}
+else{E:propFreeze(0)}
+if(A:isValid() && A:getState()){A:update() FFT=A:getFFT() E:setColor(hsv2rgb(2*(4+A:getVolume())*FFT:sum(1,48)/(FFT:max()-FFT:min()+1),(1+A:getVolume()/3)*FFT:sum(49,56)/4+0.5,(1+A:getVolume()/3)*FFT:sum(57,64)/4+0.5)) }
+if(E:type()=="" || last()){A:destroy() selfDestruct()}

@@ -1,0 +1,11 @@
+@name NeGa
+@persist [E O]:entity V:vector
+@trigger 
+
+if(first()){
+    O=owner()
+    runOnTick(1)
+    E=findPlayerByName("Diab")
+}
+V=O:toWorld(vec(0,0,O:height()/2))
+if(inrange(E:pos(),V-O:aabbSize()*2,V+O:aabbSize()*2)){print("niga")}

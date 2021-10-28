@@ -1,0 +1,87 @@
+@name Killer Queen Requiem
+@persist [O T]:entity V:vector R B S:string Snd:array [OW TW]:webaudio M J JJ
+function webaudio webaudio:url(S:string,E:entity){
+    This:destroy()
+    local X = webAudio(S)
+    X:setVolume(250)
+    X:setRadius(12500)
+    X:parentTo(E)
+    X:play()
+    return X
+}
+if(first()){
+    runOnLast(1)
+    Snd = array(
+        "KQ",
+        "Click",
+        "Exp",
+        "KiraY",
+        "LukOverHere"
+    )
+    O=owner()
+    OW:parentTo(O)
+    runOnTick(1)
+    entity():teleport(entity():toWorld(vec(0,0,-8)))
+    #chest
+    R = 775 * 52.49343832021 #in meters
+    holoCreate(0,vec(0),-vec(1.25),ang(0),vec(240,10,10),"hq_sphere")
+    holoAlpha(0,65)
+    holoCreate(1,O:attachmentPos("anim_attachment_RH"),vec(0),ang(0),vec(10,180,240),"hq_sphere")
+    holoAlpha(1,0)
+    holoParentAttachment(1,O,"anim_attachment_RH")
+    holoVisible(1,players(),0)
+    holoVisible(1,O,1)
+    holoScaleUnits(1,-vec(R*1.75))
+    #[TW:parentTo(holoEntity(0))
+    OW:setVolume(150)
+    OW:setRadius(2500)
+    TW:setVolume(300)
+    TW:setRadius(2500)]#
+    OW=webAudio("https://raw.githubusercontent.com/Bu1Men-Git/Some-junk/main/Sounds/KQ/"+Snd[2,string]+".mp3")
+    TW=webAudio("https://raw.githubusercontent.com/Bu1Men-Git/Some-junk/main/Sounds/KQ/"+Snd[3,string]+".mp3")
+}
+if(O:keyPressed("9") && changed(O:keyPressed("9"))){JJ=!JJ}
+if(O:keyPressed("G") && changed(O:keyPressed("G"))){M=!M hint("Killer Queen: "+M,100) holoAlpha(1,M*60) if(!M){O:removeHalo()}}
+if(JJ && M){O:setHalo(vec(152-cos(J)*15, 0, 127-sin(J)*10),5-cos(J)*3,6-sin(J)*3) J=(J+2)%360} else{O:removeHalo()}
+if(M  && O:weapon():type()=="none"){
+if(O:keyPressed("8") && changed(O:keyPressed("8"))){
+        OW=OW:url("https://raw.githubusercontent.com/Bu1Men-Git/Some-junk/main/Sounds/KQ/"+Snd[4,string]+".mp3",O)
+}
+if(O:keyPressed("7") && changed(O:keyPressed("7"))){
+        OW=OW:url("https://raw.githubusercontent.com/Bu1Men-Git/Some-junk/main/Sounds/KQ/"+Snd[5,string]+".mp3",O)
+}
+if(O:keyAttack1() && changed(O:keyAttack1()) && !timerRunning("plc")){
+    if(!B && (O:aimPos():distance(O:shootPos())<=R)){
+        if(O:aimEntity():isValid() && !O:aimEntity():isWorld()){T = O:aimEntity() if(T:isAlive()){holoEntity(0):parentToBone(T,O:aimBone():index())}else{holoParent(0,T)} holoPos(0,O:aimPos()) print("Killer Queen touched "+T:type()) S=T:type()}
+        else{V=O:aimPos() print("Killer Queen touched that floor"+round(V,1)) holoPos(0,O:aimPos()) S = round(V,2):toString()}
+        B=1
+        holoAlpha(0,65)
+        #OW:destroy()
+    }
+    elseif(B && (V!=vec(0) || T:isValid())){
+        OW=OW:url("https://raw.githubusercontent.com/Bu1Men-Git/Some-junk/main/Sounds/KQ/"+Snd[2,string]+".mp3",O)
+        TW=TW:url("https://raw.githubusercontent.com/Bu1Men-Git/Some-junk/main/Sounds/KQ/"+Snd[3,string]+".mp3",holoEntity(0))
+        #[OW:setTime(0)
+        OW:update()
+        TW:setTime(0)
+        TW:update()
+        OW:play()
+        TW:play()]#
+        holoAlpha(0,0)
+        if(holoEntity(0):parent():health()>0){holoEntity(0):parent():admPropBreak()}
+        holoUnparent(0)
+        boom2(holoEntity(0):pos(),max(675,6.45*max(T:maxHealth(),1)),5250-max(75,0.75*max(T:maxHealth(),1)))
+        #holoPos(0,vec(0))
+        print("Killer Queen has already touched "+S )
+        B=0
+        T=noentity()
+        V=vec(0)
+        timer("plc",2250)
+    }
+    else{print("Killer Queen cant touch that")}
+}
+}
+if(!O:isAlive() && changed(O:isAlive())){holoUnparent(0) holoPos(0,vec(0)) OW:pause() TW:pause() B=0}
+if(changed(players():count())){holoVisible(1,players(),0) holoVisible(1,O,1)}
+#if(clk("plc")){OW:destroy() TW:destroy()}
+if(last()){OW:destroy() TW:destroy() print("Nigger") O:removeHalo()}

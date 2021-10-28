@@ -1,0 +1,9 @@
+@name Ranger
+@persist R:ranger [E O]:entity V:vector
+if(first()){O=entity() runOnTick(1) holoCreate(0)}
+rangerFlags("I,E")
+R=rangerOffsetHull(50,O:pos(),O:up(),vec(7200,7200,100))
+#E=R:entity()
+if(R:entity():isPlayer()){V=R:entity():pos()+R:entity():vel()*tickInterval()}
+else{rangerFilter(R:entity())}
+holoPos(0,V)

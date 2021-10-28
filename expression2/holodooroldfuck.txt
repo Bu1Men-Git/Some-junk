@@ -1,0 +1,20 @@
+
+@name holoDoorOldFuck
+@persist [E O]:entity Fr:array V:vector
+if(first()){O=owner() #entity():setAlpha(0)
+    weld(entity(),entity():isWeldedTo())
+    runOnTick(1)
+    E=propSpawn("models/hunter/plates/plate2x2.mdl",entity():pos()+vec(0,0,48),ang(vec(90,0,90)),1)
+    holoCreate(0,E:pos(),vec(1),E:angles(),vec(30),E:model())
+holoScaleUnits(0,E:aabbSize()+vec(2))
+holoColor(0,vec(30))
+holoVisible(0,Fr,0)
+holoParent(0,E)
+}
+if(changed(players():count()) || first()){Fr=O:steamFriends() Fr:pushEntity(O) Fr:pushEntity(findPlayerByName("Azi")) holoVisible(0,Fr,0)}
+if(E:type()==""){selfDestruct()}
+for(I=1,Fr:count()){V=(E:pos()-Fr[I,entity]:pos()-vec(0,0,72))
+    if(V:length()<=E:aabbSize():y()/2 && abs(V:y())<=32.5 || O:keyPressed("0")){E:setNoCollideAll() E:setAlpha(28) holoAlpha(0,108) break}
+    else{E:removeNoCollideAll() E:setAlpha(128) holoAlpha(0,255)}
+}
+

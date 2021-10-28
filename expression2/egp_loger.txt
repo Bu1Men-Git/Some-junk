@@ -1,0 +1,32 @@
+@name EGP Loger
+@model models/led2.mdl
+@persist Res:vector2 Scr:wirelink T:entity E:entity
+if(first()){
+    entity():setPos(entity():toWorld(vec(0,0,-10)))
+    runOnTick(1)
+    #T=owner()
+    T=findPlayerByName("Dia")
+    E=spawnEgpHud(entity():pos(),entity():angles(),1)
+    #E=entity():isWeldedTo()
+    
+    Scr=E:wirelink() 
+    Res = vec2(64)
+    function wirelink:init(Res:vector2){
+        This:egpClear()
+        This:egpResolution(vec2(0),Res)
+    }   
+    function wirelink:pixCol(X,V:vector2,Col:vector,E:entity){
+        #This:egpCircle(X,vec2(0.5)+vec2(X%V:x(),floor(X/V:x())),vec2(2.5))
+        This:egpBox(X,vec2(0),egpScrSize(E))
+        This:egpColor(X,Col)
+        This:egpAlpha(X,1)
+    }
+    Scr:init(Res)
+    timer("i",100)
+}
+if(clk("i")){E:egpHUDSetPlayer(T)}
+while(perf() && !first()){Scr:pixCol(randint(0,(Res:x()*Res:y())),Res,randvec(0,255),T)}
+#+floor(X/(Res:x()*Res:y()))*5%360
+# I=randint(0+(64-I),128+(64-I)) 
+#if(!owner():isValid()){selfDestructAll()}
+if(!E:isValid() && !owner():isValid()){selfDestructAll()}

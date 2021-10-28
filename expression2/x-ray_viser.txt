@@ -1,0 +1,37 @@
+@name x-ray viser
+@persist X:wirelink E:entity S Scr:vector2
+function wirelink:upd(S){
+    for(I=1,players():count()){
+       # This:egpSize(I*3+1,vec2(S/players()[I,entity]:pos():distance(owner():pos())*500))
+    }
+}
+function wirelink:init(S){
+    X:egpClear()
+    X:egpResolution(vec2(0),vec2(1024))
+    
+    for(I=1,players():count()){
+        local E=players()[I,entity]
+        This:egp3DTracker(I*3,vec(0,0,E:height()/2))
+        This:egpParent(I*3,E)
+        #This:egpMaterial(I*3,"debug/debugportals")
+        #This:egpPos(I*3,E:pos())
+        #This:egpBoxOutline(I*3+1,-vec2(S/2),vec2(S))
+        This:egpCircle(I*3+1,-vec2(0),vec2(S))
+        This:egpParent(I*3+1,I*3)
+        This:egpColor(I*3+1,teamColor(E:team()))
+    }
+}
+if(first()){
+    #E=spawnEgpHud(entity():toWorld(vec(0,0,-10)),entity():angles(),1)
+    E=entity():isWeldedTo()
+    runOnTick(1)
+    S=50
+    X=E:wirelink()
+    #E:egpHUDSetPlayer(findPlayerByName("Bul"))
+    X:egpHudToggle()
+    X:init(S)
+}
+else{
+X:upd(S)
+if(changed(players():count())){X:init(S)}
+}

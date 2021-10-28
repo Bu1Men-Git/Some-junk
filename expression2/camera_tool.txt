@@ -1,0 +1,19 @@
+@name Camera tool
+@persist [O E]:entity
+if(first()){
+    O=owner()
+    runOnTick(1)
+    #runOnChat(1)
+    E=entity():isWeldedTo()
+    if(!E:toString():find("gmod_rtcameraprop")){hint("No",10) selfDestruct()}
+    E:propFreeze(1)
+    E:setAlpha(0)
+    #E:parentToBone(O,10)
+}
+    
+    
+    E:setPos(O:pos()+vec(0,0,O:height()*2.25)-O:forward()*45)
+    E:setAng((O:pos()+vec(0,0,3/4*O:height())-E:pos()):toAngle())
+    
+
+

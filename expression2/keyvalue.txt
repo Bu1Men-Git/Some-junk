@@ -1,0 +1,9 @@
+@name KeyValue
+@persist [W O]:entity [T]:array
+if(first()){O=owner() runOnTick(1)}
+if(O:keyPressed("T") && changed(O:keyPressed("T"))){W=O:aimEntity() #W:editValue("Active","False")
+    T=W:getKey() 
+    print(W:type(),T:count(),": ")
+    if(T:count()){for(I=1,T:count()){print(T[I,string])}}
+        }
+#print(T)

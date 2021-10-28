@@ -1,0 +1,7 @@
+@name Repl
+@persist 
+holoCreate(1)
+holoModel(1,owner():model())
+holoMaterial(1,"debug/debugportals")
+holoRenderFX(1,23)
+spawnExpression2("Repl",entity():pos(),entity():angles())

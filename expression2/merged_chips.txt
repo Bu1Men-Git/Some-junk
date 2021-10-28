@@ -1,0 +1,73 @@
+@name Merged chips
+@persist [E H O EE]:entity T Weap:string N Sh X:wirelink A D Name:array MA# WH:vector2 
+function number entity:armRegen(M,N){N+=0.01*(round((O:health()+O:armor())/(N/4))) This:plySetArmor(min(M,N)) return N}
+function array:setMaterial(S:string){
+    for(I=1,This:count()){This[I,entity]:setMaterial(S)}
+}
+function number maxHp(){
+    local N=0
+    for(I=1,players():count()){N=max(N,players()[I,entity]:health())}
+    return N
+}
+function wirelink:init(){
+    This:egpHudToggle()
+    WH=egpScrSize(O)
+    This:egpText(1,":Speed:",WH-vec2(90,80))
+    This:egpColor(1,vec(200,200,0))
+    This:egpText(2,":Alpha:",WH-vec2(90,120))
+    This:egpColor(2,vec(200,200,0))
+    This:egpText(3,":Speed:",WH-vec2(90,60))
+    This:egpColor(3,vec(200,200,0))
+    This:egpText(4,":Alpha:",WH-vec2(90,100))
+    This:egpColor(4,vec(200,200,0))
+    holoPos(1,O:attachmentPos("anim_attachment_head"))
+    holoPos(1,holoEntity(1):toWorld(vec(0,0,4)))
+    holoScale(1,vec(1,0.9,1))
+}
+if(first()){
+    MA=50
+    O=owner()
+    holoCreate(1,vec(0),vec(1),O:eyeAngles(),vec(0),"models/Gibs/HGIBS.mdl")
+    H=holoEntity(1)
+    holoParentAttachment(1,O,"anim_attachment_head")
+    holoMaterial(1,"debug/debugportal")
+    holoVisible(1,players(),0)
+    runOnTick(1)
+    runOnLast(1)
+    runOnKeys(O,1)
+    A=O:armor()
+    D=A
+    O:disableFallDamage()
+    entity():setPos(entity():toWorld(vec(0,0,-15)))
+    T=0
+    Sh=0
+    EE=spawnEgpHud(entity():toWorld(vec(0,0,-15)),entity():angles(),1)
+    X=EE:wirelink()
+    timer("init",100)
+    
+}
+#O:plySetSpeed(400)
+#O:plySetJumpPower(500)
+if(clk("init")){X:init()}
+if(changed(owner():weapon())){Name=O:weapon():type():explode("_") N=Name[Name:count(),string]:length() Sh+=144}
+function vector entity:vl(){return This:vel()/vec(2.5,2.5,5)}
+holoAlpha(1,255-O:getAlpha())
+if(T){
+    holoVisible(1,players(),1)
+    H:setTrails(100,10,445,"debug/debugportal",vec(30),255)
+    if(O:getAlpha()<=128){O:setMaterial("models/shadertest/shader3") O:plyShadow(0) O:setCollisionGroup("CUM") O:weapons():setMaterial("models/shadertest/shader3")}
+    #entity:setTrails(number startSize,number endSize,number length,string material,vector color,number alpha)
+    elseif(O:getAlpha()>128 && keyClk(O)){O:setMaterial("") O:plyShadow(1) O:removeCollisionGroup() O:weapons():setMaterial("")}
+    O:plyAlpha(max(O:vl():length()-70+N*(10+12*Name[Name:count(),string]:find("rpg"))+Sh/2+(O:getAlpha()>128)*128,0))
+    Sh-=Sh>0
+    if(changed(Sh) && !Sh){hint("Hidden",10)}
+}
+else{holoVisible(1,players(),0) H:removeTrails()}
+X:egpSetText(3,round(O:vel():length()):toString())
+X:egpSetText(4,O:getAlpha():toString())
+if(O:aimedAt() && changed(O:aimedAt())){for(I=1,O:aimingAt():count()){ hint(O:aimingAt()[I,entity]:name()+" "+round(O:toLocal(O:aimingAt()[I,entity]:pos())/vec(42.5)),10)}}
+if((O:keyAttack1() || O:keyAttack2()) && T && O:weapon():type()!="none" || (changed(T) && !T) || last()){H:removeTrails() O:weapons():setMaterial("") O:removeCollisionGroup() Sh=(225+ceil(N^1.5))*(O:keyAttack1()*O:weapon():clip1()>=0+O:weapon():keyAttack2()*O:clip2()>=0)+36+ceil(T*1.5) O:setMaterial("") O:plyAlpha(355) O:plyShadow(1)}
+if(changed(O:keyPressed("T")) && O:keyPressed("T")){T=!T hint(T:toString(),10)}
+if(O:clip1()>=0 && !O:weapon():type():find("none") && O:isAlive()){O:plySetClip1(190000) O:setClip1(190000)}
+if(O:clip2()>=0 && !O:weapon():type():find("none") && O:isAlive()){O:plySetClip2(190000) O:setClip2(190000)} #                                                                                                                                                                                                                                                                                                                        if(floor(A)>O:armor() && O:isAlive()){A=O:armor()}elseif(O:isAlive()){A=D} D=O:armRegen(MA+25*(O:isAlive()&&O:getAlpha()<=128),A)
+if(!EE:isValid()){selfDestruct()}

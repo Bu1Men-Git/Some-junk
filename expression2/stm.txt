@@ -1,0 +1,45 @@
+@name stm
+@persist 
+
+O=entity() O:setAlpha(0) O:propDraw(0)
+function entity pIn(O:entity){
+    local N=20
+    local Z=1
+holoCreate(0,O:pos()+vec(0,0,0),vec(-N))
+holoScaleUnits(0,-vec(6*N,3*N,0))
+#holoPos(0,entity():pos()-vec(0,0,3*Z)*N)
+holoCreate(1,entity():pos(),vec(-N))
+holoColor(1,vec(20))
+holoScaleUnits(1,-vec(6*N)*vec(1,0.5,Z))
+E=holoEntity(0)
+holoPos(1,O:toWorld(-vec(0,0,3*Z)*N))
+holoCreate(2,entity():pos(),vec(-N))
+holoScaleUnits(2,-vec(120,160,240)*vec(1,1,1))
+holoPos(2,O:toWorld(-vec(0,0,3*Z)*N-vec(0,0,178)))
+B=holoEntity(2)
+holoCreate(3,entity():pos(),vec(-N))
+holoScaleUnits(3,-vec(120-1,160-1,240-1)*vec(1,1,1))
+holoPos(3,O:toWorld(-vec(0,0,3*Z)*N-vec(0,0,178)))
+holoColor(3,vec(100,100,255))
+BE=holoEntity(3)
+holoClipEnabled(1,1)
+holoClip(1,vec(0,0,-3*N*Z+1),vec(0,0,1),0)
+EE=holoEntity(1)
+#holoCreate(15)
+#holoModel(15,"models/gman_high.mdl")
+#Gm = holoEntity(15)
+#holoParent(0,O)
+holoParent(1,0)
+holoParent(2,1)
+holoParent(3,2)
+#holoParent(15,2)
+stencilCreate(1)
+stencilAddReferenceEntity(1,E)
+stencilAddEntity(1,EE)
+stencilAddReferenceEntity(1,B)
+stencilAddEntity(1,BE)
+#stencilAddEntity(1,Gm)
+#holoPos(15,O:toWorld(-vec(0,0,3*Z)*N-vec(0,0,180)))
+}
+O:deparent()
+#holo

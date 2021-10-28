@@ -1,0 +1,6 @@
+@name Bot spinner
+@persist E:entity I R
+if(first()){E=findPlayerByName("Bot") R=150}
+interval(1)
+I=(I+1)%360
+E:teleport(owner():pos()+(vec(sin(I)*R,cos(I)*R,0)))

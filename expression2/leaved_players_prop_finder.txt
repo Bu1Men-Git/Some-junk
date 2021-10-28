@@ -1,0 +1,5 @@
+@name leaved players prop finder
+
+findByClass("prop_physics")
+It=findToArray()
+for(I=1,It:count()){if(!It[I,entity]:owner():isPlayer()){owner():teleport(It[I,entity]:pos())}}

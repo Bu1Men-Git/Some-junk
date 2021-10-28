@@ -1,0 +1,5 @@
+@name Neck Twister
+#interval(100)
+E=findPlayerByName("Bul")
+E:plySetAng(E:eyeAngles():setRoll(0))
+#E:plyApplyForce(vec(0))

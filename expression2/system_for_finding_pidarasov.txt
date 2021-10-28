@@ -1,0 +1,28 @@
+@name liner
+@persist [E O]:entity I V:vector
+if(first()){
+    O=owner()
+    runOnTick(1)
+}
+function rel(){
+    for(I=1,players():count()){
+        E=players()[I,entity]
+        holoCreate(I,O:pos()+vec(vec2(E:pos()/2-O:pos()/2)),vec(0),ang(vec(vec2(E:pos()-O:pos()))))
+        holoModel(I,"models/props_phx/huge/evildisc_corp.mdl")
+        holoVisible(I,players(),0)
+        holoVisible(I,O,1)
+    }
+}
+function upd(){
+    for(I=1,players():count()){
+        E=players()[I,entity]
+        V=vec(vec2( (E:pos()-O:pos()) ))
+        holoPos(I,O:pos()+vec(0,0,10))
+        holoAng(I,V:toAngle()+ang(vec(90,0,0)))
+        holoScale(I,vec(1/4/4/4/4,1/4/4/4/4,V:length()/467.42919921875/12))
+        holoVisible(I,players(),0)
+        holoVisible(I,O,1)
+    }
+}
+if(changed(players():count())){rel()}
+upd()

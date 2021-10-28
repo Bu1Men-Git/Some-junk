@@ -1,0 +1,43 @@
+@name Time Stop Core
+@persist [W E]:entity It:array V:wirelink Vel:vector
+#include "tagsfix"
+#[function plyPlep(){
+    for(I=1,players():count()){
+        local E = players()[I,entity]
+        local N = E:steamID64():toNumber()
+        if(!holoEntity(N):isValid()){
+            holoCreate(N,vec(0),vec(0))
+        }
+    }
+}
+function entity entity:rev(){return (holoEntity(This:steamID64():toNumber()))}
+function entity entity:ver(){return (findPlayerBySteamID64(holoIndex(This):toString()))}]#
+if(first()){runOnLast(1) entity():setPos(entity():toWorld(vec(0,0,-10))) W=spawnEgpHud(entity():toWorld(vec(0,0,-10)),entity():angles(),1) timer("upd",100)}
+interval(25)
+if(clk("upd")){It=getEntitiesByTag("Time") timer("upd",250)}
+if(1){
+for(I=1,It:count()){
+    E=It[I,entity]
+    if(E:hasTag("Time")){
+    if(E:parent():isPlayer()){E=E:parent() E:plyFreeze(1) if(E!=owner()){W:egpHUDSetPlayer(E)} E:setVelocity(vec(0)) E:plySetGravity(0) E:plyGod(1)}
+    if(E:isNPC()){E:npcStop() E:npcRelationship("*","neutral",999)}
+    if(E:isSolid()){E:admPropFreeze(1)}
+}
+else{
+    if(E:parent():isPlayer()){E=E:parent() E:plyFreeze(0) if(E!=owner()){W:egpHUDSetPlayer(E)} E:plySetGravity(gravity()) E:plyGod(0)}
+    if(E:isNPC()){E:npcStop() E:propStatic(0) E:plyFreeze(0)}
+    if(E:isSolid()){E:admPropFreeze(0)}
+}
+}
+}
+if(!W:isValid()){selfDestruct()}
+if(changed(W)){V=W:wirelink() V:egpBox(0,vec2(1024),vec2(4096)) V:egpColor(0,vec(0))}
+if(last()){
+for(I=1,It:count()){
+    E=It[I,entity]
+    if(E:parent():isPlayer()){E=E:parent() E:plyFreeze(0) E:plyGod(0) E:plySetGravity(gravity())}
+    if(E:isNPC()){E:npcStop() E:propStatic(0) E:plyFreeze(0)}
+    if(E:isSolid()){E:admPropFreeze(0)}
+}
+}
+

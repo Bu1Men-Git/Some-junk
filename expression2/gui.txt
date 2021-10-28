@@ -1,0 +1,9 @@
+@name gui
+@persist 
+if(first()){
+    O=owner()
+    F = dframe(1)
+    F:setPos(egpScrSize(O)/vec2(10,8))
+    F:makePopup()
+    F:create()
+}

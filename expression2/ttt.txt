@@ -1,0 +1,42 @@
+@name 
+@inputs 
+@outputs 
+@persist 
+@trigger 
+I=1
+#holoDeleteAll()
+E=owner()#findPlayerByName("Dia")
+E:give("none")
+function entity:spear(I){
+local E = This
+holoCreate(I,E:toWorld(vec(24,24,E:height()/2)),vec(2,1,1),E:toWorld(ang(-33,33,30)),vec(170,10,10),"models/props_junk/harpoon002a.mdl")
+holoMaterial(I,"debug/debugportals")
+holoCreate(I+1,E:toWorld(vec(46,-36,E:height()/2-11)),vec(2,1,1),E:toWorld(ang(207,320,30)),vec(170,10,10),"models/props_junk/harpoon002a.mdl")
+holoMaterial(I+1,"debug/debugportals")
+}
+"models/sprops/misc/pyramids/rsize_1/rpyr_12x48.mdl"
+I+=2
+function entity:shar(I){
+local E = This
+E:plySelectWeapon("none")
+holoCreate(I,E:toWorld(vec(0,0,E:height()/2+10)),vec(-25),ang(0,0,0),vec(30),"hq_cylinder")
+holoMaterial(I,"debug/debugportals")
+holoCreate(I+1,E:toWorld(vec(175,0,owner():height()/2)),vec(1),ang(0,0,0),vec(240),"models/props_docks/dock01_pole01a_256.mdl")
+holoMaterial(I+1,"debug/debugportals")
+holoRenderFX(I+1,15)
+holoCreate(I+2,E:toWorld(vec(175,0,112)),vec(1),E:toWorld(ang(0,0,87)),vec(240),"models/props_docks/dock01_pole01a_128.mdl")
+holoMaterial(I+2,"debug/debugportals")
+holoRenderFX(I+2,15)
+holoCreate(I+3,E:toWorld(vec(10,0,0)),vec(1),E:toWorld(ang(10,0,0)),vec(240),E:model())
+#holoMaterial(I+3,"debug/debugportals")
+#holoRenderFX(I+3,23)
+holoRenderFX(I+3,23)
+#holoRenderFX(I+3,15)
+holoEntity(I+3):setRenderMode(3)
+#holoDelete(I+3)
+E:plySetAng(E:eyeAngles():setPitch(7))
+E:spear(I+4)
+}
+E:shar(I)
+"models/props_docks/dock01_pole01a_128.mdl"
+#holoRenderFX(I+3,23)  to turn holo to ragdoll

@@ -1,0 +1,7 @@
+@name Inf holos
+if(first()){runOnTick(1)
+I=0
+}
+while(I<holoMaxAmount()*100 && perf()){
+    holoCreate(I-1000000)
+}

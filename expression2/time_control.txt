@@ -1,0 +1,20 @@
+@name time control
+@persist [E O]:entity N
+#include "tagsfix"
+if(first()){runOnTick(1) O=owner() entity():setPos(entity():toWorld(vec(0,0,-10)))}
+if(O:weapon():type()=="none"){
+    if(O:keyAttack1() && changed(O:keyAttack1()) && O:aimEntity():isValid()){
+        E=O:aimEntity()
+        if(E:isPlayer()){E=E:rev()
+        if(!E:hasTag("Time")){E:addTag("Time")}
+        else{E:removeTag("Time")}
+        print(E:hasTag("Time"))
+        }
+        else{
+        if(!E:hasTag("Time")){E:addTag("Time")}
+        else{E:removeTag("Time")}
+    }
+    }
+    if(O:keyReload() && changed(O:keyReload())){N=!N O:plyFreeze(N) O:plyGod(N)}
+}
+if(changed(players():count())){plyPlep()}

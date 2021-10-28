@@ -1,0 +1,10 @@
+@name Owner pos finder
+@persist O:entity
+
+if(first()){
+    O=owner()
+    runOnTick(1)
+}
+if(changed(O:keyPressed("X")) && O:keyPressed("X")){print(O:eyeAngles():yaw())}
+
+

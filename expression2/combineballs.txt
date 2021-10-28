@@ -1,0 +1,35 @@
+@name CombineBalls
+@persist [O E EE]:entity F [Es It]:array T
+function entity:rocket(S:string,It:array){
+local O=This
+local A=O:eyeAngles()
+local V = O:aabbSize()
+local E=entSpawn(S,O:shootPos()+A:forward()*25+vec(0,0,10),A)
+E:admApplyForce(A:forward()*6250)
+#E:admPropGravity(0)
+E:admSetOwner(O)
+It:pushEntity(E)
+}
+Es=array("arccw_gl_m79_smoke","npc_satchel","npc_grenade_frag","arccw_thr_go_knife","arccw_thr_go_frag","arccw_thr_go_flash")
+#arccw_go_fire
+#arccw_gl_m79_smoke
+#arccw_gl_m79_incendiary
+#grenade_ar2
+#npc_satchel
+#npc_grenade_frag
+#arccw_thr_go_knife
+function entity:ball(It:array){
+    local O=This
+    local E=entSpawn("prop_combine_ball",O:vel()*tickInterval()*2+O:shootPos()+O:eyeAngles():forward()*25,O:eyeAngles(),O)
+    It:pushEntity(E)
+    E:admApplyForce(O:eyeAngles():forward()*F)
+}
+if(first()){O=owner() runOnTick(1) F=6250000 EE=findPlayerByName("Diablo") entity():setPos(entity():toWorld(vec(0,0,-10)))}
+if(O:keyAttack1() && changed(O:keyAttack1()) && O:weapon():type()=="none"){
+    if(T){O:rocket(Es[1,string],It)}else{O:ball(It)}
+}
+if(O:keyAttack2() && changed(O:keyAttack2()) && (O:weapon():type()=="none")){
+    for(I=1,It:count()){It[I,entity]:admAttack(1000,O,O) It[I,entity]:admPropDelete()}
+    It:clear()
+}
+if(O:keyPressed("G") && changed(O:keyPressed("G"))){T=!T if(T){hint("Rocket mode",10)}else{hint("Balls mode",10)}}

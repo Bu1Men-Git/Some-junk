@@ -1,0 +1,12 @@
+@name Effects
+@persist I
+
+#Ef=effect()
+interval(1)
+#boomCustom(I,entity():pos(),0,500)
+#I++
+#Ef=Ef:setOrigin(entity():pos())
+#Ef:setEntity(owner())
+#Ef:setScale(20)
+#Ef:play("ThumperDust")
+effect():setOrigin(entity():pos()):setScale(2):play("StriderMuzzleFlash")

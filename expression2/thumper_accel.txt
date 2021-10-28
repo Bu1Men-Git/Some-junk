@@ -1,0 +1,13 @@
+@name Thumper accel
+@persist It:array [E O]:entity
+if(first()){runOnTick(1) O=owner()}
+if(O:weapon():toString():find("arccw_mifl_fas2_m79")){
+findByClass("arccw_gl_m79_he")
+It=findToArray()
+}
+#arccw_gl_m79_he
+if(It:count()){
+for(I=1,It:count()){E=It[I,entity]
+    E:setVelocity(E:vel()/E:vel():length()*2500)
+}
+}

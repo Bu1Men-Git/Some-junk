@@ -1,0 +1,11 @@
+@name God
+@persist E:entity
+if(first()){E=findPlayerByName("Bot") runOnTick(1) E:disableFallDamage()}
+if(E:isValid()){
+E:plySetArmor(100)#22842)
+E:plySetHealth(100)
+#E:teleport(entity():toWorld(vec(0,0,10)))
+#E:plyGod(0)
+#E:takeDamage(E:health(),owner(),owner():weapon())
+#E:kill()
+}

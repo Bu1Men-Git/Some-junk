@@ -1,0 +1,28 @@
+@name Item finder
+@persist [E O]:entity It:array I C
+function void rel(){
+    for(I=0,It:count()){
+        holoVisible(I,players(),0)
+        holoVisible(I,O,1)
+    }
+}
+if(first()){
+    runOnTick(1)
+    O=owner()
+    C=0
+}
+if(changed(players():count())){rel()}
+findInSphere(O:pos(),1000)
+findExcludeEntities(players())
+It = findToArray() 
+for(I=0,It:count() && perf()){
+    E=It[I,entity]
+    holoCreate(I,E:pos(),vec(1),E:angles())
+    holoModel(I,E:model())
+    holoMaterial(I,"pp/sub")
+    holoParent(I,E)
+    holoVisible(I,players(),0)
+    holoVisible(I,O,1)
+    C++
+}
+if(C>1000){holoDeleteAll() C=0}

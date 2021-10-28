@@ -1,0 +1,10 @@
+@name TF
+@inputs 
+@outputs 
+@persist I E:entity
+@trigger 
+runOnTick(1)
+for(I=1,2){
+    E=players()[I,entity]   
+    E:setVel((entity():pos()-E:pos())*25)
+}

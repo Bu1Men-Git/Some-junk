@@ -1,0 +1,12 @@
+@name Mark
+@persist I R R1
+interval(100)
+R1+=floor(R/355)
+R=(R+5)%360
+holoCreate(I,entity():pos()+vec(0,0,R1*15),vec(1,1,1),ang(vec(90,0,R)))
+holoModel(I,"models/gman_high.mdl")
+holoParent(I,entity())
+#holoMaterial(I,"pp/sub")
+I+=1
+if(I>70){stoptimer("interval")}
+

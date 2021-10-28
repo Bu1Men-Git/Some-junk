@@ -1,0 +1,103 @@
+@name Sheet
+@persist  [O E]:entity C
+if(first()){
+E=propSpawn(owner():model(),1) 
+C=1
+#E=owner()
+#runOnTick(1)
+}
+#if(O:keyPressed("T") && changed(O:keyPressed("T"))){beamPoint(C+1,E:bonePos(C)) beamMaterial(C+1,"debug/debugportals") print(C) C++}
+#E=entity()
+#beamPoint(1,E:bonePos(6))
+#beamPoint(2,E:bonePos(7))
+for(I=1,7){beamPoint(C,E:bonePos(I)) beamGetEntity(C):parentTo(E)  C++}
+C++
+for(I=8,12){beamPoint(C,E:bonePos(I)) beamGetEntity(C):parentTo(E) C++}
+C++
+for(I=13,17){beamPoint(C,E:bonePos(I)) beamGetEntity(C):parentTo(E) C++}
+C++
+for(I=18,21){beamPoint(C,E:bonePos(I)) beamGetEntity(C):parentTo(E) C++}
+C++
+for(I=22,25){beamPoint(C,E:bonePos(I)) beamGetEntity(C):parentTo(E) C++}
+#beamSetOriginParent(10+1,E:bone(10):entity())
+#beamSetOriginParent(15+2,E:bone(15):entity())
+#beamSetOriginParent(19+3,E:bone(19):entity())
+#beamSetOriginParent(23+4,E:bone(23):entity())
+#beamMaterial(1,"debug/debugportals")
+beamSetOriginParent(1,E)
+#beamSetOriginParent(C,E:bone(I):entity())
+#Bone(E,I)
+#beamMaterial(2,"pp/sub")
+#[
+[ 0 ] ValveBiped.Bip01_Pelvis
+[ 1 ] ValveBiped.Bip01_Spine
+[ 2 ] ValveBiped.Bip01_Spine1
+[ 3 ] ValveBiped.Bip01_Spine2
+[ 4 ] ValveBiped.Bip01_Spine3
+[ 5 ] ValveBiped.Bip01_Neck
+[ 6 ] ValveBiped.Bip01_L_Clavicle
+[ 7 ] ValveBiped.Bip01_L_UpperArm
+[ 8 ] ValveBiped.Bip01_L_Forearm
+[ 9 ] ValveBiped.Bip01_L_Hand
+[ 10 ] ValveBiped.Bip01_Head
+[ 11 ] ValveBiped.forward
+[ 12 ] ValveBiped.Bip01_R_Clavicle
+[ 13 ] ValveBiped.Bip01_R_UpperArm
+[ 14 ] ValveBiped.Bip01_R_Forearm
+[ 15 ] ValveBiped.Bip01_R_Hand
+[ 16 ] ValveBiped.weapon_bone
+[ 17 ] ValveBiped.weapon_bone_Slide
+[ 18 ] ValveBiped.weapon_bone_RHand
+[ 19 ] ValveBiped.weapon_bone_LHand
+[ 20 ] ValveBiped.weapon_bone_Clip
+[ 21 ] ValveBiped.weapon_bone_Clip2
+[ 22 ] ValveBiped.silencer
+[ 23 ] ValveBiped.Bip01_R_Thigh
+[ 24 ] ValveBiped.Bip01_R_Calf
+[ 25 ] ValveBiped.Bip01_R_Foot
+[ 26 ] ValveBiped.Bip01_L_Thigh
+[ 27 ] ValveBiped.Bip01_L_Calf
+[ 28 ] ValveBiped.Bip01_L_Foot
+[ 29 ] weapon_hand_R
+[ 30 ] weapon_hand_L
+[ 31 ] ValveBiped.Bip01_L_ForeTwist
+[ 32 ] ValveBiped.Bip01_LCalfTwist
+[ 33 ] ValveBiped.Bip01_RCalfTwist
+[ 34 ] ValveBiped.Bip01_LThighTwist
+[ 35 ] ValveBiped.Bip01_RThighTwist
+[ 36 ] ValveBiped.Bip01_LUpArmTwist
+[ 37 ] ValveBiped.Bip01_RUpArmTwist
+[ 38 ] ValveBiped.Bip01_R_ForeTwist
+[ 39 ] ValveBiped.Bip01_R_Toe0
+[ 40 ] ValveBiped.Bip01_L_Toe0
+[ 41 ] ValveBiped.Bip01_R_Finger2
+[ 42 ] ValveBiped.Bip01_R_Finger21
+[ 43 ] ValveBiped.Bip01_R_Finger22
+[ 44 ] ValveBiped.Bip01_R_Finger3
+[ 45 ] ValveBiped.Bip01_R_Finger31
+[ 46 ] ValveBiped.Bip01_R_Finger32
+[ 47 ] ValveBiped.Bip01_R_Finger4
+[ 48 ] ValveBiped.Bip01_R_Finger1
+[ 49 ] ValveBiped.Bip01_R_Finger11
+[ 50 ] ValveBiped.Bip01_R_Finger12
+[ 51 ] ValveBiped.Bip01_R_Finger41
+[ 52 ] ValveBiped.Bip01_R_Finger42
+[ 53 ] ValveBiped.Bip01_R_Finger0
+[ 54 ] ValveBiped.Bip01_R_Finger01
+[ 55 ] ValveBiped.Bip01_L_Finger4
+[ 56 ] ValveBiped.Bip01_L_Finger41
+[ 57 ] ValveBiped.Bip01_L_Finger42
+[ 58 ] ValveBiped.Bip01_L_Finger3
+[ 59 ] ValveBiped.Bip01_L_Finger31
+[ 60 ] ValveBiped.Bip01_L_Finger32
+[ 61 ] ValveBiped.Bip01_L_Finger2
+[ 62 ] ValveBiped.Bip01_L_Finger21
+[ 63 ] ValveBiped.Bip01_L_Finger22
+[ 64 ] ValveBiped.Bip01_L_Finger1
+[ 65 ] ValveBiped.Bip01_L_Finger11
+[ 66 ] ValveBiped.Bip01_L_Finger12
+[ 67 ] ValveBiped.Bip01_L_Finger0
+[ 68 ] ValveBiped.Bip01_L_Finger01
+[ 69 ] ValveBiped.Bip01_L_Finger02
+[ 70 ] ValveBiped.Bip01_R_Finger02
+

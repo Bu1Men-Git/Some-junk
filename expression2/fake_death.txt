@@ -1,0 +1,15 @@
+@name Fake Death
+@persist O:entity I PI
+if(first()){O=owner() runOnTick(1) runOnDmg(1,O)}
+I=4242424200+floor(curtime())%100
+if(dmgClk() && !timerRunning("cool")){
+PI=I
+holoCreate(PI,O:pos()+O:vel()*tickInterval(),vec(1),O:angles()+ang(10,0,0))
+holoModel(PI,O:model())
+holoRenderFX(PI,23)
+holoEntity(PI):applyForce(O:vel() * O:mass())
+O:plyAlpha(255)
+O:plyAlpha(10)
+timer("ded",5000)
+}
+if(clk("ded") || (O:getAlpha()==10 && dmgClk())){O:plyAlpha(255) timer("cool",1500)}

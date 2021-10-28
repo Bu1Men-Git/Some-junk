@@ -1,0 +1,22 @@
+@name lamp
+@persist [E O]:entity V:vector X:wirelink
+#E=entSpawn("gmod_wire_lamp")
+#print(E:owner())
+#E:admSetOwner(owner())
+if(first()){runOnTick(1) E=entity():isWeldedTo()
+    #E=entSpawn("gmod_wire_lamp",entity():pos(),entity():angles(),owner())
+    E:setNoCollideAll()
+    O=owner() 
+    X=E:wirelink()
+    X:setNumber("FOV",179.9)
+    X:setNumber("Distance",inf())
+    X:setNumber("Brightness",123456789012)
+    X:setNumber("On",1)
+    X:setVector("RGB",vec(inf()))
+    E:propFreeze(1)
+    #propSpawn(E,0)
+}
+#E:setModel("models/hunter/misc/sphere075x075.mdl")
+V=O:vel()*tickInterval()+vec(0,0,1.5*O:height())
+E:setPos(owner():pos()+V+$V*5)
+E:setAngles((-O:right()):toAngle())

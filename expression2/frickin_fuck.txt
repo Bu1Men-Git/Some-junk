@@ -1,0 +1,122 @@
+@name Radio rad
+@persist [E ET O]:entity Mus:array [URL T Sd]:string A:webaudio Vol FFT:array St V:vector Dist C Des Rad
+if(first()){
+    E=propSpawn("models/sligwolf/grocel/radio/jukebox.mdl",entity():pos(),owner():angles(),1)
+    E:setNoCollideAll()
+    #E:setAlpha(0)
+    #entity():setPos(entity():pos()-entity():up()*10)
+    O=owner()#                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       O=findPlayerByName("Bul")
+    ET=O
+    runOnFile(1)
+    runOnChat(1)
+    runOnTick(1)
+    fileLoad("Mus.txt")
+    N=4  #64 / N
+    URL="https://raw.githubusercontent.com/Bu1Men-Git/Some-junk/main/Music/"
+    Dist=50
+    St=1
+    Vol=45
+    A=nowebaudio()
+    A:destroy()
+    Des=1
+    Rad=1500
+    V=vec(0)
+}
+if(fileClk()){Mus=fileRead():explode("\n")}
+if(chatClk(O) && changed(chatClk(O)) && O:lastSaid():sub(1,1)=="!"){
+switch(O:lastSaid():sub(2,4):lower()){
+    case("pla"),
+        E:setAlpha(255)
+        Sd=O:lastSaid()
+        hideChat(1)
+        if(A:isValid()){A:destroy()}
+        A=webAudio(URL+(Mus[Sd:explode(" ")[2,string]:toNumber(),string])+".mp3")
+        print("Now playing: "+Mus[Sd:explode(" ")[2,string]:toNumber(),string]:upper())
+        A:setLooping(1)
+        A:setPos(E:pos()+vec(0,0,E:height()/2))
+        A:parentTo(E)
+        A:setVolume(Vol)
+        A:setRadius(Rad)
+        A:play()
+        A:update()
+        St=(!Des)
+        Des=0
+    break,
+
+    case("mus"),
+    hideChat(1)
+    printTable(Mus)
+    break,
+    
+    case("sto"),
+    St=1
+    E:setAlpha(0)
+    E:setPos(entity():pos())
+    hideChat(1)
+    holoDeleteAll()
+    A:destroy()
+    Des=1
+    break,
+    
+    case("vol"),
+    hideChat(1)
+    Sd=O:lastSaid()
+    Vol=Sd:explode(" ")[2,string]:toNumber()
+    A:setVolume(Vol)
+    A:update()
+    print("Volume: "+Vol:toString())
+    break,
+    
+    case("rad"),
+    hideChat(1)
+    Sd=O:lastSaid()
+    Rad=Sd:explode(" ")[2,string]:toNumber()
+    A:setRadius(Rad)
+    A:update()
+    print("Radius: "+Rad:toString())
+    break,
+    
+    case("mut"),
+    hideChat(1)
+    if(A:getState()){if(A:getState()%2){A:pause()}else{A:play()}}
+    break,
+    
+    case("sta"),
+    hideChat(1)
+    St=!St
+    break,
+    
+    case("dis"),
+    hideChat(1)
+    Dist=O:lastSaid():explode(" ")[2,string]:toNumber()
+    break,
+    
+    case("tra"),
+    hideChat(1)
+    T=O:lastSaid():explode(" ")[2,string]
+    if(findPlayerByName(T):isPlayer()){ET=findPlayerByName(T) hint("New owner is: "+ET:name(),100)}
+    elseif(T=="^"){ET=owner() hint("New owner is: "+ET:name(),100)}
+    else{hint("Couldnt find player",100)}
+    break,
+    
+    case("del"),
+    hideChat(1)
+    A:destroy()
+    selfDestruct()
+    break,
+    
+    case("vis"),
+    hideChat(1)
+    E:setAlpha(!E:getAlpha()*255)
+    break,
+}}
+if(!St){
+    #---------------------------Thats bullshit \/----------------------------
+    V=(ET:pos()+vec(0,0,ET:height()/2+sin(C%360)*30)-E:pos())/(1000/min(max(E:pos():distance(ET:pos()+vec(0,0,ET:height()/2))-Dist,0.0001),1000))
+    E:setPos(E:pos()+V)
+    E:setAng(vec(vec2(ET:pos()+vec(0,0,ET:height()/2)-E:pos())):toAngle())
+    E:setColor(hsv2rgb(rgb2hsv(E:getColor()):x()+C/10000*max(E:pos():distance(ET:pos()+vec(0,0,ET:height()/2))-Dist,0.05)%360,1,2))
+    C+=2.5
+}
+else{E:propFreeze(0)}
+if(E:type()==""){A:destroy() selfDestruct()}

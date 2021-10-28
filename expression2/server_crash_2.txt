@@ -1,0 +1,5 @@
+@name chatReciever
+@persist O:entity It:array
+if(first()){runOnTick(1) O=owner() runOnChat(1)}
+if(chatClk()){print(lastSaid())}
+if(!O:isValid()){selfDestructAll()}

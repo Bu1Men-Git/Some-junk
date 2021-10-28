@@ -1,0 +1,49 @@
+@name EGP screen
+@persist [E O T]:entity I Sc:wirelink [ScXY Pos]:vector2 X Y [Map Col]:vector
+if(first()){
+    O=owner()
+    runOnTick(1)
+    #E=spawnEgpHud(entity():pos()-entity():up()*15,entity():angles(),1)
+    E=entity():isWeldedTo()
+    Sc=E:wirelink()
+    ScXY=vec2(512)
+    #X = 10 #Total amount of egp objects
+    #Y = 10
+    Sc:egpClear()
+    Map = vec(26463,-26463,14430)
+    #Sc:egpHudToggle()
+}
+function rel(){
+for(I=1,players():count()){
+    T=players()[I,entity]
+    Pos=vec2((T:pos()+vec(13231.972656,13231.968750,11520))/Map)
+    Sc:egpCircle(I,Pos*ScXY-vec2(2.5),vec2(5))
+    Sc:egpColor(I,Col)
+    Sc:egpText(players():count()+I,T:name():left(3),Pos+vec2(0,-22)-vec2(T:name():left(3):length()*5,0))
+    Sc:egpParent(players():count()+I,I)
+    Sc:egpColor(players():count()+I,teamColor(T:team()))
+    Sc:egpLine(players():count()*2+I,Pos,Pos+vec2(0,ScXY:y()/16))
+    Sc:egpParent(players():count()*2+I,I)
+    Sc:egpParent(I,T)
+}
+}
+function upd(){
+for(I=1,players():count()){
+    T=players()[I,entity]
+    Col=hsv2rgb(((T:pos():z()+11520)/Map:z())*255,1,1)
+    Sc:egpPos(I,vec2((T:pos()+vec(13231.972656,-13231.968750,11520))/Map)*ScXY-vec2(2.5))
+    Sc:egpColor(I,Col)
+    Sc:egpAngle(I,T:eyeAngles():yaw()+90)
+     Sc:egpColor(players():count()*2+I,hsv2rgb(((T:aimPos():z()+11520)/Map:z())*255,1,1))
+} 
+}
+if(E:type()==""){selfDestruct()}
+if(changed(players():count())){Sc:egpClear() Sc:egpBox(1337,ScXY/2,ScXY) Sc:egpColor(1337,vec(0)) rel()}
+upd()
+#13231.972656 -13231.968750   X Y
+#-13231.972656 13231.968750   X Y
+# X - 26463  Y - 26463
+#2910  Z
+#-11520  Z
+# Z - 14430
+

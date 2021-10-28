@@ -1,0 +1,5 @@
+@name Team checker
+for(I=1,players():count()){
+    E=(players()[I,entity]):team()
+    print(teamName(E)," - ",teamColor(E))
+}

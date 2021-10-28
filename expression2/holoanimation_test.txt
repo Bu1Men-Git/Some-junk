@@ -1,0 +1,58 @@
+#@disabled for security reasons. Remove this line (Ctrl+Shift+L) and left-click the chip to enable. 'wire_expression2_friendwrite 1' disables security.
+@name holoAnimation test
+@inputs 
+@outputs 
+@persist SpikeOut SpikeVal 
+@trigger 
+runOnTick(1)
+propSpawnUndo(0)
+if(first()|dupefinished()){
+
+holoCreate(3)
+holoModel(3,"models/props_canal/bridge_pillar02.mdl")
+holoScale(3,vec(0.3,0.3,1))
+holoPos(3,entity():pos()+vec(-0,0,0))
+#holoMaterial(3,"models/props_pipes/pipemetal001a")
+holoColor(3,vec(40,40,40))
+holoParent(3,entity())
+
+#models/props/de_inferno/brickpillara.mdl
+
+
+
+
+
+}
+
+O=owner()
+R = (owner():keyPressed("r"))
+if(first()){
+    SpikeVal = 0
+}
+
+if(changed(R) & R){
+    if(SpikeOut){
+        SpikeOut = 0
+    }else{
+        SpikeOut = 1
+    }
+}
+
+
+
+
+if(SpikeOut){
+    if(SpikeVal < 100){
+        SpikeVal = SpikeVal + 10
+    }
+}else{
+    if(SpikeVal > 0){
+        SpikeVal = SpikeVal - 10
+    }
+}
+
+
+
+
+
+holoPos(3,entity():toWorld(vec(0,0,SpikeVal-90)))

@@ -1,0 +1,29 @@
+@name DigScreen upd
+@model models/led2.mdl
+@outputs Data:string
+@persist X Y Scr:wirelink V:vector Data:string Cl DEnd DStr:string DDel:array Name:string Res:vector2 C Load Rx Ry
+if(first()){runOnFile(1) runOnTick(1)
+    Name="7.txt"
+    Scr=entity():isWeldedTo():wirelink() 
+    function wirelink:init(Res:vector2){
+        This[1048574]=1
+        This[1048574]=0
+        This[1048569]=3
+        This[1048575]=1
+        This[1048573]=Res:x()  
+        This[1048572]=Res:y()
+    }   
+    function wirelink:pixCol(X,Col:vector){
+        This[X]=rgb2digi(Col,3)
+    }
+}
+if(!Load && fileCanLoad()){print("Loading file...") fileLoad(Name) Load=1}
+while(perf() && Data:length()>0 && !first() && X*3<=Data:length()){
+V=vec(toByte(Data,55+X*3+2),toByte(Data,55+X*3+1),toByte(Data,55+X*3))
+#D:pixCol(Data:length()/3-X-19,V,sqrt(Data:length()/3))
+Scr:pixCol(Rx*Ry-(Rx-(X%Rx)+floor(X/Rx)*Rx),V)
+X++
+}
+if(X*3+54>Data:length() && Data:length()){hint("Done",100) selfDestruct()}
+if(fileClk(Name) || (first() && fileName()==Name) || (changed(Data)&&Data:length())){Data=fileRead() Rx=toByte(Data:sub(19,19))+toByte(Data:sub(20,20))*256 Ry=toByte(Data:sub(23,23))+toByte(Data:sub(24,24))*256 Scr:init(vec2(Rx,Ry))  if(Data:length()){hint(Data:length():toString(),100) print("Size: ",vec2(Rx,Ry))}else{fileLoad(Name) print("Loading file...")} }
+

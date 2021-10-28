@@ -1,0 +1,26 @@
+@name Busoshoku Haki
+@persist A E:entity D:damage
+#include "tagsfix"
+#if(changed(players():count())){plyPlep()}
+function number entity:haveTag(S:string){return (getEntitiesByTag(S):getIndex(This))}
+if(first()){runOnTick(1) A=40 runOnLast(1) entity():setPos(entity():toWorld(vec(0,0,-10)))}
+else{
+if(changed(players():count())){runOnDmg(1,players())}
+for(I=1,players():count()){
+    E=players()[I,entity]
+    if(E:keyPressed("H") && !timerRunning(E:name():left(5))){timer(E:name():left(5),1200) if(E:rev():hasTag("BHaki")>0){E:rev():removeTag("BHaki")}else{E:rev():addTag("BHaki")}}
+    if(E:rev():hasTag("BHaki")>0){
+        E:setColor(vec(20))
+        E:setMaterial("sprops/sprops_plastic")
+        if(E:weapon():type()=="weapon_fists"){
+        D=lastDamage() D:setDamage(D:getDamage()/2)
+        #if(dmgClk() && D:getAttacker()==E && D:getType()==0){D:setType(516) lastDamageVictim():takeDamage(D)}
+        }
+        E:plySetArmor(A-25*(E:haveTag("fruit")))
+    }
+    else{E:plySetArmor(0) E:setColor(vec(255)) E:setMaterial("")}
+}
+}
+if(last()){for(I=1,players():count()){E=players()[I,entity]
+    E:plySetArmor(0) E:setColor(vec(255)) E:setMaterial("")
+}}

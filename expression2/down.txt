@@ -1,0 +1,10 @@
+@name Down
+@model models/hunter/blocks/cube1x1x1.mdl
+@persist E:entity O:entity
+
+if(first()){E=entity() O = findPlayerByName("Bul'") runOnTick(1) E:setMass(2500) E:propFreeze(0) E:removeNoCollideAll()}
+if(O:isAlive()){
+E:setPos(O:toWorld(vec(0,0,O:height()+E:height()))+O:vel()*tickInterval())
+E:setAng(ang(0))
+E:applyForce(vec(0,0,-E:mass()*100000))
+}

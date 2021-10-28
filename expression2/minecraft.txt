@@ -1,0 +1,31 @@
+@name Minecraft
+@persist [Mat Mod]:array O:entity [M Md]:string I
+if(first()){
+runOnTick(1)
+Mat[0,string] = "brick/brick_model"
+
+Mod[0,string] = "models/hunter/blocks/cube05x05x05.mdl"
+
+O=owner()
+M=Mat[0,string]
+Md=Mod[0,string]
+holoCreate(0,entity():pos()+vec(0,0,6))
+holoMaterial(0,M)
+holoAlpha(0,130)
+holoModel(0,Md) #24.225*2=48.45
+}
+while(O:weapon():type()=="weapon_crowbar" & perf(1)){
+holoVisible(0,players(),1)
+P=round(O:aimPos()/24)*24
+holoPos(0,P)
+if(O:keyAttack1()){
+holoDelete(holoIndex(O:aimEntity()))
+}
+if(O:keyAttack2()){
+I++
+holoCreate(I,P,vec(1),holoEntity(0):angles(),vec(255),Md)
+holoMaterial(I,M)
+alibHoloSolid(I)
+}
+}
+if(O:weapon():type()!="weapon_crowbar"){holoVisible(0,players(),0)}

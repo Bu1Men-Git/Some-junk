@@ -1,0 +1,37 @@
+@name GW ADD
+@persist [B E]:entity It:array S V:vector T Del:array A:angle
+function array:del(){
+    for(I=1,This:count()){
+        if(This[I*2,entity]:pos():distance(This[I*2+1,entity]:pos())<=200){This[I*2,entity]:wirelink():setNumber("Detonate",1) This:removeEntity(I*2+1) This:removeEntity(I*2)}
+    }
+}
+if(first()){runOnTick(1) S=300 V=entity():toWorld(vec(0,0,52)) findIncludeClass("lunasflightschool_") findIncludeClass("lfs_") findExcludeClass("prop_physics")
+    holoCreate(0,entity():pos(),vec(2))
+    holoModel(0,"models/props_combine/combine_mine01.mdl")
+    holoCreate(1,V,vec(1.2),(owner():pos()-V):toAngle())
+    holoModel(1,"models/combine_helicopter/helicopter_bomb01.mdl")
+    #
+}
+#findExcludePlayerProps(owner())
+findInSphere(entity():pos(),7500)
+findClipToBox(entity():toWorld(vec(-7500,-7500,0)),entity():toWorld(vec(7500)))
+if(find():isValid()){
+    A=(E:pos()-V):toAngle()+ang(90,0,0)
+    holoAng(1,A+$A*5)
+    if(!B:isValid() && !timerRunning("cld")){
+    findSortByDistance(entity():pos())
+#    findClipFromEntities(Bnd)
+    E=find()
+    T=(E:pos():distance(V))/S
+    B=sentSpawn("gb_bomb_sc100",V,(E:pos()-V):toAngle(),0)
+    B:wirelink():setNumber("Arm",1)
+    B:applyForce(E:mass()*((E:pos()-V):normalized()*S+E:vel()*tickInterval()*T+vec(0,0,T*S+gravity()/200*(T*tickInterval())^2)))
+    Del:pushEntity(B)
+    Del:pushEntity(E)
+    timer("cld",2250)
+}
+}
+elseif(!find():isValid()){B:propDelete()}
+if(Del:count()){Del:del()}
+#if(owner():keyPressed("Z")){B:propDelete() selfDestructAll()}
+#27.05

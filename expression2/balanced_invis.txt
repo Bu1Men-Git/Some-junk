@@ -1,0 +1,16 @@
+@name Balanced invis
+@persist O:entity T Weap:string
+if(first()){
+    runOnTick(1)
+    O=owner()
+    entity():setPos(entity():pos()-entity():up()*10)
+    T=0
+    Weap="none medkit"
+}
+if(Weap:find(O:weapon():type()) && T){
+    if(O:getAlpha()<=128){O:setMaterial("models/shadertest/shader3")}
+    else{O:setMaterial("")}
+    O:plyAlpha(max(O:vel():length()/2-40+(O:getAlpha()>128)*150,0))
+}
+if(!Weap:find(O:weapon():type()) || (changed(T) && !T)){O:setMaterial("") O:plyAlpha(255)}
+if(changed(O:keyPressed("G")) && O:keyPressed("G") && Weap:find(O:weapon():type())){T=!T}

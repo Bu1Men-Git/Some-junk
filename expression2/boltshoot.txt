@@ -1,0 +1,7 @@
+@name 
+@inputs 
+@outputs 
+@persist E:entity
+@trigger
+
+interval(150) if (owner():keyUse()) { E = shootBolt(owner():shootPos(), owner():eye() * 3000, 100000) E:animate(221234)}

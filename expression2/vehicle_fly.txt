@@ -1,0 +1,13 @@
+@name Vehicle fly
+@persist [E O]:entity V:vector A:angle Up
+if(first()){
+    E = entity():isWeldedTo()
+    runOnTick(1)
+    E:setAngles(ang(vec(0)))
+}
+if(O:isPlayer()){O=E:driver()}
+Up=(O:keyJump()-O:keyDuck())*(O:isPlayer())
+A=-E:angVel()
+E:applyAngForce(A+$A*5)
+V=-E:vel()*vec(1,1,10)+(vec(0,0,Up*1))*E:mass()*10
+E:applyForce(V+$V*5)

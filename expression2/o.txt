@@ -1,0 +1,7 @@
+@name O
+@persist O:entity
+if(first()){
+runOnTick(1)
+O=owner()
+}
+O:setVel(vec(0,0,-100))

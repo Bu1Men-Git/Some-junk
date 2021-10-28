@@ -1,0 +1,51 @@
+@name Day & Night sys
+@model models/Items/HealthKit.mdl
+@persist [Sn Fe Sk]:entity Tim [Mnc Snc Mno Sno Skdu Skdb Skbu Skbb]:vector [Snn Mnn]:vector2 N Fged Fgsd Fgen Fgsn Dd Dn
+@outputs Deg:vector
+function string vector:string(){
+    return (This:x()+" "+This:y()+" "+This:z())
+}
+if(first()){runOnTick(1) N=(24*60) # 1 sec = 1 min
+    Sk=sentSpawn("edit_sky",entity():toWorld(vec(0,0,-25)),1)
+    Sn=sentSpawn("edit_sun",vec(0,0,-11500),1)
+    Fe=sentSpawn("edit_fog",entity():toWorld(vec(0,0,-25)),1)
+    Sn:propDraw(0)
+    Snc=vec(1) Sno = vec(1)
+    Mnc=vec(1,0,0)  Mno = vec(1,0.5,0.5)
+    Snn = vec2(45,30)
+    Mnn = vec2(25,5)
+    Skdu = vec(0.2,0.5,1)*255
+    Skdb = vec(0.8,1,1)*255
+    #Skbu = vec(7,11,52)-Skdu
+    #Skbb = vec(10,14,98)-Skbb
+    Skbu = -Skdu
+    Skbb = -Skdb
+    Fged = 40000
+    Fgsd = 0
+    Fgen = 8000
+    Fgsn = 1250
+    Dd = 0.1
+    Dn = 0.3
+    entity():setPos(entity():toWorld(vec(0,0,-10)))
+}
+Tim=(curtime()-entity():creationTime())%N
+Sn:setAngles(ang(360/N*Tim%(180)-180,0,0))
+if(Tim>=N/2){
+    Sn:editValue("SunSize",Mnn:x():toString())
+    Sn:editValue("OverlaySize",Mnn:y():toString())
+    Sn:editValue("SunColor",Mnc:string())
+    Sn:editValue("OverlayColor",Mno:string())
+}
+else{
+    Sn:editValue("SunSize",Snn:x():toString())
+    Sn:editValue("OverlaySize",Snn:y():toString())
+    Sn:editValue("SunColor",Snc:string())
+    Sn:editValue("OverlayColor",Sno:string())
+}
+Sk:editValue("TopColor",((Skdu+(Skbu-Skbu*sin((360/N*Tim)%(360)))/2)/255):string())
+Sk:editValue("BottomColor",((Skdb+(Skbb-Skbb*sin((360/N*Tim)%(360)))/2)/255):string())
+Fe:editValue("FogStart",((Fgsd+Fgsn)/2+(Fgsn*2)*sin((360/N*Tim)%(360))):toString())
+Fe:editValue("FogEnd",((Fged+Fgen)/2+(Fged-Fgen)/2*sin((360/N*Tim)%(360))):toString())
+Fe:editValue("Density",((Dd+Dn)/2+(Dd-Dn)/2*sin((360/N*Tim)%(360))):toString())
+if(!Fe:isValid()){Sk:propDelete() Sn:propDelete() selfDestructAll()}
+Deg = Sn:pos()+vec(-cos((360/N*Tim)%(360)),0,sin((360/N*Tim)%(360)))*25000

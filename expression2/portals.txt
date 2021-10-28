@@ -1,0 +1,41 @@
+@name Portals
+@persist [Pi Pe O]:entity
+#vec(100,100,255)
+function entity pIn(O:entity,V:vector,I){
+    local N=20
+    local Z=1
+holoCreate(I,O:pos()+vec(0,0,0),vec(-N))
+holoScaleUnits(I,-vec(6*N,3*N,0))
+holoCreate(I+1,entity():pos(),vec(-N))
+holoColor(I+1,vec(20))
+holoScaleUnits(I+1,-vec(6*N)*vec(1,0.5,Z))
+local E=holoEntity(I)
+holoPos(I+1,O:toWorld(-vec(0,0,3*Z)*N))
+holoCreate(I+2,entity():pos(),vec(-N))
+holoScaleUnits(I+2,-vec(120,160,240)*vec(1,1,1))
+holoPos(I+2,O:toWorld(-vec(0,0,3*Z)*N-vec(0,0,178)))
+local B=holoEntity(I+2)
+holoCreate(I+3,entity():pos(),vec(-N))
+holoScaleUnits(I+3,-vec(120-1,160-1,240-1)*vec(1,1,1))
+holoPos(I+3,O:toWorld(-vec(0,0,3*Z)*N-vec(0,0,178)))
+holoColor(I+3,V)
+local BE=holoEntity(I+3)
+holoClipEnabled(I+1,1)
+holoClip(I+1,vec(0,0,-3*N*Z+1),vec(0,0,1),0)
+local EE=holoEntity(I+1)
+holoParent(I+1,I)
+holoParent(I+2,I+1)
+holoParent(I+3,I+2)
+stencilCreate(I)
+stencilAddReferenceEntity(I,E)
+stencilAddEntity(I,EE)
+stencilAddReferenceEntity(I,B)
+stencilAddEntity(I,BE)
+return E
+}
+if(first()){runOnTick(1) O=owner() holoCreate(1337,vec(0),vec(0))}
+if(O:keyWalk()){
+    holoPos(1337,O:aimPos()) holoAng(1337,O:aimNormal():toAngle()+ang(90,0,90))
+    if(O:keyAttack1() && changed(O:keyAttack1())){holoDelete(holoIndex(Pi)) Pi=pIn(holoEntity(1337),vec(100,100,255),1)}
+    elseif(O:keyAttack2() && changed(O:keyAttack2())){holoDelete(holoIndex(Pe)) Pe=pIn(holoEntity(1337),vec(240,180,80),5)}
+}

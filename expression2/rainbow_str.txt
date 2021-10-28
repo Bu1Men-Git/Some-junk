@@ -1,0 +1,10 @@
+@name Rainbow str
+@persist 
+Str="________________________________________________________________________________________________________________________________________________________________________________"
+Ar=array(vec(30),"[",vec(124,53,84),"Player",vec(30),"]",vec(124,53,84),owner():name(),vec(255),": ")
+for(I=1,Str:length()){
+    Col = hsv2rgb(360/Str:length()*I,1,1)
+    Ar:pushVector(Col)
+    Ar:pushString(Str[I%Str:length()])
+}
+chatPrint(owner(),Ar)

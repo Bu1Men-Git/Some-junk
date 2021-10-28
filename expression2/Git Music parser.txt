@@ -1,0 +1,79 @@
+@name Git parser
+@persist [O]:entity [S S1 URL Song All]:string [U Sort Id Ply]:array C T Sh
+function rel(){
+    Sort=httpData():explode("/Bu1Men-Git/Some-junk/blob/main/Music/")
+    Sort:remove(1)
+    foreach(C,S:string=Sort){
+        if(!Sort[C,string]:find("AlbumArt")){
+        S1=S:explode(">")[1,string]
+        #print(S1)
+        U[C-1,string]=httpUrlDecode(S1:left(S1:length()-5))
+        #print(U[C-1,string])
+    }}
+        U=U:clean()
+        dArray("Music",U)
+        All=U:concat("\n")
+        timer("upload",100)
+        #for(I=1,U:count()){AllS+=U[I,string] if(I!=U:count()){AllS+="\n"}}
+        
+        #hint(AllS:length():toString(),100)
+     
+    #T=randint(1,U:count())
+    #print(U[T,string])
+    #printTable(U)
+    
+}
+if(clk("upload")){print(All) fileWrite("mus.txt",All)}
+if(first()){
+    holoCreate(0) holoScale(0,vec(1.5)) holoModel(0,"models/beer/wiremod/gate_e2.mdl")
+    #holoColide(0)
+    runOnTick(1)
+    S=""
+    Data=""
+    URL="https://github.com/Bu1Men-Git/Some-junk/raw/main/Music/"
+    Sh=0
+    Id=array("1","2","3")
+    httpRequest(URL)
+    dPanel("Music player",vec2(1025,30),vec2(220,380))
+dTabHolder("P","Music player",vec2(5,25),vec2(210,350))
+dListBox("Music","P",vec2(10),vec2(190,220))
+dButton("Start","P",vec2(10,235),vec2(90,14)) #dButton("Start for all","P",vec2(10,251),vec2(90,14))
+dButton("Stop","P",vec2(110,235),vec2(90,12))
+dButton("Stop all","P",vec2(110,252),vec2(90,15))
+dButton("Pause","P",vec2(10,270),vec2(90,30))   dButton("Play","P",vec2(110,270),vec2(90,30))
+dSlider("Volume","P",vec2(10,290),220,0,20)    dSetNval("Volume",10)
+dDropBox("Ply","P",vec2(10,325),130)
+dDropBox("ID","P",vec2(145,325),60)
+dArray("ID",Id)
+dSetSval("ID","1")
+dSetSval("Ply",owner():name())
+dArray("Ply",players())
+#dArray("Music",U)
+dShow("Music player",Sh)
+} 
+if(changed(players():count())){Ply = array() for(I=1,players():count()){Ply:pushString(players()[I,entity]:name())} dArray("Ply",Ply)}
+if(owner():keyPressed("T") && changed(owner():keyPressed("T"))){Sh=!Sh dShow("Music player",Sh) enableMouse(Sh)}
+if(httpData()!="" && changed(httpData()) && Sort:count()==0){rel()}
+if(changed(dNval("Volume"))){soundURLvolume(dSval("ID"),dNval("Volume")/20)}
+if(dClk("Start")){
+O=findPlayerByName(dSval("Ply"))
+Song=dSval("Music")
+if(O:name()!="" && Song!=""){
+    soundURLload(dSval("ID"),URL+Song:replace(" ","%20")+".mp3",dNval("Volume")/20,0,O)
+    print(URL+Song:replace(" ","%20")+".mp3")
+    soundURLparent(dSval("ID"),O)
+}
+}
+if(dClk("Stop")){
+soundURLdelete(dSval("ID"))
+}
+if(dClk("Stop all")){
+for(I=1,Id:count()){soundURLdelete(I:toString())}
+}
+if(dClk("Pause")){
+soundURLpause(dSval("ID"))
+}
+if(dClk("Play")){
+soundURLpause(dSval("ID"))
+soundURLplay(dSval("ID"))
+}

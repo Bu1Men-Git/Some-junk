@@ -1,0 +1,22 @@
+@name Loger
+@model models/led2.mdl
+@persist Res:vector2 Scr:wirelink
+if(first()){runOnTick(1)
+    Scr=entity():isWeldedTo():wirelink() 
+    Res = vec2(1024)
+    function wirelink:init(Res:vector2){
+        This[1048574]=1
+        This[1048574]=0
+        This[1048569]=3
+        This[1048575]=1
+        This[1048573]=Res:x()  
+        This[1048572]=Res:y()
+    }   
+    function wirelink:pixCol(X,Col:vector){
+        This[X]=rgb2digi(Col,3)
+    }
+    Scr:init(Res)
+}
+while(opcounter()<15000 && !first()){Scr:pixCol(randint(0,(Res:x()*Res:y())),randvec(0,255))}
+#+floor(X/(Res:x()*Res:y()))*5%360
+# I=randint(0+(64-I),128+(64-I)) 

@@ -1,0 +1,19 @@
+@name circ
+@persist I R X Y Sz N
+if(first()){
+R=60
+I=0
+Sz=7
+N=Sz
+runOnTick(1)
+}
+else{
+while(Sz>0 && perf(1)){
+    X=cos(I*360/(4*Sz-4))*R*(Sz*1.5)*6
+    Y=sin(I*360/(4*Sz-4))*R*(Sz*1.5)*6
+    holoCreate(I+1+(Sz)*100,entity():pos()+vec(min(R/sqrt(2),max(X,-R/sqrt(2))),min(R/sqrt(2),max(Y,-R/sqrt(2))),6*(N-Sz)))
+    holoAng(I+1+(Sz)*100,entity():angles())
+    I=(I+1)%(4*Sz-4)
+    Sz-=2*(I==0)
+}
+}

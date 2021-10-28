@@ -1,0 +1,13 @@
+@name attachments
+@persist O:entity
+if(first()){O=owner() E=propSpawn("models/Humans/Group01/male_07.mdl",1)}
+for(I=1,E:attachments():count()){holoCreate(I,E:attachmentPos(I))}
+
+#[
+1	=	eyes
+2	=	mouth
+3	=	chest
+4	=	forward
+5	=	anim_attachment_RH
+6	=	anim_attachment_LH
+7	=	anim_attachment_head

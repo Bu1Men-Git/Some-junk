@@ -1,0 +1,13 @@
+@name Testast
+@persist [E O]:entity I Sh Size:vector2
+if(first()){
+    O=owner()
+    Sh=0
+    Size=vec2()
+    runOnTick(1)
+    dPanel("Main",vec2(),Size)
+}
+if(changed(lastDeathTime(O))){
+    print(lastDeathAttacker(lastDeathVictim()):name())
+    print(lastDeathInflictor(lastDeathVictim()):name())
+    }

@@ -1,0 +1,5 @@
+@name isIfWorld 
+@persist O:entity
+
+if(first()){O=owner() runOnTick(1)}
+print(O:toWorld(vec(0,0,-5)):isInWorld())

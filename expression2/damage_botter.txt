@@ -1,0 +1,7 @@
+@name Damage Botter
+@persist E:entity Dm:damage
+if(first()){E=findPlayerByName("Bot04") runOnTick(1) Dm=damage() Dm:setType(0) Dm:setDamage(1244) Dm:setAttacker(owner()) Dm:setInflictor(owner():weapon())}
+for(I=1,players():count()){
+    E=players()[I,entity]
+    if(E:name():lower():find("bot")){E:takeDamage(Dm) E:plySpawn()}
+}

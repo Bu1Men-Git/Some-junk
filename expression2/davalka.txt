@@ -1,0 +1,27 @@
+@name davalka
+@outputs Str:string
+@persist O:entity S:string Sh:array
+if(first()){
+	O=owner()
+	S="Говно,Залупа,Пенис,Хер,Давалка,Хуй,Блядина,Головка,Шлюха,Жопа,Член,Еблан,Петух,Мудила,Рукоблуд,Ссанина,Очко,Блядун,Вагина,Сука,Ебланище,Влагалище,Пердун,Дрочила,Пидор,Пизда,Туз,Малафья,Гомик,Мудила,Пилотка,Манда,Анус,Вагина,Путана,Педрила,Шалава,Хуила,Мошонка,Елда"
+	Sh=S:explode(",")
+	#runOnTick(1)
+ print(entity(13228))
+#print(E)
+}
+interval(2250)
+function string sname(Ar:array,N){
+    for(I=1,N-1){return (sname(Ar,N-1) + " " + Sh[random(Sh:count()),string])}
+    return Sh[random(Sh:count()),string]
+    
+}
+E=entity():isWeldedTo()
+if(E:isValid()){
+Str = sname(Sh,256)
+setName(Str)
+E:wirelink():setString("Text",Str)
+#chatPrint(E,Str)
+E:takeDamage(100)
+#printColor(Sh[random(Sh:count()),string],randvec(vec(128),vec(255)))
+}
+else{selfDestruct()}

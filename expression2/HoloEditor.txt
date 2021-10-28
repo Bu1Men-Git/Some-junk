@@ -1,0 +1,103 @@
+@name HoloEditor
+@persist O:entity [H Mat Mod Clr]:array Sh CurH I Pr [VXYZ SXYZ]:vector AXYZ:angle
+@persist VX VY VZ AX AY AZ SX SY SZ
+if(first()){
+alibNoDup()
+runOnTick(1)
+dRunOnChange("Holos",1)
+O=owner()
+Mat = array("hunter/myplastic","brick/brick_model")
+Mod = array("cube","sphere","cone","hq_cylinder")
+Sh=0
+H:insertString(0,"")
+#--------------------------------------------------------#
+dPanel("Editor",vec2(850,30),vec2(400,200))
+dTabHolder("Edit","Editor",vec2(5,25),vec2(390,170))
+#dDropBox("Holos","Edit",vec2(265,15),120)
+dButton("Unsolid","Edit",vec2(275,45),vec2(50,20))
+dButton("Solid","Edit",vec2(335,45),vec2(40,20))
+dButton("TP","Edit",vec2(355,70),vec2(20,20))
+dButton("Create","Edit",vec2(275,70),vec2(40,20))
+dButton("Del","Edit",vec2(320,70),vec2(30,20))
+dDropBox("Material","Edit",vec2(265,100),120)
+dDropBox("Model","Edit",vec2(265,130),120)
+#--------------------------------------------------------#
+dLabel("Vector","Edit",vec2(60,15))
+dTextBox("VX","Edit",vec2(20,30),30)
+dTextBox("VY","Edit",vec2(60,30),30)
+dTextBox("VZ","Edit",vec2(100,30),30)
+#--------------------------------------------------------#
+dLabel("Angle","Edit",vec2(60,65))
+dTextBox("AX","Edit",vec2(20,80),30)
+dTextBox("AY","Edit",vec2(60,80),30)
+dTextBox("AZ","Edit",vec2(100,80),30)
+#--------------------------------------------------------#
+dLabel("Size","Edit",vec2(65,110))
+dTextBox("SX","Edit",vec2(20,125),30)
+dTextBox("SY","Edit",vec2(60,125),30)
+dTextBox("SZ","Edit",vec2(100,125),30)
+
+#--------------------------------------------------------#
+dListBox("Holos","Edit",vec2(140,15),vec2(120,140))
+#--------------------------------------------------------#
+dArray("Holos",H)
+dArray("Material",Mat)
+dArray("Model",Mod)
+dText("Material","Material")
+dText("Model","Model")
+dShow("Editor",Sh)
+#--------------------------------------------------------#
+}
+if(O:keyPressed("T") && changed(O:keyPressed("T"))){
+Sh=!Sh
+enableMouse(Sh)
+dShow("Editor",Sh)
+}
+if(changed(dSval("Holos"))){
+holoColor(Pr,vec(255))
+holoColor(dSval("Holos"):toNumber(),vec(205,25,25))
+dText("Material","Material")
+dText("Model","Model")
+dArray("Holos",H)
+Pr=dSval("Holos"):toNumber()
+dText("VX",toString(holoEntity(dSval("Holos"):toNumber()):pos():x()))
+dText("VY",toString(holoEntity(dSval("Holos"):toNumber()):pos():y()))
+dText("VZ",toString(holoEntity(dSval("Holos"):toNumber()):pos():z()))
+dText("AX",toString(holoEntity(dSval("Holos"):toNumber()):angles():yaw()))
+dText("AY",toString(holoEntity(dSval("Holos"):toNumber()):angles():pitch()))
+dText("AZ",toString(holoEntity(dSval("Holos"):toNumber()):angles():roll()))
+dText("SX",toString(holoScale(dSval("Holos"):toNumber()):x()))
+dText("SY",toString(holoScale(dSval("Holos"):toNumber()):y()))
+dText("SZ",toString(holoScale(dSval("Holos"):toNumber()):z()))
+}
+if(dSval("Holos")!=""){
+if(changed(holoEntity(dSval("Holos"):toNumber()):pos()) && !changed(VXYZ)){
+dText("VX",toString(holoEntity(dSval("Holos"):toNumber()):pos():x()))
+dText("VY",toString(holoEntity(dSval("Holos"):toNumber()):pos():y()))
+dText("VZ",toString(holoEntity(dSval("Holos"):toNumber()):pos():z()))
+}
+if(changed(holoEntity(dSval("Holos"):toNumber()):angles()) && !changed(AXYZ)){
+dText("AX",toString(holoEntity(dSval("Holos"):toNumber()):angles():yaw()))
+dText("AY",toString(holoEntity(dSval("Holos"):toNumber()):angles():pitch()))
+dText("AZ",toString(holoEntity(dSval("Holos"):toNumber()):angles():roll()))
+}
+if(changed(holoScale(dSval("Holos"):toNumber())) && !changed(SXYZ)){
+dText("SX",toString(holoScale(dSval("Holos"):toNumber()):x()))
+dText("SY",toString(holoScale(dSval("Holos"):toNumber()):y()))
+dText("SZ",toString(holoScale(dSval("Holos"):toNumber()):z()))
+}
+if(changed(dSval("VX")) && dSval("VX")!=toString(holoEntity(dSval("Holos"):toNumber()):pos():x())){VXYZ=vec(dSval("VX"):toNumber(),dSval("VY"):toNumber(),dSval("VZ"):toNumber()) holoPos(dSval("Holos"):toNumber(),VXYZ)}
+if(changed(dSval("VY")) && dSval("VY")!=toString(holoEntity(dSval("Holos"):toNumber()):pos():y())){VXYZ=vec(dSval("VX"):toNumber(),dSval("VY"):toNumber(),dSval("VZ"):toNumber()) holoPos(dSval("Holos"):toNumber(),VXYZ)}
+if(changed(dSval("VZ")) && dSval("VZ")!=toString(holoEntity(dSval("Holos"):toNumber()):pos():z())){VXYZ=vec(dSval("VX"):toNumber(),dSval("VY"):toNumber(),dSval("VZ"):toNumber()) holoPos(dSval("Holos"):toNumber(),VXYZ)}
+if(changed(dSval("AX")) && dSval("AX")!=toString(holoEntity(dSval("Holos"):toNumber()):angles():yaw())){AXYZ=ang(vec(dSval("AX"):toNumber(),dSval("AY"):toNumber(),dSval("AZ"):toNumber())) holoAng(dSval("Holos"):toNumber(),AXYZ)}
+if(changed(dSval("AY")) && dSval("AY")!=toString(holoEntity(dSval("Holos"):toNumber()):angles():pitch())){AXYZ=ang(vec(dSval("AX"):toNumber(),dSval("AY"):toNumber(),dSval("AZ"):toNumber())) holoAng(dSval("Holos"):toNumber(),AXYZ)}
+if(changed(dSval("AZ")) && dSval("AZ")!=toString(holoEntity(dSval("Holos"):toNumber()):angles():roll())){AXYZ=ang(vec(dSval("AX"):toNumber(),dSval("AY"):toNumber(),dSval("AZ"):toNumber())) holoAng(dSval("Holos"):toNumber(),AXYZ)}
+if(changed(dSval("SX")) && dSval("SX")!=toString(holoScale(dSval("Holos"):toNumber()):x())){SXYZ=vec(dSval("SX"):toNumber(),dSval("SY"):toNumber(),dSval("SZ"):toNumber()) holoScale(dSval("Holos"):toNumber(),SXYZ)}
+if(changed(dSval("SY")) && dSval("SY")!=toString(holoScale(dSval("Holos"):toNumber()):y())){SXYZ=vec(dSval("SX"):toNumber(),dSval("SY"):toNumber(),dSval("SZ"):toNumber()) holoScale(dSval("Holos"):toNumber(),SXYZ)}
+if(changed(dSval("SZ")) && dSval("SZ")!=toString(holoScale(dSval("Holos"):toNumber()):z())){SXYZ=vec(dSval("SX"):toNumber(),dSval("SY"):toNumber(),dSval("SZ"):toNumber()) holoScale(dSval("Holos"):toNumber(),SXYZ)}
+}
+if(dClk("Solid")){alibHoloSolid(dSval("Holos"):toNumber())}
+if(dClk("Unsolid")){alibHoloUnSolid(dSval("Holos"):toNumber())}
+if(dClk("Create")){I++ holoCreate(I) H:insertString(I,toString(I)) dArray("Holos",Clr) dArray("Holos",H)}
+if(dClk("Del")){H:setString(dSval("Holos"):toNumber(),"") holoDelete(dSval("Holos"):toNumber()) dText("Holos","") dArray("Holos",H)}
+if(dClk("TP")){holoPos(dSval("Holos"):toNumber(),O:aimPos())}

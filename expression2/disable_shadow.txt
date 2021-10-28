@@ -1,0 +1,8 @@
+@name Disable shadow
+
+findIncludePlayerProps(owner())
+findInSphere(entity():pos(),7500)
+It=findToTable()
+for(I=1,It:count()){
+    It[I,entity]:propShadow(0)
+}

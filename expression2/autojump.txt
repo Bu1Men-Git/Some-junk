@@ -1,0 +1,14 @@
+@name AutoJump
+@persist O:entity T
+
+if(first()){
+    O=owner()
+    runOnTick(1)
+    T=1
+}
+if(O:vel():z()<=-75){O:plyDoJump(1)}
+else{O:plyDoJump(0)}
+#print(O:vel():z())
+#if(abs(O:vel():z())<1){O:plyDoJump(1)  O:plyDoJump(0)}
+#O:plyDoJump(T)
+#T=!T

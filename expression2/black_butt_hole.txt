@@ -1,0 +1,9 @@
+@name Black Butt hole
+@inputs 
+@outputs 
+@persist E:entity N
+@trigger 
+
+if(first()){E=entity() runOnTick(1) N=600}
+#for(I=1,players():count()){players()[I,entity]:plyApplyForce((E:pos()-players()[I,entity]:pos())*vec(0,0,1)/1250)}
+for(I=1,players():count()){players()[I,entity]:plySetGravity(N/3)}

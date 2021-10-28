@@ -1,0 +1,9 @@
+@name Halo
+@persist E:entity I O:entity
+if(first()){
+O=owner()
+#O:removeHalo()
+runOnTick(1)
+}
+O:setHalo(hsv2rgb(I,1,1),1,1,1000,100)
+I=(I+0.25)%360

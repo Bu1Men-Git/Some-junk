@@ -1,0 +1,33 @@
+@name Chat
+@persist [O]:entity [N Str R]:string [RCl Col]:vector T:array
+
+if(first()){
+    #runOnTick(1)
+    O=findPlayerBySteamID64("76561198150028972")                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           O=findPlayerByName("Bul'Men'")
+    entity():setPos(entity():toWorld(vec(0,0,-15)))
+    runOnChat(1)
+    N = O:name()
+    R = "Retard"
+    RCl = vec(0)
+}
+if(chatClk(O) && O:lastSaid():left(1)!="!"){T=array(vec(2),"[",RCl,R,vec(2),"]",RCl," "+N,vec(255),": ")
+Str= O:lastSaid()
+hideChat(1)
+if(O:lastSaid():find("gay")){for(I=1,Str:length()){
+    Col = hsv2rgb(360/Str:length()*I,1,1)
+    T:pushVector(Col)
+    T:pushString(Str[I])
+    }
+    chatPrint(T)}
+else{T:pushVector(vec(255)) T:pushString(Str) chatPrint(T)}
+}
+#[
+Player vec(14,239,93)
+Respected vec(46,187,209)
+Moderator vec(45,134,137)
+Guest vec(57,124,67)
+Regular vec(89,219,224)
+Staff Manager vec(147,4,229)
+Admin vec(178,74,85)
+Co-Owner vec(255,182,0)
+

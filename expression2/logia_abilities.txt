@@ -1,0 +1,103 @@
+@name Logia abilities
+#include "TagsFix"
+function entity table:fruit(Map1:vector2,Map2:vector2,Z){
+    #local V = randvec2(Map1,Map2)
+    local V = vec2(owner():pos())
+    #local E = propSpawn("models/sprops/geometry/sphere_12.mdl",vec(V),ang(0),0)
+    local E = entity()
+    #E:setModel("models/sprops/geometry/sphere_12.mdl")
+    local Name = This[2,string]
+    #local R = rangerOffset(2^16,E:pos(),vec(0,0,1))
+    #local Z = R:position():z()-15
+    rangerFlags("W")
+    local R = rangerOffset(2^16,vec(V,Z),vec(0,0,-1))
+    local Z = R:position():z()+E:aabbSize():z()/1.8
+    setName(Name+" "+Name+" no mi")
+    E:setPos(owner():pos())
+    #E:setPos(owner():pos():setZ(Z))
+    E:admPropFreeze(0)
+    E:propGravity(gravity()*10)
+    E:setColor(This[6,vector])
+    E:setMaterial("phoenix_storms/wire/pcb_blue")
+    #E:setHalo(E:getColor(),23-This[3,number]/3,23-This[3,number]/3)
+    E:propGravity(gravity()*This[8,table][1,number]^2)
+    E:setMass(sqrt(2))
+    E:removeNoCollideAll()
+    E:propSetFriction(1)
+    return E
+}
+
+function table line(D,V:vector,Vd:vector,S:vector){
+    local It=table()
+    rangerFlags("IE")
+    local Rng = rangerOffsetHull(D,V,Vd,S)
+    while(Rng:entity():isValid()){
+        local E=Rng:entity()
+        It:pushEntity(E)
+        rangerFilter(It:toArray())
+        rangerFlags("IE")
+        Rng = rangerOffsetHull(D,V,Vd,S)
+    }
+    return It
+}
+
+function entity:mode(L,T:table,Col:vector,N){
+    if(N){
+        This:setMaterial("sprops/sprops_plastic")
+        This:plySetColor(Col)
+        This:plySetSpeed(200*T[1,number])
+        This:plySetJumpPower(200*T[2,number])
+        This:plySetGravity(gravity()*T[3,number])
+        This:setCollisionGroup(L:toString())
+        This:plyAlpha(min(235,Col:length()*1.5))
+        This:disableFallDamage()
+    }
+    else{
+        This:setMaterial("")
+        This:plySetColor(vec(255))
+        This:plySetSpeed(200)
+        This:plySetJumpPower(200)
+        This:plySetGravity(gravity())
+        This:removeCollisionGroup()
+        This:plyAlpha(255)
+        This:enableFallDamage()
+    }
+}
+
+function entity:laser(It:table){
+        rangerFlags("Z")
+        local R = rangerOffset(2^15,This:attachmentPos("eyes"),This:eye())
+        local N = min(It[5,number]*16,R:distance())
+        timer("dec",720)
+        timer("1",900)
+        local V = vec(6,6,20)
+        holoCreate(0,This:shootPos()+This:vel()*tickInterval()+This:eye()*(N/2+30),-V,This:eyeAngles()+ang(90,0,0),vec4(It[6,vector],255),"models/props_docks/dock03_pole01a.mdl")
+        holoEntity(0):setHalo(It[6,vector],It[3,number]/2,It[3,number]/2)
+        holoScaleUnits(0,shiftL(vec(-N,It[3,number]*3,It[3,number]*3)))
+        holoMaterial(0,"debug/debugportals")
+        
+        rangerFilter(This)
+        local En = line(N,This:attachmentPos("eyes"),This:eye(),shiftR(V)):toArray()
+        for(I=1,En:count()){En[I,entity]:admAttack(It[3,number]*(4.2),This,This,It[1,number])}
+}
+
+function particle(T:array,V:vector,Vel:vector,G:vector,Dur,Siz:vector2,Alp:vector2,Col:vector){
+    particleSetMaterialList(T)
+    particleSetPosition(V)
+    particleSetVelocity(Vel)
+    particleGravity(G)
+    particleSetDuration(Dur)
+    particleSetStartSize(Siz:x())
+    particleSetEndSize(Siz:y())
+    particleSetStartAlpha(Alp:x())
+    particleSetEndAlpha(Alp:y())
+    particleSetColor(Col)
+    particleCreate()
+}
+
+
+
+function entity:death(Stat:table,Map:table){
+    local O = This
+    O:plyGod(0) O:mode(0,table(),vec(),0) O:rev():removeTag("fruit") Mode=0 O=noentity() E=Stat:fruit(Map[1,vector2],Map[2,vector2],Map[3,number])
+}

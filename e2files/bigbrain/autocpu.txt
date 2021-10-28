@@ -1,0 +1,45 @@
+@name AutoCPU
+@inputs 
+@outputs 
+@persist CPU_USAGE MaxCPU MaxOPS MinCPU AdjustTime ChangedOPS OPS
+@trigger
+
+if( first() | changed(softQuota()) | duped()){
+    MaxCPU = 500
+    MaxOPS = min(2000, softQuota())
+    MinCPU = 500
+    AdjustTime = 1000
+    CPU_USAGE = MaxCPU
+    
+    function number adjustCPU(Max:number) {
+        MaxCPU = Max
+        
+        findExcludeEntity(entity())
+        findByClass("gmod_wire_expression2")
+        E2s = findToArray()
+        
+        local TotalCPU = 0
+        foreach(K, E2:entity = E2s) {
+            TotalCPU += E2:cpuUsage()*1000000
+        }
+        
+        timer("adjust", AdjustTime)
+         
+        return clamp(MaxCPU - TotalCPU, MinCPU, Max - TotalCPU)*10^-6
+    }
+    
+    function number canProcess() {
+        return opcounter() < MaxOPS & cpuUsage() < CPU_USAGE
+    }
+    
+    function number canProcess(MaxOPS, MaxCPU) { 
+        return opcounter() < MaxOPS & cpuUsage() < MaxCPU
+    } 
+    
+    adjustCPU(MaxCPU) 
+}
+
+if(clk("adjust")) {
+    CPU_USAGE = adjustCPU(MaxCPU)
+}
+

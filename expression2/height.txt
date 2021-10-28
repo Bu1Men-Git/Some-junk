@@ -1,0 +1,4 @@
+@name Height
+
+print((entity():pos()-owner():pos()):z()/42)
+print(entity():isWeldedTo():type())

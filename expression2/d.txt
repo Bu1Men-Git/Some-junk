@@ -1,0 +1,9 @@
+@name 
+@inputs 
+@outputs 
+@persist 
+@trigger 
+findInSphere(entity():pos(),10)
+findClipToClass("prop_physics")
+findResult(1):admSetOwner(world())
+

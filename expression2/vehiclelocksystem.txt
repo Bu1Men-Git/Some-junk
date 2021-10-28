@@ -1,0 +1,12 @@
+@name VehicleLockSystem
+@persist Tx:string E:entity
+interval(1)
+if(first()){runOnTick(1) runOnFile(1) fileLoad("s.txt") entity():setPos(entity():toWorld(vec(0,0,-8))) entity():setAlpha(0)}
+if(fileClk("s.txt")){Tx=fileRead() X = entity():isWeldedTo():wirelink()}
+if(Tx:length()){
+if(changed(entity():isWeldedTo():driver()) && entity():isWeldedTo():driver()==owner()){E=entity():isWeldedTo()}
+while(E:driver():isPlayer() && perf()){
+E:printColorDriver(vec(0),Tx)
+}
+}
+if(!owner():isValid()){selfDestruct()}

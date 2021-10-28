@@ -1,0 +1,46 @@
+@name ComplexNumberDigitalScreen by Mist
+@outputs [PixelX PixelY] PixelG Clk
+@persist Wl:wirelink
+@persist N Clk
+@persist I [PixelX PixelY] MAX
+
+@persist Table:table
+
+interval(20)
+if(first()){
+    MAX = 100
+    Wl = entity():isWeldedTo():wirelink()
+    
+    N = 0
+    
+    
+    I=-1
+    if(I==-1)
+    {Wl["FillColor",number] = rgb2digi(vec(0), N)}
+    
+}
+else{
+        I += 1
+        PixelX = I%MAX
+        PixelY = floor(I/MAX)
+        
+        Output=comp()
+        for(J=0,3)
+        {
+            In = comp(PixelX+(J%2)/2-0.25, PixelY+floor(J/2)/2-0.25)
+            In /= 10
+            Output += In*In*In - 2*In + 0
+        }
+        Output /= 4
+        
+        Color = hsv2rgb((real(Output))*360/50%360, 1, 0.75+cos(imag(Output)*360/5)/4)
+        PixelG = rgb2digi(Color, N)
+        
+        
+        Wl["PixelX",number] = PixelX
+        Wl["PixelY",number] = PixelY
+        Wl["PixelG",number] = PixelG
+
+        Clk = !Clk
+        Wl["Clk",number] = Clk
+}

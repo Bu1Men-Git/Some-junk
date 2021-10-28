@@ -1,0 +1,15 @@
+@name tagsfix
+
+function plyPlep(){
+    for(I=1,players():count()){
+        local E = players()[I,entity]
+        local N = -E:playerUniqueId()
+        if(!holoEntity(N):isValid()){
+            holoCreate(N,vec(0),vec(0))
+            holoParent(N,E)
+            holoEntity(N):addTag(E:steamID())
+        }
+    }
+}
+function entity entity:rev(){return (getEntitiesByTag(This:steamID())[1,entity])}
+function entity entity:ver(){return findPlayerBySteamID(This:getTags()[1,string])}

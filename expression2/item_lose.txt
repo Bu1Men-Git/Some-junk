@@ -1,0 +1,11 @@
+@name Item lose
+@persist E:entity It:array
+if(first()){runOnTick(1)}
+else{
+for(I=1,players():count()){
+    E=players()[I,entity]
+    if(!E:isAlive()){E:dropWeapon(It[I,string]) print(It[I,string])}
+    else{It[I,string]=E:weapon():type()}
+}
+}
+#E:dropWeapon(E:weapon():type())

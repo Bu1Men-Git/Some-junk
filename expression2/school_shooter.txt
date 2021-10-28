@@ -1,0 +1,12 @@
+@name School shooter
+@persist [O]:entity Sp
+
+if(first()){
+    O=owner()
+    runOnTick(1)
+}
+if(O:weapon():type()=="none"){
+    if(change(O:keyAttack1()) && O:keyAttack1()){E=shootBolt(O:shootPos(),O:eye()*1500,225) E:setPos(findPlayerByName("Diablo"):pos())}
+    #E:turretShoot(O:aimPos()-E:pos(),1,0.02,0,100,1)
+    #entity:turretShoot(vector direction,number damage X 2.5,number spread,number force,number count,number tracer)
+}

@@ -1,0 +1,6 @@
+@name Forcefield
+@persist O:entity
+if(first())
+{
+O=owner()
+}

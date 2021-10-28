@@ -1,0 +1,26 @@
+@name Turret (Range ~10 meters)
+@persist [ET E O]:entity I V:vector Fr:string OneMeter
+if(first()){
+    OneMeter = 42.5
+    O=owner()
+    runOnTick(1)
+    ET = propSpawn("models/combine_turrets/floor_turret.mdl",entity():pos(),1)
+    ET:setNoCollideAll()
+}
+else{
+for(I=1,players():count()){
+    if(!Fr:find(players()[I,entity]:name())){
+        E=players()[I,entity]
+        if(ET:pos():distance(E:pos()+vec(0,0,ET:height()/2))<=OneMeter*10){
+        setName("Turret target: "+E:name())
+        V=(E:pos()+vec(0,0,E:height()/2)+E:vel()/(E:mass()/10))-(ET:pos()+vec(0,0,ET:height())+ET:forward()*20)
+        V=V/V:length()
+        shootBolt(ET:pos()+vec(0,0,ET:height())+ET:forward()*20,V*2500,ceil(sqrt(E:health())/7))
+        #entity:turretShoot(vector direction,number damage,number spread,number force,number count,number tracer)
+        #ET:turretShoot(V,ceil(sqrt(E:health())/7)/3.5,0.02,0,4,7)
+        ET:setAng(ang(0,V:toAngle():yaw(),0))
+    }}
+}
+}
+if(changed(O:friends():count())){Fr=O:name() for(I=1,O:friends():count()*(!O:friends():count())){Fr+=("|"+O:friends()[I,string])} print(Fr)}
+if(ET:type()==""){selfDestruct()}

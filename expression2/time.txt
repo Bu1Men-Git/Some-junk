@@ -1,0 +1,5 @@
+@name time
+runOnDmg(1)
+interval(1)
+if(changed(owner():keyAttack1()) && owner():keyAttack1()){timer("time",2500)}
+if(dmgClk()){print(2500-timerTimeLeft("time"))}

@@ -1,0 +1,16 @@
+@name tag fix e2
+function plyPlep(){
+    for(I=1,players():count()){
+        local E = players()[I,entity]
+        local N = E:playerUniqueId()
+        if(!holoEntity(N):isValid()){
+            holoCreate(N,vec(0),vec(0))
+            holoParent(N,E)
+        }
+    }
+}
+function entity entity:rev(){return (holoEntity(This:playerUniqueId()))}
+function entity entity:ver(){return (This:parent())}
+
+interval(10)
+if(changed(players():count())){plyPlep()}

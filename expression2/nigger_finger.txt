@@ -1,0 +1,10 @@
+@name Nigger Finger
+@persist Ents:array WL:wirelink
+interval(1)
+findInSphere(entity():pos(),9999999)
+findClipFromEntity(owner())
+Ents = findToArray()
+WL=entity():isWeldedTo():wirelink()
+WL:setNumber("On",1)
+WL:setArray("Entities",Ents)
+

@@ -1,0 +1,6 @@
+@name Damage detector
+@persist X:wirelink O:entity I
+
+if(first()){runOnTick(1) O=owner() X=entity():isWeldedTo():wirelink() X:setEntity("Entity",O)}
+X:setNumber("On",I)
+I=!I

@@ -1,0 +1,40 @@
+@name Iterator
+@persist ArrayIterators:table
+
+if(first() | duped()) { 
+    function void table:resetIterator() {
+        This["-Iterate", number] = 1
+    }
+    
+    function number table:iterate(Loop) {
+       if(!This["-Iterate", number]) { This:resetIterator() }
+        
+        local Iterate = This["-Iterate", number]
+        
+        if(Iterate > This:count()) { 
+            Iterate = Loop
+        }
+        
+        This["-Iterate", number] = Iterate + 1
+        
+        return Iterate
+    }
+    
+    function void resetIterator(ID:string) {
+        ArrayIterators[ID, number] = 1
+    }
+    
+    function number array:iterate(ID:string, Loop:number) {
+        if(!ArrayIterators[ID, number]) { resetIterator(ID) }
+        
+        Iterator = ArrayIterators[ID, number]
+        
+        if(Iterator > This:count()) { 
+            Iterator = Loop
+        } 
+        
+        ArrayIterators[ID, number] = Iterator + 1
+        
+        return Iterator
+    }
+}

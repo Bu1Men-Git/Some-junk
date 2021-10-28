@@ -1,0 +1,4 @@
+@name output spammer
+@outputs X
+interval(1)
+X=!X

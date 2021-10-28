@@ -1,0 +1,15 @@
+@name Aim Assist like on console
+@persist [E O]:entity T It:array A:angle
+function table line(D,V:vector,Vd:vector,S:vector){
+    local It=table()
+    rangerFlags("IE")
+    local Rng = rangerOffsetHull(D,V,Vd,S)
+    while(Rng:entity():isValid()){
+        local E=Rng:entity()
+        It:pushEntity(E)
+        rangerFilter(It:toArray())
+        rangerFlags("IE")
+        Rng = rangerOffsetHull(D,V,Vd,S)
+    }
+    return It
+}

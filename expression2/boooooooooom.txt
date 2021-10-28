@@ -1,0 +1,7 @@
+@name BOOOOOOOOOOM
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+boom2(entity():toWorld(vec(0,0,-1)),88000,1241424)

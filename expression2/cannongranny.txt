@@ -1,0 +1,26 @@
+@name cannonGranny
+@inputs 
+@outputs 
+@persist Models:array Prop:entity 
+@trigger 
+interval(1)
+    Models = array(
+   "models/props_phx/cannonball_solid.mdl",
+    "models/props_phx/cannonball.mdl",
+    "models/props_phx/ball.mdl",
+    "models/xqm/rails/gumball_1.mdl",
+    "models/xqm/rails/trackball_1.mdl"
+    )
+
+
+if(owner():weapon():type() == "none"){
+if(owner():keyAttack1() && changed(owner():keyAttack1())){
+Random = round(random(1, Models:count()))
+Prop = propSpawn(Models[Random,string], owner():shootPos()+owner():eye()*50, owner():eye():toAngle(), 0)
+Prop:applyForce(Prop:forward()*Prop:mass()*10*1000)
+if(owner():keyAttack2()){
+  propDeleteAll()
+}
+}
+}
+

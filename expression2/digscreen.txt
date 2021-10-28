@@ -1,0 +1,30 @@
+@name DigScreen
+@model models/led2.mdl
+@persist ResX ResY X Y D:wirelink A V:vector
+if(first()){runOnTick(1)
+    D=entity():isWeldedTo():wirelink() 
+    function wirelink:init(ResX,ResY){
+        This[1048574]=0 
+        This[1048569]=3 
+        This[1048575]=1
+        This[1048573]=ResX  
+        This[1048572]=ResY
+    }   
+    function wirelink:dPixel(X,Y,Color:vector,ResX,ResY){
+        This[X+Y*ResX]=rgb2digi(Color,3)
+    }
+    ResX=2^7
+    ResY=2^7
+    D:init(ResX,ResY)  
+}
+while(X<ResX*ResY && perf()){
+A=(abs(cos(X/128*180))+Y)
+V=hsv2rgb(180/(ResX+ResY)*(X+Y),1,1)
+D:dPixel(X,Y,V,ResX,ResY)
+X++
+Y+=floor(X/ResX)
+X=X%ResX 
+setName(toString(round((X+Y*ResX)/(ResX*ResY),3   )*100) + "%")
+if(X*Y>=ResY*ResX){selfDestruct()}
+}
+#http://i.imgur.com/xn4cYl4.png

@@ -1,0 +1,20 @@
+@name LAser
+@model models/led2.mdl
+@persist [O]:entity [P1 P2]:vector Ang:angle N R:ranger
+if(first()){
+    O=owner()
+    runOnTick(1)
+    N=5
+    entity():setPos(O:shootPos())
+    entity():parentTo(O)
+}
+if(O:weapon():type()==".357 Magnum" && O:keyAttack2() && changed(O:keyAttack2())){
+    holoDeleteAll()
+    Ang=O:eyeAngles(    )
+    for(I=1,N+1){
+        rangerFilter(O)
+        R=rangerAngle(10000,Ang:pitch(),Ang:yaw()) 
+        P1=R:position()     
+        holoCreate(I,O:pos()*1.5-P1/2,vec(0.5,0.5,(O:pos()-P1):length()/2),(O:pos()-P1):toAngle())  
+    }
+}

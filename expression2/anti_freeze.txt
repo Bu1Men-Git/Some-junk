@@ -1,0 +1,6 @@
+@name anti freeze
+@persist  O:entity
+
+if(first()){O=owner() runOnTick(1)}
+O:plyFreeze(0)
+O:freezePlayer(0)

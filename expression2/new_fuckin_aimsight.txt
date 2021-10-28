@@ -1,0 +1,10 @@
+@name New FUCKIN aimsight
+@persist E:entity W:wirelink V2:vector2
+
+if(first()){E=spawnEgpHud(entity():toWorld(vec(0,0,-10)),ang(0),1) V2=egpScrSize(owner())/2 W=E:wirelink()}
+W:egpBox(1,V2-vec2(0,1),vec2(20,2))
+W:egpBox(2,V2-vec2(1,0),vec2(2,20))
+W:egpAlpha(1,100)
+W:egpAlpha(2,100)
+W:egpHudToggle()
+selfDestruct()

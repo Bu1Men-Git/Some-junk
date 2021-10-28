@@ -1,0 +1,8 @@
+@name Tru Bhop
+@persist O:entity
+if(first()){O=owner() runOnTick(1) O:plyDoJump(0)}
+if(pointHasContent(O:toWorld(vec(0,0,-12-(O:ping()/10))+O:vel()*tickInterval()),"solid") && !timerRunning("clk")){
+    timer("clk",150)
+    O:plyDoJump(1)
+}
+if(clk("clk")){O:plyDoJump(0)}

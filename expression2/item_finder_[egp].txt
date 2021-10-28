@@ -1,0 +1,37 @@
+@name Item Finder [EGP]
+#@inputs X:wirelink
+@persist [O E EW]:entity It:array I C X:wirelink D
+if(first()){
+    runOnTick(1)
+    O=owner() I=0
+    findByModel("models/bull/dynamicbutton.mdl")
+    findClipToPlayerProps(O)
+    EW=findResult(1)
+    X=EW:wirelink()
+    if(EW:isValid()){hint("Da",100)}
+    timer("Rel",100) 
+    findExcludeModel("weapons")
+    findExcludeClass("gmod")
+    findExcludeClass("player")
+    findExcludeClass("beam")
+    findExcludeClass("spotlight_end")
+    findExcludeClass("ambient")
+    findExcludeClass("trigger")
+    findExcludeClass("text")
+}
+function rel(){X:egpClear()
+    findByModel("models/props_junk/wood_crate001a.mdl")
+    It=findToArray()
+    print(It:count())
+    if(It:count()){
+    while(I<It:count() && perf()){I++
+        E=It[I,entity]
+        D=E:pos():distance(O:pos())
+        X:egp3DTracker(I,vec(0))
+        X:egpParent(I,E)
+        X:egpBoxOutline(I+2500,X:egpPos(I)-vec2(0,12.5),vec2(25))
+        X:egpParent(I+2500,I)
+    }}
+    #timer("Rel",500)
+}
+if(clk("Rel")){rel()}

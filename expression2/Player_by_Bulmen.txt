@@ -1,0 +1,124 @@
+@name Player by Bullman V2
+@persist O:entity [Src Ply FFT Mu Music]:array RGB I N R M Sh Url:string As Pl
+if(first()){ entity():setAlpha(0) #[timer("Up",1000)]# O=owner() runOnTick(1) #[hideMyAss(10)]# #fileLoad("URL.txt")
+Src=array("https://yadi.sk/d/p_a2cm5g3Ysn7K#600 years",
+"https://yadi.sk/d/n3ODPv9B3YskKF#Goodbye Motherfucker",
+"https://yadi.sk/d/G1uOMVII3YskRP#Welcome To The Club",
+"https://yadi.sk/d/EMmS4XkR3YskYs#War of Change",
+"https://yadi.sk/d/W9vYsx1r3Yskbd#My Demons",
+"https://yadi.sk/d/Mt_-c6rz3Yskkx#It Has Begun",
+"https://yadi.sk/d/hTTJ_uBc3YsnhX#Monster",
+"https://yadi.sk/d/08-gXjkg3YskoD#Mad dummy",
+"https://yadi.sk/d/BivJKBfo3YskoH#Megalovania Dance remix",
+"https://yadi.sk/d/ITvaE0mT3YskwU#Megalovania Dual remix",
+"https://yadi.sk/d/3-EWvTYZ3YskwX#Noize MC Sniper",
+"https://yadi.sk/d/lUtKxnRa3Yskwa#Noize MC Talking Heads",
+"https://yadi.sk/d/hHRrQp7u3Yskwc#Noize MC Ustroy Destroy",
+"https://yadi.sk/d/5Xm2oM4G3Yskwh#Noize MC Hard Reboot",
+"https://yadi.sk/d/Cx9sFCXR3Yskwr#Broiler Money",
+"https://yadi.sk/d/JeUwvP_n3Yskwm#Apache No Twerk",
+"https://yadi.sk/d/65HE7R0M3YjC2Z#Dance till u are dead",
+"https://yadi.sk/d/S9s1MhAU3YsmCe#Discord",
+"https://yadi.sk/d/ZwK_es6e3Ysm3m#Drank Rain",
+"https://yadi.sk/d/x_5oyxzl3YjCFd#The Last Ones standing",
+"https://yadi.sk/d/HIwzm7vc3YsmCg#I can't stop",
+"https://yadi.sk/d/TZibHcsk3YuRtw#Bass cannon",
+"https://yadi.sk/d/wVvwFWzE3YjCd5#Pumped up kicks",
+"https://yadi.sk/d/EAhZeYzI3YjCR4#I want to kill every pony in the world",
+"https://yadi.sk/d/yrylXVTy3YjCXP#I want to kill everybody in the world",
+"https://yadi.sk/d/7NGwy0rF3ZAZGF#Skrillex Welcome To Jamrock",
+"https://yadi.sk/d/Ai3PRNhR3Ysm23#Black Clover OP",
+"https://yadi.sk/d/1HlvtcE83YsmF7#Believer",
+"https://yadi.sk/d/7Ruw0kOB3YsmFG#Radioactive",
+"https://yadi.sk/d/QciiloSb3Ysn5Y#JoJo 1 OP",
+"https://yadi.sk/d/6RrCs-QL3Ysn5g#JoJo 2 OP",
+"https://yadi.sk/d/htbJOSu73Ysn5k#JoJo 3 OP",
+"https://yadi.sk/d/mseiEX7-3Ysn5p#JoJo 4 OP",
+"https://yadi.sk/d/c1A4qQ1V3Ysn5r#JoJo 5 OP",
+"https://yadi.sk/d/zVxuBVXf3Ysn5v#JoJo 6 OP",
+"https://yadi.sk/d/HB4fts5D3Ysn5y#JoJo 7 OP",
+"https://yadi.sk/d/oWFgUn_L3Ysmfq#JoJo Awaken",
+"https://yadi.sk/d/Qc8DZ5CY3Ysmg2#JoJo Awaken Bass",
+"https://yadi.sk/d/58zx55eQ3YjCkL#Merry Christmas",
+"https://yadi.sk/d/P3pNyyB43YjCnU#Mob Psycho 100 OP",
+"https://yadi.sk/d/VDN_DkMF3YsmQR#Nanatsu No Taizai OP",
+"https://yadi.sk/d/ViK1LyNp3YjCva#Napas Lavandos",
+"https://yadi.sk/d/j6glELg_3YsmLA#Saga of Tanya the evil ",
+"https://yadi.sk/d/wwIZ_E_83YsmQW#Skillet Monster",
+"https://yadi.sk/d/RYuJQZHw3YsmXU#Riders on the storm",
+"https://yadi.sk/d/kwAoRkFG3Yskbj#Starset Monster",
+"https://yadi.sk/d/2AdhCe4C3YsmYk#21 Pilots Stressed out",
+"https://yadi.sk/d/lNGZ--9E3Ysmmu#ZA WARUDO",
+"https://yadi.sk/d/710oNQ5j3YuS6N#ZHIEND Fallin'",
+"https://yadi.sk/d/B664sGQa3ZYKVu#Dead Island 2 trailer theme",
+"https://yadi.sk/d/hOCShlro3YsmEy#Imagine Dragons Demons",
+"https://yadi.sk/d/fCMTGT7x3Zk6zy#Imagine Dragons Warriors",
+"https://yadi.sk/d/OVgFSzl_3YjCgg#Looking like this",
+"https://yadi.sk/d/Gqb9Crz53YsmXS#Let's get it started",
+"https://yadi.sk/d/DF5BmRIB3YsmYr#21 Pilots Heathens",
+"https://yadi.sk/d/1ZdXLIoA3Yv7tx#shiki Senpai ver. Hentai dude",
+"https://yadi.sk/d/3Ct9IYiC3Yv7zb#shiki Senpai Cypher prod.",
+"https://yadi.sk/d/V87TkiuU3Zk79u#Rae Sremmurd Black Beatles",
+"https://yadi.sk/d/t0R2e8IF3ZvRRT#CaHya xyu CoCu",
+"https://yadi.sk/d/mFabFr7e3ZvRSf#CaHya TbI B noPyadke?",
+"https://yadi.sk/d/gtb2jUf13YuYk8#ERROR")
+for(M=1,players():count()){Ply:pushString(M+"-"+players()[M,entity]:name())}
+for(M=1,Src:count()){Music:pushString(M:toString()+" "+Src[M,string]:explode("#"):string(2))}
+dPanel("Music player",vec2(1025,30),vec2(220,380))
+dTabHolder("P","Music player",vec2(5,25),vec2(210,350))
+dListBox("Music","P",vec2(10),vec2(190,220))
+dButton("Start","P",vec2(10,235),vec2(90,14)) dButton("Start for all","P",vec2(10,251),vec2(90,14))
+dButton("Stop","P",vec2(110,235),vec2(90,30))
+dButton("Pause","P",vec2(10,270),vec2(90,30))   dButton("Play","P",vec2(110,270),vec2(90,30))
+dSlider("Volume","P",vec2(10,290),220,0,100)    dSetNval("Volume",50)
+dDropBox("Ply","P",vec2(10,325),190)
+dArray("Ply",Ply)
+dArray("Music",Music)
+dShow("Music player",Sh)
+}
+if(changed(players():count())){Ply=array() for(M=1,players():count()){Ply:pushString(M+"-"+players()[M,entity]:name())} dArray("Ply",Ply)}
+if(owner():keyPressed("T") && changed(owner():keyPressed("T"))){Sh=!Sh dShow("Music player",Sh) enableMouse(Sh)}
+if(Sh){
+if(changed(dNval("Volume"))){soundURLvolume("1",dNval("Volume")/100)}
+if(dClk("Start")){stopAllTimers() if(Pl>0){for(Q=1,Pl){soundURLdelete(Q)}} O=findPlayerByName(dSval("Ply"):explode("-"):string(2)) holoDeleteAll()  
+soundURLload("1","https://getfile.dokpub.com/yandex/get/"+Src[dSval("Music"):explode(" "):string(1):toNumber(),string]:explode("#"):string(1),0.5,0,O)
+ timer("Play",100) #print(Src[dSval("Music"):explode(" "):string(1):toNumber(),string]+" : "+dSval("Music"):explode(" "):string(1):toNumber())
+}
+if(dClk("Stop")){
+soundURLdelete("1") for(Q=1,Pl){soundURLdelete(Q)} holoDeleteAll() 
+}
+if(dClk("Pause")){
+soundURLpause("1")
+}
+if(dClk("Play")){
+soundURLpause("1")
+soundURLplay("1")
+}
+if(dClk("Start for all")){holoDeleteAll() for(Q=1,players():count()){O=players()[Q,entity] Pl=Q
+soundURLload(Pl:toString(),"https://getfile.dokpub.com/yandex/get/"+Src[dSval("Music"):explode(" "):string(1):toNumber(),string]:explode("#"):string(1),0.5,0,O)}
+}}
+if(clk("Play")){RGB=0
+holoCreate(1337) holoAng(1337,world():angles()) holoAlpha(1337,0)
+for(I=1,24){
+holoCreate(I)
+holoPos(I,holoEntity(1337):pos()+vec(sin(R)*10,cos(R)*10,7.5))
+holoModel(I,"models/holograms/rcylinder_thick.mdl")
+holoAng(I,ang(vec(0,-R,0)))
+holoDisableShading(I,1) 
+holoParent(I,1337)
+R=(R+30)%360  }  holoPos(1337,O:pos()) holoAlpha(1337,0)  RGB=randint(1,2) if(As==0){ holoCreate(228)  holoModel(228,O:model()) }
+timer("P",100)}
+if(clk("P") && RGB>0){ holoAlpha(1337,0)
+FFT = entity():soundFFT("1")
+if(O:inVehicle()){holoPos(1337,O:vehicle():toWorld(vec(0,0,85))) soundURLparent("1",O:vehicle()) holoParent(1337,O:vehicle()) holoAlpha(228,0)}
+else{holoPos(1337,O:pos()) holoUnparent(1337) holoAlpha(228,0) soundURLparent("1",O) holoAng(1337,ang(vec(0)))}
+for(I=1,24){
+holoScale(I,vec(0.5+FFT[I,number]*0.00025*dNval("Volume")/100,0.5+FFT[I,number]*0.00025*dNval("Volume")/100,0.5+FFT[I,number]*0.025*dNval("Volume")/100))
+#holoScale(I,vec(0.4275,0.5+FFT[I,number]*0.025*dNval("Volume")/100,0.4275))
+if(RGB==1){holoColor(I,vec(FFT[I,number]*2.5*dNval("Volume")/100,12.5,12.5))}
+#elseif(RGB==2){holoColor(I,vec(FFT[I,number]*2.5,FFT[I,number]*5,25))}
+elseif(RGB==2){holoColor(I,vec(FFT[I,number]*2.5*dNval("Volume")/100,12.5,FFT[I,number]*2.5*dNval("Volume")/100))}
+} timer("P",50)  }
+#https://zaix.ru/
+if(FFT:sum()==0 && clk("P")&& dNval("Volume")!=0){timer("end",7500)} if(clk("end")){if(FFT:sum()==0){soundURLdelete("1") stoptimer("P") holoDeleteAll()}}
+

@@ -1,0 +1,5 @@
+@name Dmg tester
+@model models/props_c17/canister_propane01a.mdl 
+if(first()){runOnTick(1)  entity():removeNoCollideAll()}
+entity():setAng(-owner():angles())
+if(changed(damage())){print(damage():getDamage())}

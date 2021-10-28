@@ -1,0 +1,8 @@
+@name Entity dissolver
+@persist [O E]:entity D:damage
+if(first()){runOnTick(1) O=owner() E=entSpawn("env_entity_dissolver",O) D=damage() D:setDamage(88005553535) D:setType(33540137) D:setAttacker(E) D:setInflictor(E)}
+if(O:keyUse() && changed(O:keyUse()) && O:aimEntity():isValid()){O:aimEntity():takeDamage(D)}
+#[
+33540137
+Entity [213][env_entity_dissolver]
+Entity [213][env_entity_dissolver]

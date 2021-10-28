@@ -1,0 +1,86 @@
+@name lazerparticles
+@persist Lazers:table
+
+
+if(first() | duped()) { 
+    #include "particles/particles"
+    #include "particles/particleemitter"
+    
+    #models/tankgun/tankgun_short_50mm.mdl
+    
+    function vector4 randomLazerColor() { 
+        return vec4(random(100,255), random(100, 255), random(100, 255), 200) 
+    }
+    
+    #Thanks Reism
+    function void table:gayColor() { 
+        local Idx = This["Index", number]
+        holoColor(Idx, vec4(hsv2rgb(realtime()*(Idx-StartIdx)*500%360, 1, 1), 200))
+    }
+    
+    
+    function entity holoLine(ID, Thickness, V1:vector, V2:vector, Color:vector4) {
+        local Holo = holoCreate(ID, (V1 - V2) / 2, vec(0), (V2 - V1):toAngle() + ang(90,0,0), Color, "models/props_docks/dock02_pole02a.mdl")
+        holoScaleUnits(ID, -vec(Thickness,Thickness, V1:distance(V2)))
+        holoMaterial(ID, "models/debug/debugwhite")
+        holoDisableShading(ID, 1)
+        
+        return Holo
+    }
+    
+    function void table:drawLazer() { 
+        local Origin = This["Origin", vector]
+        
+        This:setEnt(holoLine(This:getID(), This:getSize(), Origin, Origin + This:getVel(), vec4()))
+        
+        This:gayColor()
+    }
+    
+    function table table:createLazer(Size, Origin:vector, Vel:vector) {
+        local Lazer = This:createParticle(Size, Origin, Vel)
+        Lazer["Origin", vector] = Origin
+        
+        Lazer:drawLazer()
+        
+        return Lazer
+    }
+    
+    function void table:onLazerStopped(R:ranger) { 
+        #doShit()  lol 
+    }
+    
+    function void table:onParticleUpdate() {
+        local Index = This["Index", number]
+        local Origin = This["Origin", vector]
+        local Pos = This["Pos", vector]
+        local Vel = This["Vel", vector]
+        local Size = This["Size", number]
+        
+        local R = rangerOffsetHull(Origin, Pos + Vel, vec(Size, Size, 1))
+        
+        if(R:hit() | Vel:length() < 1 | This:getSize() < 1) {
+            This:onLazerStopped(R)
+        } else { 
+            This:setPos(Pos + Vel)
+            This:setVel(This:getVel() * 0.9)
+        }
+        
+        This:setSize(max(This:getSize() * 0.9,1))
+        
+        
+        holoPos(Index, (Origin + Pos) / 2)
+        holoScaleUnits(Index, -vec(Size,Size, Origin:distance(Pos)))
+        
+        This:gayColor()
+    }
+   
+    function table createLazerEmitter(Size, Pos:vector, Vel:vector, Rate, Max) { 
+        local LazerEmitter = createParticleEmitter(Size, Pos, Vel, -1, Rate, Max)
+        return LazerEmitter
+    }
+    
+    function void table:emitParticle() { 
+        This:getParticles():createLazer(This:getSize(),This:getPos(), This:getVel())
+    }
+}
+

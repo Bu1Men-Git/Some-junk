@@ -1,0 +1,23 @@
+@name Killer Queen
+@persist X:wirelink [O E EO P1]:entity T Name:array
+if(first()){
+O=owner()
+runOnTick(1)
+P1=propSpawn("Killer Queen.mdl",entity():toWorld(vec(0,0,-70)),1)
+entity():setPos(entity():toWorld(vec(0,0,-10)))
+}
+findIncludeClass("gb_bomb")
+findIncludeClass("gb_rocket")
+findInSphere(owner():pos(),25000)
+if(!E:isValid()){#[if(EO:isPlayer()){chatPrint("Killer Queen has already touched "+ EO:name() +" "+Name[3,string]+" "+Name[2,string])}]# E=findResult(1) EO=E:owner() Name=E:type():explode("_")}
+if(E:isValid() && !T){
+if(E:type():left(3)=="gb_"){T=1
+X=E:wirelink()
+X:setNumber("Arm",1)
+X:setNumber("Launch",1)
+timer("3",10)
+}
+else{findExcludeEntity(E)}
+}
+if(clk("3")){E:setPos(vec(0)) X:setNumber("Detonate",1) T=0}
+if(P1:type()==""){selfDestruct()}

@@ -1,0 +1,28 @@
+@name Radar
+@persist [O E]:entity I [D]:vector
+function void reload(){
+    for(I=0,players():count()-1){
+        E=players()[I,entity]
+        D=(E:pos()-O:pos())
+        holoPos(I,(O:pos()+O:height()/2)+(D/D:length())*25)
+        holoColor(I,vec(255,10,10)-vec(max(255,D:length()/100),0,0))
+    }
+}
+function void ply(){
+    holoDeleteAll()
+    for(I=0,I<players():count()){I++
+        E=players()[I,entity]
+        if(E!=O){
+            D=(E:pos()-O:pos())
+        holoCreate(I,(O:pos()+O:height()/2)+(D/D:length())*25,vec(0.5),ang(D),vec(10),"sphere")
+        holoVisible(I,players(),0)
+        holoVisible(I,O,1)
+    }
+    }
+}
+if(first()){
+    O=owner()
+}
+interval(10)
+if(changed(players():count())){ply()}
+reload()

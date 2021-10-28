@@ -1,0 +1,45 @@
+@name fartnite
+@persist T:entity 
+interval(1)
+if(first()){ T=findPlayerByName("Dia")}
+if(owner():weapon():type() == "none"){
+if(owner():keyAttack1()&&changed(owner():keyAttack1())){
+    holoCreate(1,owner():aimPos() + vec(0,0,holoEntity(1):height()/2))
+    holoModel(1,"models/hunter/tubes/circle2x2.mdl")
+    holoMaterial(1,"models/props_combine/stasisshield_sheet")
+   holoPos(1,holoEntity(1):pos() + vec(0,0,owner():height()/2))
+    holoAng(1,(owner():pos()-holoEntity(1):pos()):toAngle()+entity():toWorld(ang(0,90,90)))
+}
+  if(owner():keyAttack2()&&changed(owner():keyAttack2())){  
+    holoCreate(2,owner():aimPos())
+    holoModel(2,"models/hunter/tubes/circle2x2.mdl")
+    holoMaterial(2,"models/props_combine/stasisshield_sheet")
+  holoPos(2,holoEntity(2):pos() + vec(0,0,owner():height()/2))
+    holoAng(2,(owner():pos()-holoEntity(2):pos()):toAngle()+entity():toWorld(ang(0,90,90)))
+  #  
+
+ 
+
+}
+
+
+# og prop models/props_phx/construct/metal_plate1_tri.mdl
+#<=60 orignally 
+}
+if((owner():pos()+vec(0,0,owner():height()/2)):distance(holoEntity(1):pos()) <= 30){
+    owner():teleport(holoEntity(2):pos()+(owner():pos()-holoEntity(1):pos())*vec(-1.5)-vec(0,0,owner():height()/2))
+    
+}
+
+if((owner():pos()+vec(0,0,owner():height()/2)):distance(holoEntity(2):pos()) <= 30){
+    owner():teleport(holoEntity(1):pos()+(owner():pos()-holoEntity(2):pos())*vec(-1.5)-vec(0,0,owner():height()/2))
+   
+}
+ if((T:pos()+vec(0,0,T:height()/2)):distance(holoEntity(1):pos()) <= 30){
+    T:teleport(holoEntity(2):pos()+(T:pos()-holoEntity(1):pos())*vec(-1.5)-vec(0,0,T:height()/2))
+}
+ if((T:pos()+vec(0,0,T:height()/2)):distance(holoEntity(2):pos()) <= 30){
+    T:teleport(holoEntity(1):pos()+(T:pos()-holoEntity(2):pos())*vec(-1.5)-vec(0,0,T:height()/2))
+}
+
+ 

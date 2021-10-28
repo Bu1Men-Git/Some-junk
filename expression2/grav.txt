@@ -1,0 +1,5 @@
+@name Grav
+@persist O:entity G:vector
+if(first()){O=owner() runOnTick(1) G=vec(0,0,1) runOnLast(1)}
+if(O:keyPressed("G") && changed(O:keyPressed("G"))){G=-O:aimNormal():normalized() print(G) O:removeHull() #[entity():plySetGravity(0) ]#O:gravityHull(G,0,0,gravity()*12) O:plySetMass(0)}
+if(last()){O:plySetGravity(gravity())}

@@ -1,0 +1,5 @@
+@name tool
+@persist 
+
+interval(1)
+if(changed(owner():weapon():type())){print(owner():weapon():type())}

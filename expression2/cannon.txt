@@ -1,0 +1,30 @@
+@name cannon
+@persist Models:array Prop:entity NPC:array O:entity
+if(first()){O=owner()
+runOnTick(1)
+    Models = array(
+   "models/props_phx/cannonball_solid.mdl",
+    "models/props_phx/cannonball.mdl",
+    "models/props_phx/ball.mdl",
+    "models/xqm/rails/gumball_1.mdl",
+    "models/xqm/rails/trackball_1.mdl"
+    )
+    NPC = array(
+    "models/Kleiner.mdl",
+    "models/gman_high.mdl",
+    "models/monk.mdl",
+    "models/breen.mdl",
+    "models/Eli.mdl",
+    "models/dog.mdl"
+    )
+}
+if(owner():weapon():type() == "none"){
+if(owner():keyAttack1() && changed(owner():keyAttack1())){
+Prop = propSpawn(Models[round(random(1, Models:count())),string], owner():shootPos()+owner():eye()*50, owner():eye():toAngle(), 0)
+Prop:setModel(NPC[round(random(1, NPC:count())),string])
+Prop:applyForce((O:aimPos()-O:pos())/(O:aimPos()-O:pos()):length()*Prop:mass()*(O:aimPos()-O:pos()):length()*10)
+}
+if(owner():keyAttack2() && changed(owner():keyAttack2())){
+  propDeleteAll()
+}
+}

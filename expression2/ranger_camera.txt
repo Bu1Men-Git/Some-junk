@@ -1,0 +1,21 @@
+@name Ranger camera
+@persist Sz:vector2 [W E]:entity X:wirelink I
+function wirelink:render(S:vector2,N,E:entity){
+    local X = N%S:x()
+    local Y = floor(N/S:x())
+    local V = W:aabbSize()*vec(-0.5,0,1)
+    local V2 = vec2(E:aabbSize():x()/S:x()*X,-E:aabbSize():y()/S:y()*Y)
+    print(V2)
+    This:egpBox(N,vec2(X,Y),vec2(1))
+    rangerFilter(W)
+    local R=rangerOffsetHull(1024,W:pos()+V+shiftR(vec(V2)),E:aabbSize(),-E:up(),vec(1,V2:x(),V2:y()))
+    #W:pos()+V+V2
+    This:egpColor(N,vec(R:distance()/4))
+}
+if(first()){E=entity()  W=spawnEgp("models/hunter/plates/plate2x2.mdl",E:toWorld(vec(0,0,48)),E:angles()+ang(90,0,180),1) X=W:wirelink() W:parentTo(E)
+    Sz=vec2(16) X:egpResolution(vec2(0),Sz)
+}
+interval(300)
+if(!W:isValid()){selfDestruct()}
+X:render(Sz,I,W)
+I=(I+1)%(Sz:x()*Sz:y())

@@ -1,0 +1,5 @@
+@name Texts printer
+@persist O:entity I Txt:array
+if(first()){runOnFile(1) fileLoad("texts/Lose youself.txt") I=1}
+if(fileClk()){Txt=fileRead():explode("\n") timer("step",10)}
+if(clk("step") && I<Txt:count()){chatPrint(vec(30),"[",vec(240),"Eminem",vec(30),"]",vec(255),": "+Txt[I,string]) timer("step",1000*(Txt[I,string]:replace(" ",""):length())/7/(1+3/Txt:count()*I)) I++}

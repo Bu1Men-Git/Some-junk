@@ -1,0 +1,24 @@
+@name Map data
+@persist R:ranger E:entity [V1 V2]:vector2 Z
+@outputs Map:table
+if(first()){
+    interval(100)
+E=entity() E:setAlpha(0)
+R=rangerOffset(4^8,E:pos(),vec(0,0,1))
+Z=R:position():z()
+E:setPos(R:position()-vec(0,0,5))
+}
+rangerFlags("")
+R=rangerOffset(4^8,E:pos(),vec(-1,0,0))
+V1=V1:setX(R:position():x())
+rangerFlags("")
+R=rangerOffset(4^8,E:pos(),vec(1,0,0))
+V2=V2:setX(R:position():x())
+rangerFlags("")
+R=rangerOffset(4^8,E:pos(),vec(0,-1,0))
+V1=V1:setY(R:position():y())
+rangerFlags("")
+R=rangerOffset(4^8,E:pos(),vec(0,1,0))
+V2=V2:setY(R:position():y())
+Map = table(V1,V2,Z)
+printTable(Map)

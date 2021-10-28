@@ -1,0 +1,112 @@
+@name JustSimple dPanel [WIP]
+@persist [F O]:entity I H Sh Ply:array P
+interval(100)
+if(first()){ entity():setAlpha(0)
+O=owner()
+Ply=array()
+Sh=0  I=1
+dPanel("Wallhack",vec2(950,30),vec2(400,400))
+dTabHolder("WH panel","Wallhack",vec2(5,25),vec2(390,370))
+dPanel("Wallhack",vec2(1050,30),vec2(200,165))
+dTabHolder("WH panel","Wallhack",vec2(5,25),vec2(190,135))
+dDropBox("Players","WH panel",vec2(10,5),120)
+dButton("Scan","WH panel",vec2(140,5),vec2(40,20))
+dButton("Track","WH panel",vec2(10,30),vec2(170,30))
+dButton("ON WH","WH panel",vec2(10,30),vec2(80,30))
+dButton("OFF WH","WH panel",vec2(100,30),vec2(80,30))
+dButton("HP|Armor","WH panel",vec2(100,65),vec2(80,30))
+dButton("Weapon","WH panel",vec2(100,100),vec2(80,30))  
+dButton("Distance","WH panel",vec2(10,100),vec2(80,30))
+dButton("WH for all","WH panel",vec2(10,65),vec2(80,30))
+dButton("Untrack","WH panel",vec2(10,65),vec2(80,30))
+#dButton("Freeze","WH panel",vec2(10,135),vec2(80,30))  
+#dButton("Unfreeze","WH panel",vec2(100,135),vec2(80,30))  
+dShow("Wallhack",Sh)
+#alibNoDup()
+#slibNoDupe()
+function void scan(){
+for(H=1,players():count()){
+Ply:pushString(players()[H,entity]:name())}
+#Ply:insertString(0,"AirDrop")
+dArray("Players",Ply)}
+scan()
+}
+timer("Scan",1000)
+if(O:keyPressed("T") && changed(O:keyPressed("T"))){
+Sh=!Sh
+enableMouse(Sh)
+dShow("Wallhack",Sh)
+}
+if(clk("Scan")){
+    findInSphere(vec(0),15000)
+    findIncludeClass("sent_airdropcrate")
+    F=find()
+}
+    if(F & changed(F)){
+    print(F:pos())
+    holoCreate(I,F:pos())
+    holoModel(I,F:model())
+    holoAng(I,F:angles())
+    holoVisible(I,players(),0)
+    holoVisible(I,O,1)
+    I++
+    }
+if(dClk("ON WH")){
+    if(findPlayerByName(dSval("Players"))){
+        holoCreate(I,findPlayerByName(dSval("Players")):pos()+vec(0,0,0)) #35
+        holoParent(I,findPlayerByName(dSval("Players")))
+        holoPos(I,findPlayerByName(dSval("Players")):pos()+vec(0,0,30))
+        holoScale(I,vec(2.1,2.1,5.5))
+        holoColor(I,vec4(2,16,32,200))
+        holoDisableShading(I,1)
+        holoModel(I,"hq_cylinder")
+        holoMaterial(I,"pp/sub")
+        #holoAnim(I,3)
+        holoAng(I,world():angles())
+    }
+    else{
+        holoDelete(I)
+    } 
+holoPos(I,findPlayerByName(dSval("Players")):pos()+vec(0,0,35))
+holoVisible(I,players(),0)
+holoVisible(I,O,1)
+I++
+}
+if(dClk("OFF WH")){
+holoDeleteAll()
+I=0
+}
+function dist(){hint("Distance: ~"+(O:pos():distance(findPlayerByName(dSval("Players")):pos())/100):toString():explode("."):string(1)+" M",2)}
+if(dClk("Track")){timer("track",1000)}
+if(clk("track")){
+timer("track",1000)
+dist()
+}
+if(dClk("Untrack")){stoptimer("track")}
+if(dClk("HP|Armor")){
+print("Health: "+findPlayerByName(dSval("Players")):health()+"%")
+print("Armor: "+findPlayerByName(dSval("Players")):armor()+"%")
+}
+if(dClk("Weapon")){
+print("Weapon: "+findPlayerByName(dSval("Players")):weapon():type())
+}
+if(dClk("Scan")||changed(players():count())){Ply=array()   scan()}
+if(dClk("Distance")){dist()}
+if(dClk("WH for all")){
+    for(P=0,players():count()){
+        holoCreate(I)
+        holoParent(I,findPlayerByName(Ply[P,string]))
+        holoScale(I,vec(2.1,2.1,6))
+        holoColor(I,vec4(2,16,32,200))
+        holoDisableShading(I,1)
+        holoModel(I,"hq_cylinder")
+        holoMaterial(I,"pp/sub")
+        holoAng(I,world():angles())
+holoPos(I,findPlayerByName(Ply[P,string]):pos()+vec(0,0,35))
+holoVisible(I,players(),0)
+holoVisible(I,O,1)
+if(Ply[P,string]==O:name()){holoDelete(I)}
+I++
+}}
+#if(dClk("Freeze")){I--  znbHoloSolid(I)  I++}
+#if(dClk("Unfreeze")){I--  znbHoloUnSolid(I)  I++}

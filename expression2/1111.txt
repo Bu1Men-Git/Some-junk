@@ -1,0 +1,11 @@
+@name 1111
+@inputs 
+@outputs 
+@persist [E O]:entity V:vector
+@trigger 
+#function vector size(V:entity){
+    #return vector(V:)
+#}
+runOnTick(1)
+if(first()){O=owner() E=players()[2,entity] holoCreate(1,E:pos()+vec(0,0,E:height()/2),vec(-2,-2,-6)) V=vec(25,25,E:height()) }
+print(V/(E:pos()-O:pos()):length())

@@ -1,0 +1,9 @@
+@name point
+@persist I N
+N=36 I=0
+while(I<N && perf()){
+holoCreate(I,entity():pos(),vec(0.01,0.01,25),ang(vec(0,I*360/N,0)))
+holoModel(I,"models/props_phx/huge/evildisc_corp.mdl")
+holoMaterial(I,"pp/sub")
+I++
+}

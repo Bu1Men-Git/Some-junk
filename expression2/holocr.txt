@@ -1,0 +1,15 @@
+@name HOloCr
+@persist  [E O]:entity V:vector
+
+if(first()){
+    O=owner()
+    runOnTick(1)
+    holoCreate(1)
+    holoCreate(12,O:pos())
+    holoVisible(12,players(),0)
+    holoParent(12,O)
+    E=holoEntity(12)
+}
+V=E:vel()/8.5
+holoAng(12,O:angles())
+holoPos(1,E:forward()*50+E:pos()+V+$V*5)

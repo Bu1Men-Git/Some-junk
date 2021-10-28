@@ -1,0 +1,30 @@
+@name Immor
+@persist O:entity M D:damage T:array DD V:vector
+if(first()){O=findPlayerByName("Bul") runOnTick(1) runOnDmg(1,O) runOnLast(1) T=array(67108865,0) V=entity():toWorld(vec(0,0,-10))}
+#entity():teleport(V)
+O:plyGod(!M)
+if(dmgClk() && !M && !timerRunning("prot")){
+    D=lastDamage()
+    #DD=min(DD+D:getDamage()*5,15*110)
+    #hint((DD/15):toString(),10)
+    #D:setType(1337)
+    if(T:getIndex(D:getType())){O:setHealth(O:health()-D:getDamage()*((2*D:getType()==0)+1))}
+    if(O:health()<1 && O:isAlive()){O:plyGod(0) M=1 O:takeDamage(D) M=0}
+    
+}
+#DD=max(0,DD-1)
+if(O:isAlive() && changed(O:isAlive()) && !first()){timer("prot",7000)}
+if(pointHasContent(O:toWorld(vec(0,0,O:height()/2)),"water,slime")){M=1}else{M=0}
+if(changed(M)){O:plyDucking(M)}
+#O:plyApplyForce(O:up()*(-800*M)*O:keyJump())
+if(M){O:plyDoJump(0) O:plyApplyForce(O:up()*(-800)*O:keyJump())}
+O:plySetSpeed(max(!M*180+20-DD/15,20))
+#if()
+if(last()){O:plyGod(0) O:plyDucking(0) O:plySetSpeed(200)}
+#[
+Dmg types
+8 - fire
+256 - lighting
+0 - fists
+67108865 - combine ball
+1048576 - slime(toxic water)

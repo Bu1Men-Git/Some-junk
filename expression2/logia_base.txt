@@ -1,0 +1,218 @@
+@name Logia_base
+@persist [E O Dev Temp]:entity M [D]:damage [L Cur T Stat]:table N Lt Mode It:array DmgM Fx:effect
+@model models/sprops/geometry/sphere_12.mdl
+#include "tagsfix"
+if(changed(players():count())){plyPlep()}
+function table laser(D,V:vector,Vd:vector,S:vector){
+    local It=table()
+    rangerFlags("I,E")
+    local Rng = rangerOffsetHull(D,V,Vd,S)
+    while(Rng:entity():isValid()){
+        local E=Rng:entity()
+        It:pushEntity(E)
+        rangerFilter(It:toArray())
+        rangerFlags("I,E")
+        Rng = rangerOffsetHull(D,V,Vd,S)
+    }
+    return It
+}
+#table(T ,Name:string ,Dmg ,Grav ,Spd ,Col:color,Weakness:w1,w2,...,wX,strengh:speed,jump,grav)
+function number entity:haveTag(S:string){return (getEntitiesByTag(S):getIndex(This))}
+function number table:getIndexT(N){
+    for(I=1,This:count()){if(This[I,table][1,number]==N){return I}}
+    return 0
+}
+function entity:ultimate(It:table){
+    switch(It[2,string]){
+        case("Gero"),
+        local V = vec(7,7,18)
+        timer("dec",1000+1200*This:hasTag("Haki"))
+        timer("ult",4000+1200*This:hasTag("Haki"))
+        holoCreate(0,This:aimPos()+vec(0,0,3000),-V,ang(0),vec4(It[6,vector],max(225,It[6,vector]:length())),"models/props_docks/dock02_pole02a.mdl")
+        holoScaleUnits(0,-vec(325,325,15000))
+        local E = holoEntity(0)
+        holoMaterial(0,"models/props_combine/stasisshield_sheet")
+        local En = laser(2^15,This:aimPos():setZ(2000),vec(0,0,-1),vec(325)):toArray()
+        for(I=1,En:count()){En[I,entity]:admAttack(It[3,number]*(4.2-(En[I,entity]:pos():distance(This:aimPos()))/325),This,Dev,It[1,number]) En[I,entity]:admPropBreak()}
+        break,
+        
+        case("Kesu"),
+        timer("dec",3100+1200*This:hasTag("Haki"))
+        timer("ult",6500+1200*This:hasTag("Haki"))
+        local V = vec(4)
+        holoCreate(0,This:pos()+vec(0,0,32),-V,ang(0),vec4(It[6,vector],255),"models/sprops/geometry/sphere_96.mdl")
+        holoMaterial(0,"debug/debugportals")
+        holoScaleUnits(0,-vec(625))
+        local En = laser(2^15,This:aimPos():setZ(2000),vec(0,0,-1),vec(625)):toArray()
+        for(I=1,En:count()){En[I,entity]:admAttack(It[3,number]*(4.2-(En[I,entity]:pos():distance(This:aimPos()))/625*2),This,Dev,It[1,number])}
+        break,
+        
+        case("Pika"),
+        rangerFlags("Z")
+        local R = rangerOffset(2^15,This:attachmentPos("eyes"),This:eye())
+        local N = R:distance()
+        timer("dec",1000+1200*This:hasTag("Haki"))
+        timer("ult",1100+700*This:hasTag("Haki"))
+        local V = vec(6,6,20)
+        holoCreate(0,This:shootPos()+This:vel()*tickInterval()+This:eye()*N/1.75,-V,This:eyeAngles()+ang(0,0,90),vec4(It[6,vector],255),"models/props_docks/dock03_pole01a.mdl")
+        holoScaleUnits(0,vec(-N,24,24))
+        holoMaterial(0,"debug/debugportals")
+        rangerFilter(This)
+        local En = laser(N,This:attachmentPos("eyes"),This:eye(),shiftR(V)):toArray()
+        for(I=1,En:count()){En[I,entity]:admAttack(It[3,number]*(4.2),This,Dev,It[1,number])}
+        break,
+        
+        case("Chiru"),
+        timer("dec",2100+1200*This:hasTag("Haki"))
+        timer("ult",2300+1200*This:hasTag("Haki"))
+        Temp:admPropDelete()
+        Temp=entSpawn("prop_combine_ball",This:vel()*tickInterval()+This:shootPos()+This:eyeAngles():forward()*25,This:eyeAngles(),This)
+        #E:makeSpherical(50)
+        Temp:admApplyForce(This:eyeAngles():forward()*It[5,number]*10000)
+        Temp:propGravity(0)
+        break,
+    }
+}
+function entity:dmgM(N,Size){
+    if(N){This:setHalo(O:getColor(),16*Size,16*Size)}
+    else{This:removeHalo()}
+}
+function entity:mode(L,T:table,Col:vector,N){
+    if(N){
+        This:setMaterial("sprops/sprops_plastic")
+        This:plySetColor(Col)
+        This:plySetSpeed(200*T[1,number])
+        This:plySetJumpPower(200*T[2,number])
+        This:plySetGravity(gravity()*T[3,number])
+        This:setCollisionGroup(L:toString())
+        This:plyAlpha(min(235,Col:length()*1.5))
+        This:disableFallDamage()
+    }
+    else{
+        This:setMaterial("")
+        This:setColor(vec(255))
+        This:plySetSpeed(200)
+        This:plySetJumpPower(200)
+        This:plySetGravity(gravity())
+        This:removeCollisionGroup()
+        This:plyAlpha(255)
+        This:enableFallDamage()
+    }
+}
+function entity table:fruit(Map:vector2){
+    #local V = randvec2(-Map,Map)
+    #local V = vec2(owner():pos())
+    #local E = propSpawn("models/sprops/geometry/sphere_12.mdl",vec(V),ang(0),0)
+    local E = entity()
+    #E:setModel("models/sprops/geometry/sphere_12.mdl")
+    local Name = This[2,string]
+    setName(Name+" "+Name+" no mi")
+    #E:setPos(vec(V,-11000))
+    E:setPos(owner():pos())
+    E:admPropFreeze(0)
+    E:propGravity(gravity()*10)
+    E:setColor(This[6,vector])
+    E:setMaterial("phoenix_storms/wire/pcb_blue")
+    #E:setHalo(E:getColor(),23-This[3,number]/3,23-This[3,number]/3)
+    E:setMass(21-sqrt(This[5,number]/(This[4,number]+2)))
+    E:admPropNotSolid(1)
+    E:admPropNotSolid(0)
+    return E
+}
+function entity:eball(T,Dmg,Grav,Spd,Col:vector){
+    local B = shootBolt(This:shootPos()+This:eye()*35+O:vel()*tickInterval(),This:eye()*10*Spd,Dmg)
+    #print(B:type())
+    B:admPropGravity(gravity()*Grav)
+    B:animate(T)
+    #print(B:getAnimation())
+    B:setColor(Col)
+    B:setMaterial("debug/debugportals")
+    B:setAlpha(Col:length()*2)
+    B:admSetCollisionGroup(3)
+    B:makeSpherical(22)
+    B:propSetVelocityInstant(This:eye()*10*Spd+vec(0,0,10-10*Grav))
+    B:setModel("models/sprops/misc/domes/size_0/dome_6x30.mdl")
+}
+if(first()){O=noentity() runOnTick(1) runOnLast(1) runOnUse(1) E:setModelScale(1.2)
+    findIncludeClass("player") findIncludeClass("npc") findIncludeClass("prop")
+	#table(T,Name:string,Dmg,Grav,Spd,Col:color,Weakness:w1,w2,...,wX,strengh:speed,jump,grav)
+	L=table(
+	table(8,"Mera",15,0.1,122,vec(242,125,12),table(1048576,256,16777216,67108865,4194304),table(1.3,1.2,0.6),"AirboatGunImpact"),
+	table(131072,"Doku",13,0.6,86,vec(106,8,136),table(8,256,67108865,67108865,4194304),table(1.2,1,0.9),"HunterMuzzleFlash"),
+	table(1048576,"San",17,0.8,67,vec(200,212,138),table(256,67108865,67108865,4194304),table(1,0.8,0.9),""),
+	table(256,"Goro",21,0,238,vec(238,230,255),table(67108865,67108865,4194304),table(3.1,1.5,0.5),"TeslaHitboxes"),
+	table(1024,"Pika",8,0,420,vec(255,255,25),table(4194304),table(4.5,1.5,0.2),""),
+	table(16777216,"Sei",27,0.2,144,vec(140,25,255),table(67108865,4194304),table(1.65,1.5,0.5),""),
+	table(67108865,"Chiru",42,0,25,vec(42,47,52),table(4194304),table(0.85,0.7,0.7),""),
+	table(4194304,"Kesu",56,0,8,vec(25,24,27),table(),table(0.7,0.6,0.2),"")
+	)
+Dev=owner()
+	Lt=randint(1,L:count())
+	Cur=L[Lt,table]
+ Stat=Cur[8,table]
+	T=Cur[7,table]
+ T:pushNumber(516)
+	print(Cur[2,string])
+E=Cur:fruit(vec2(12500))
+Fx = effect():setOrigin(owner():aimPos())
+Fx:setEntity(E)
+Fx:play(Cur[9,string])
+Fx:setMagnitude(Cur[5,number]/60)
+#O=findPlayerByName("bot")
+#runOnDmg(1,O)
+}
+if(changed(DmgM)){if(DmgM){Fx:setEntity(O)}else{Fx:setEntity(O)}}
+Fx:play(Cur[9,string])
+if(O:isValid()){
+O:plyGod(!M)
+if(dmgClk() && !M){
+    N=-1337
+    D=lastDamage()
+    if(D:getInflictor():type()=="crossbow_bolt" && D:getDamage()==0){print("Bolt") N = D:getInflictor():getAnimation() D:setInflictor(Dev) D:setDamage(L[L:getIndexT(N),table][3,number]) D:setType(N)}
+	   else{N=D:getType()}
+    print(N,"maybe")
+    if(D:getAttacker():haveTag("BHaki") && N!=-1337){D:setDamage(D:getDamage()*(T:getIndexNum(N)>0)+D:getDamage()/2.5)}
+    if(T:getIndexNum(N)>0 || D:getAttacker():haveTag("BHaki") && N!=-1337){O:setHealth(O:health()-D:getDamage())}
+    if(O:health()<1 && O:isAlive()){Fx:setEntity(E) O:plyGod(0) M=1 O:takeDamage(D) M=0
+    O:removeHalo() O:mode(0,table(),Cur[6,vector],0) O:rev():removeTag("fruit") Mode=0 O=noentity() E=Cur:fruit(vec2(12500))
+    }
+    
+}
+
+if(pointHasContent(O:toWorld(vec(0,0,O:height()/2)),"water,slime")){M=1}else{M=0}
+
+if(changed(M)){O:plyDucking(M)}
+
+if(M){O:plyDoJump(0) O:plyApplyForce(O:up()*(-1000)*O:keyJump())}
+
+O:plySetSpeed(max((!M*180+20)*((Stat[1,number]-1)*Mode+1),20))
+
+if(last()){O:plyGod(0) O:plyDucking(0) O:rev():removeTag("fruit") O:removeHalo() O:mode(0,table(),Cur[6,vector],0) O:ver():removeTag("fruit")}
+
+if(O:weapon():type()=="none" && O:keyAttack1() && changed(O:keyAttack1()) && !timerRunning("cld")){
+    timer("cld",150+125*O:haveTag("BHaki"))
+    O:eball(Cur[1,number],Cur[3,number],Cur[4,number],Cur[5,number],Cur[6,vector])
+}
+
+if(O:weapon():type()=="none" && O:keyReload() && changed(O:keyReload()) && !timerRunning("ult") && Mode){
+    O:ultimate(Cur)
+}
+
+if(changed(O:keyPressed("7")) && O:keyPressed("7")  && !timerRunning("cld")){Mode=!Mode timer("cld",2250*(!Mode)+500) O:mode(Cur[1,number],Stat,Cur[6,vector],Mode)}
+if(Mode && changed(O:keyPressed("8")) && O:keyPressed("8")  && !timerRunning("cld")){DmgM=!DmgM timer("cld",1650*(!DmgM)+1250) 
+if(DmgM){
+Fx:setEntity(O)
+Fx:setOrigin(O:pos())
+Fx:play(Cur[9,string])
+Fx:setMagnitude(Cur[5,number]/30)
+}
+else{Fx:setEntity(E)}
+}#O:dmgM(DmgM,Stat[2,number])}
+if(Mode && DmgM && !timerRunning("dmgclk")){timer("dmgClk",250) findInSphere(O:pos()+vec(0,0,O:height()/2) ,25) findClipFromEntity(O) It=findToArray()
+    if(It:count()){for(I=1,It:count()){if(It[I,entity]:isValid()){It[I,entity]:admAttack(Cur[3,number]/25,O,O,Cur[1,number])}}}
+}
+if(Mode && changed(O:weapon())){O:selectWeapon("none")}
+}
+#else{if(E:isValid() && E:isPlayerHolding()){for(I=1,players():count()){if(players()[I,entity]:aimEntity()==E){O=players()[I,entity] E:admPropDelete()}} if(O:hasTag("fruit")){O:kill() O:removeTag("fruit")}else{O:addTag("fruit")}}}
+else{if(useClk():isValid() && !timerRunning("dmgclk")){timer("dmgclk",250) O=useClk() runOnDmg(1,O) E:removeHalo() E:setPos(vec(4000)) E:setPos(vec(5000)) E:admPropFreeze(1)} if(O:rev():hasTag("fruit")){O:kill() O:rev():removeTag("fruit")}else{O:rev():addTag("fruit")}}
+if(clk("dec")){holoDelete(0) Temp:admPropDelete()}

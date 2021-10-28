@@ -1,0 +1,29 @@
+@name Boner
+@inputs 
+@outputs 
+@persist RH:entity E:entity O:entity
+@trigger 
+if(first()){
+RH=owner():bone(12):entity()
+#O=propSpawn("models/Humans/Group03/male_07.mdl",entity():pos(),1)
+O=owner()
+holoCreate(0)
+
+E=holoEntity(0)
+E:parentToBone(O,12)
+
+#E=propSpawn("models/hunter/blocks/cube025x025x025.mdl",1)
+#E:setNoCollideAll()
+#E:setPos(O:bonePos(12))
+timer("1",100)
+runOnTick(1)
+}
+
+if(clk("1")){holoPos(0,O:bonePos(12))}
+#if(clk("1")){print(E:pos()-O:pos()) E:parentToBone(O,12) print(E:pos()-O:pos())}
+
+#E:parentTo(RH)
+#print(O:boneCount())
+
+
+#selfDestruct()

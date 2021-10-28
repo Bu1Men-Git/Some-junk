@@ -1,0 +1,54 @@
+@name Earthquake
+@persist Chip:entity Radius RadiusMax Speed
+
+if (first()) {
+    Chip = entity()
+
+    RadiusMax = 15000
+    Speed = 20
+
+    holoCreate(1, Chip:pos() - vec(0,0,300), vec(1), ang(0), vec4(255),
+        "models/hunter/tubes/tube4x4x16.mdl")
+    holoMaterial(1,"models/props_wasteland/dirtwall001a")
+    holoClipEnabled(1,1)
+    holoClip(1, vec(0,0,0), vec(0,0,-1), Chip)
+    holoScale(2,vec(1,1,100))
+
+    holoCreate(2, Chip:pos(), vec(1), ang(0), vec4(255),
+        "models/hunter/tubes/circle4x4.mdl")
+
+    stencilCreate(2)
+    stencilAddReferenceEntity(2, holoEntity(2))
+    stencilAddEntity(2, holoEntity(1))
+
+    runOnTick(1)
+}
+
+if (Radius < RadiusMax) {
+    Radius += tickInterval() * Speed
+
+    local Diameter = Radius * 2
+    holoScaleUnits(1, vec(Diameter, Diameter, 50000))
+    holoScaleUnits(2, vec(Diameter, Diameter, 1))
+
+    local Players = players()
+    local CraterPos = Chip:pos()
+
+    foreach (K, V:entity = Players) {
+        local PlyPos = V:pos()
+
+        if (CraterPos:distance2(PlyPos) < Radius * Radius) {
+            if (V:inNoclip()) {
+                V:plyNoclip(0)
+            }
+
+            if (PlyPos:z() > CraterPos:z() - 100) {
+                V:teleport( PlyPos - vec(0, 0, 2) )
+            }
+            else {
+                V:teleport( PlyPos + vec(0, 0, 5000) )
+                V:kill()
+            }
+        }
+    }
+}

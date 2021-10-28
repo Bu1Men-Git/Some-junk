@@ -1,0 +1,12 @@
+@name Fly
+@persist O:entity
+interval(100)
+if(first()){
+O=owner()
+holoCreate(0,entity():pos()+vec(0,0,30),vec(1),entity():angles(),vec(255),"models/props_combine/breenchair.mdl")
+alibHoloSolid(0)
+}
+while(O:inVehicle()&&O:pos():distance(holoEntity(0):pos())<100){
+alibHoloUnSolid(0)
+}
+alibHoloSolid(0)

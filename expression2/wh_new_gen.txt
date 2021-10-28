@@ -1,0 +1,41 @@
+@name WH new gen
+@persist [E E1 O]:entity I R C
+if(first()){#[entity():setPos(entity():pos()-vec(0,0,10))]# O = owner()}
+function void reload(){
+    for(R=0,R<players():count()){R++
+        E=players()[R+1,entity]
+        #holoReset(R*2+1,"rcylinder_thick",vec(1),vec(255),"pp/sub")
+        #holoPos(R*2+1,E:pos()+vec(0,0,E:height()/2+(E:height()/5)*(E:isCrouch())))
+        #holoScaleUnits(R*2+1,-vec(20,20,E:height()-(E:height()/2.5)*(E:isCrouch())))
+        holoRenderFX(R*2+1,14)
+        holoColor(R*2+1,vec(C*11))
+        holoEntity(R*2+1):setRenderMode(C%11)
+    }
+}
+function void holoC(){
+    holoDeleteAll()
+    for(I=0,I<players():count()){I++
+        E=players()[I+1,entity]
+        holoCreate(I*2+1,E:pos()+vec(0,0,0*E:height()/2),vec(1),ang(vec(0)),vec(127),E:model())
+        #holoAng(I*2+1,E:angles()*ang(vec(0,0,0)))
+        holoScaleUnits(I*2+1,vec(25,25,E:height()))
+        holoParent(I*2+1,E)
+        holoVisible(I*2+1,players(),0)
+        if(E!=O){holoVisible(I*2+1,O,1)}
+        holoMaterial(I*2+1,"pp/sub")
+        holoDisableShading(I*2+1,1)
+        holoShadow(I*2+1,0)
+        holoRenderFX(I*2+1,14)
+    }
+}
+if(first()){
+    holoC() C=0
+    interval(100)
+    setName(toString(random(100000000000000,999999999999999),36))
+    timer("cn",1000)
+    timer("rel",250)
+}
+if(O:keyPressed("T") && changed(O:keyPressed("T"))){C++ hint(C:toString(),10)}
+if(clk("cn")){setName(toString(random(1000000000,9999999999),36)) timer("cn",1000)}
+if(clk("rel")){reload() timer("rel",25)}
+if(changed(players():count()) && !first()){holoC()}

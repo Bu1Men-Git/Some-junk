@@ -1,0 +1,33 @@
+@name Mein kampf
+@persist [E O]:entity Blk:table R:ranger [F S Pos Col]:vector N Cb:string
+#function number timerRunning(S:string){return (timerTimeLeft(S)>0)}
+if(first()){O=owner() runOnTick(1)
+holoCreate(0,vec(0),vec(1),ang(0),vec4(255,255,255,169))
+Blk = table("models/sprops/cuboids/height36/size_1/cube_36x36x36.mdl",vec(6),vec(70,240,70))
+Cb=Blk[1,string]
+S=Blk[2,vector]
+Col=Blk[3,vector]
+N=6  #коэффициент
+}
+if(O:weapon():type()=="weapon_crowbar"){
+	rangerFilter(O)
+	R=rangerOffset(52*5,O:shootPos(),O:eye())
+ #R=O:eyeTraceCursor()
+	holoModel(0,Cb)
+ holoColor(0,Col)
+	if(R:entity():hasTag("Block")){
+		E=R:entity()
+		F=(E:aabbSize()/S/N)
+		#Pos=R:position()-E:pos()
+		holoPos(0,E:pos()+R:hitNormal()*(E:aabbSize()+S*N)/2)
+		holoAng(0,ang(round((O:pos()-R:position()):toAngle():pitch()/90),0,0))
+	}
+	else{
+  E=noentity()
+		holoPos(0,R:position()+R:hitNormal()*N*S/2)
+		holoAng(0,ang(round((O:pos()-R:position()):toAngle():pitch()/90),0,0))
+	}
+	if(O:keyAttack2() && changed(O:keyAttack2())){E=holoEntity(0) E=propSpawn(Cb,E:pos(),E:angles(),1) E:setColor(Col) E:addTag("Block") E:animate(0)}
+	if(O:keyAttack1() && E:isValid() && !timerRunning("dmgclk")){timer("dmgclk",375) E:animate(E:getAnimation()+25) E:setColor(Col-vec(200*(E:getAnimation()/E:aabbSize():length()/N))) if(E:getAnimation()>=E:aabbSize():length()*N){E:propDelete() E:soundPlay("1",sqrt(2),"snd_jack_turretbreak.wav")}}
+}
+else{holoPos(0,vec(4000))}

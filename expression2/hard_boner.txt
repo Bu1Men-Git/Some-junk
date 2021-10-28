@@ -1,0 +1,9 @@
+@name hard Boner
+@inputs 
+@outputs 
+@persist 
+@trigger 
+O=owner()
+holoCreate(1)
+holoModel(1,O:model())
+for(I=1,25){holoEntity(1):setBonePos(I,O:bonePos(I))}

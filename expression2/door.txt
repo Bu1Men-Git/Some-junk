@@ -1,0 +1,4 @@
+@name Door
+@persist It:array E:entity
+interval(10)
+if(changed(players():count())){E=entity():isWeldedTo() It=owner():steamFriends() It:pushEntity(owner()) E:noCollide(It)}

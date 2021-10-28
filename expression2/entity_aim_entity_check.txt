@@ -1,0 +1,5 @@
+@name Entity aim entity check
+@persist E:entity
+
+if(first()){E=entity():isWeldedTo() runOnTick(1)}
+if(E:aimEntity():isValid()){print(E:aimEntity())}

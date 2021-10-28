@@ -1,0 +1,5 @@
+@name Vegicle
+@inputs E:entity
+@outputs E:entity
+interval(10)
+E=findPlayerByName("Diablo"):vehicle()

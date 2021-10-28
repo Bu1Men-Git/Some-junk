@@ -1,0 +1,6 @@
+@name Radio
+@persist [O S]:entity
+if(first()){
+    runOnTick(1)
+}
+

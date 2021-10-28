@@ -1,0 +1,37 @@
+@name killua
+@inputs 
+@outputs 
+@persist Fx:effect
+#@persist [E O]:entity Dmg:damage Mul
+#if(first()){
+ #   O=owner()
+    #runOnTick(1)
+ #   runOnDmg(1)
+#    Mul=5
+#    #200.25
+#}
+#Dmg=lastDamage()
+#if(Dmg:getAttacker()==O && dmgClk()){
+  #  E=lastDamageVictim()
+  #  E:takeDamage((Mul-1)*Dmg:getDamage(),E)
+    #E:plySetHealth(E:health()+max(0,(1-Mul)*Dmg:getDamage()))
+    #print(E:name()+" "+Dmg:getDamage())
+#}
+
+
+
+if(changed(owner():isAlive()) & owner():isAlive()){
+  #  owner():plySetHealth(10000)
+  #  owner():plySetArmor(2147483647)
+    owner():plySetRunSpeed(400)
+    owner():plySetJumpPower(600)
+   owner():disableFallDamage()
+
+}
+runOnTick(1)
+
+Fx = effect():setOrigin(owner():aimPos())
+Fx:setEntity(owner())
+Fx:play("TeslaHitboxes")
+Fx:setMagnitude(8)
+

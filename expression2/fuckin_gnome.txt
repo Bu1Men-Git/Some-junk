@@ -1,0 +1,298 @@
+@name Gnome Child
+@persist [Ba Bob Mo O]:entity [A B Spd Stay Stop Up Vape]:number [Skin]:vector
+if(first()|duped())
+{   
+    On = 1
+    O = owner()
+    Green = vec(0,255,0)
+    Skin = vec(186,133,111)
+    entity():setAlpha(0)
+    Ba = holoCreate(0, entity():toWorld(vec(0,0,25)), vec(), entity():toWorld(ang(0,0,0)), vec()) holoAlpha(0,0)
+    
+    Mo = holoCreate(1, Ba:toWorld(vec(0,0,0)), vec(), Ba:toWorld(ang(0,0,0)), vec()) holoAlpha(1,0) holoParent(1,Ba)
+
+    Bob = holoCreate(2, Ba:toWorld(vec(0,0,-11)), vec(), Ba:toWorld(ang(0,0,0)), vec()) holoAlpha(2,0) holoParent(2,Ba)
+    #chest
+    holoCreate(3, Ba:toWorld(vec(0,0,-6.5)), vec(0.25,0.65,0.75), Ba:toWorld(ang(0,0,0)), vec(0,255,0), "rcube_thin") holoAlpha(3,255) holoParent(3,Bob)
+    #armanim
+    holoCreate(100, Ba:toWorld(vec(0,-3.5,-3.5)), vec(), Ba:toWorld(ang(0,0,0)), vec(), "cube") holoAlpha(100,0) holoParent(100,Bob)
+    holoCreate(101, Ba:toWorld(vec(0,3.5,-3.5)), vec(), Ba:toWorld(ang(0,0,0)), vec(), "cube") holoAlpha(101,0) holoParent(101,Bob)
+    #arms
+    holoCreate(4, Ba:toWorld(vec(0,5.3,-5.45)), vec(0.175,0.4,0.175), Ba:toWorld(ang(0,0,-70)), Green, "rcube") holoAlpha(4,255) holoParent(4,101)
+    holoCreate(5, Ba:toWorld(vec(0,4,-3.5)), vec(0.175,0.175,0.175), Ba:toWorld(ang(0,0,-20)), Green, "cube") holoAlpha(5,255) holoParent(5,101)
+    holoCreate(6, Ba:toWorld(vec(0,-5.3,-5.45)), vec(0.175,0.4,0.175), Ba:toWorld(ang(0,0,70)), Green, "rcube") holoAlpha(6,255) holoParent(6,100)
+    holoCreate(7, Ba:toWorld(vec(0,-4,-3.5)), vec(0.175,0.175,0.175), Ba:toWorld(ang(0,0,20)), Green, "cube") holoAlpha(7,255) holoParent(7,100)
+    holoCreate(8, Ba:toWorld(vec(0,6.4,-11.5)), vec(0.15,0.15,0.75), Ba:toWorld(ang(0,0,185)), Skin, "pyramid") holoAlpha(8,255) holoParent(8,101)
+    holoCreate(9, Ba:toWorld(vec(0,-6.4,-11.5)), vec(0.15,0.15,0.75), Ba:toWorld(ang(0,0,-185)), Skin, "pyramid") holoAlpha(9,255) holoParent(9,100)
+    for(I=8,9)
+    {
+        holoClipEnabled(I,1)
+        holoClip(I,vec(0,0,0),vec(0,0,-1),0)
+    }
+    holoCreate(10, Ba:toWorld(vec(0,6.7,-11)), vec(0.2,0.2,0.2), Ba:toWorld(ang(0,0,185)), Skin, "icosphere") holoAlpha(10,255) holoParent(10,8)
+    holoCreate(11, Ba:toWorld(vec(0,-6.7,-11)), vec(0.2,0.2,0.2), Ba:toWorld(ang(0,0,-185)), Skin, "icosphere") holoAlpha(11,255) holoParent(11,9)
+    holoCreate(12, Ba:toWorld(vec()), vec(), Ba:toWorld(ang(0,0,0)), vec()) holoAlpha(12,0) holoParent(12,Bob)
+    #head
+    holoCreate(13, Ba:toWorld(vec(0.5,0,-1.1)), vec(0.2,0.3,0.2), Ba:toWorld(ang(10,0,0)), Skin, "pyramid") holoAlpha(13,255) holoParent(13,12)
+    holoCreate(14, Ba:toWorld(vec(0.5,0,-1)), vec(0.175,0.15,0.2), Ba:toWorld(ang(10,0,0)), Skin, "cube") holoAlpha(14,255) holoParent(14,12)
+    holoCreate(15, Ba:toWorld(vec(1.3,0,1.5)), vec(0.4,0.4,0.5), Ba:toWorld(ang(0,0,0)),Skin, "sphere") holoAlpha(15,255) holoParent(15,12) holoMaterial(15, "")
+    holoClipEnabled(15,1,1)
+    holoClip(15,1,vec(0,0,-0.5),vec(0,0,1),0)
+    holoCreate(16, Ba:toWorld(vec(1,2.2,2.8)), vec(0.05,0.01,0.2), Ba:toWorld(ang(-10,0,-19)), Skin, "prism") holoAlpha(16,255) holoParent(16,12)
+    holoCreate(17, Ba:toWorld(vec(1,-2.2,2.8)), vec(0.05,0.01,0.2), Ba:toWorld(ang(-10,0,19)), Skin, "prism") holoAlpha(17,255) holoParent(17,12)
+    holoCreate(18, Ba:toWorld(vec(1.3,0,6.5)), vec(0.37,0.37,0.6), Ba:toWorld(ang(0,0,0)), Green, "hq_cone") holoAlpha(18,255) holoParent(18,12)
+    holoCreate(19, Ba:toWorld(vec(1.3,0,1.5)), vec(0.4,0.4,0.5), Ba:toWorld(ang(0,0,0)), Skin, "sphere") holoAlpha(19,255) holoParent(19,12) holoMaterial(19, "")
+    holoClipEnabled(19,1)
+    holoClip(19,vec(6.1,0,-2.7),vec(-0.9,0,-1.9),0)
+    holoCreate(20, Ba:toWorld(vec(1.3,0,1.5)), vec(0.38,0.375,0.5), Ba:toWorld(ang(0,0,0)), vec(100,0,0), "sphere") holoAlpha(20,255) holoParent(20,12)
+    holoClipEnabled(20,1)
+    holoClip(20,vec(1,0,0),vec(4,0,-1),0)
+    holoCreate(21, Ba:toWorld(vec(2.9,1.1,2.3)), vec(0.025,0.015,0.05), Ba:toWorld(ang(90,120,0)), vec(255,255,255), "prism") holoAlpha(21,255) holoParent(21,12)
+    holoCreate(22, Ba:toWorld(vec(3.2,0.6,2.3)), vec(0.025,0.015,0.05), Ba:toWorld(ang(90,300,0)), vec(255,255,255), "prism") holoAlpha(22,255) holoParent(22,12)
+    holoCreate(23, Ba:toWorld(vec(3.1,0.85,2.3)), vec(0.015,0.015,0.015), Ba:toWorld(ang(0,300,0)), vec(), "cube") holoAlpha(23,255) holoParent(23,12)
+    holoCreate(24, Ba:toWorld(vec(2.9,-1.1,2.3)), vec(0.025,0.015,0.05), Ba:toWorld(ang(90,-120,0)), vec(255,255,255), "prism") holoAlpha(24,255) holoParent(24,12)
+    holoCreate(25, Ba:toWorld(vec(3.2,-0.6,2.3)), vec(0.025,0.015,0.05), Ba:toWorld(ang(90,-300,0)), vec(255,255,255), "prism") holoAlpha(25,255) holoParent(25,12)
+    holoCreate(26, Ba:toWorld(vec(3.1,-0.85,2.3)), vec(0.015,0.015,0.015), Ba:toWorld(ang(0,-300,0)), vec(), "cube") holoAlpha(26,255) holoParent(26,12)
+    #belt
+    holoCreate(27, Ba:toWorld(vec(0,0,-11)), vec(0.225,0.625,0.05), Ba:toWorld(ang(0,0,0)), vec(), "cube") holoAlpha(27,255) holoParent(27,Bob)
+    #BeginOfLegs
+    holoCreate(28, Ba:toWorld(vec(0.155,0,-9.63)), vec(0.25,0.5,0.45), Ba:toWorld(ang(0,0,0)), Green, "prism") holoAlpha(28,255) holoParent(28,Ba)
+    holoClipEnabled(28,1)
+    holoClip(28,vec(0,0,0),vec(0,0,-1),0)
+    holoCreate(29, Ba:toWorld(vec(0.155,-2.5,-9.63)), vec(0.25,0.2,0.45), Ba:toWorld(ang(0,0,0)), Green, "pyramid") holoAlpha(29,255) holoParent(29,Ba)
+    holoCreate(30, Ba:toWorld(vec(0.155,2.5,-9.63)), vec(0.25,0.2,0.45), Ba:toWorld(ang(0,0,0)), Green, "pyramid") holoAlpha(30,255) holoParent(30,Ba)
+    holoClipEnabled(29,1)
+    holoClip(29,vec(0,0,0),vec(0,0,-1),0)
+    holoClipEnabled(30,1)
+    holoClip(30,vec(0,0,0),vec(0,0,-1),0)
+    #leganim
+    holoCreate(31, Ba:toWorld(vec(0,-4.5,-12.5)), vec(), Ba:toWorld(ang(0,0,0)), vec()) holoAlpha(31,0) holoParent(31,Ba)
+    holoCreate(32, Ba:toWorld(vec(0,4.5,-12.5)), vec(), Ba:toWorld(ang(0,0,0)), vec()) holoAlpha(32,0) holoParent(32,Ba)
+    #upperleg
+    holoCreate(33, Ba:toWorld(vec(0.44,-2.05,-15)), vec(0.2,0.275,0.45), Ba:toWorld(ang(0,0,0)), Green, "cube") holoAlpha(33,255) holoParent(33,31)
+    holoCreate(34, Ba:toWorld(vec(0.05,-2.05,-12.5)), vec(0.2,0.275,0.15), Ba:toWorld(ang(-25,0,0)), Green, "cube") holoAlpha(34,255) holoParent(34,Ba)
+    holoClipEnabled(34,1)
+    holoClip(34,vec(6.5,0,-3.05),vec(-1,0,-2),0)
+    holoCreate(35, Ba:toWorld(vec(0.44,2.05,-15)), vec(0.2,0.275,0.45), Ba:toWorld(ang(0,0,0)), Green, "cube") holoAlpha(35,255) holoParent(35,32)
+    holoCreate(36, Ba:toWorld(vec(0.05,2.05,-12.5)), vec(0.2,0.275,0.15), Ba:toWorld(ang(-25,0,0)), Green, "cube") holoAlpha(36,255) holoParent(36,Ba)
+    holoClipEnabled(36,1)
+    holoClip(36,vec(6.5,0,-3.05),vec(-1,0,-2),0)
+    #leganimlowerhalf
+    holoCreate(37, Ba:toWorld(vec(0,-4.5,-17.8)), vec(), Ba:toWorld(ang(0,0,0)), vec()) holoAlpha(37,0) holoParent(37,33)
+    holoCreate(38, Ba:toWorld(vec(0,4.5,-17.8)), vec(), Ba:toWorld(ang(0,0,0)), vec()) holoAlpha(38,0) holoParent(38,35)
+    #Lowerlegs
+    holoCreate(39, Ba:toWorld(vec(0.3,-2.05,-14.65)), vec(0.225,0.325,0.5), Ba:toWorld(ang(0,0,0)), Green, "pyramid") holoAlpha(39,255) holoParent(39,37)
+    holoClipEnabled(39,1)
+    holoClip(39,vec(0,0,-1.8),vec(0,0,-1),0)
+    holoCreate(40, Ba:toWorld(vec(0.3,2.05,-14.65)), vec(0.225,0.325,0.5), Ba:toWorld(ang(0,0,0)), Green, "pyramid") holoAlpha(40,255) holoParent(40,38)
+    holoClipEnabled(40,1)
+    holoClip(40,vec(0,0,-1.8),vec(0,0,-1),0)
+    holoCreate(41, Ba:toWorld(vec(0.3,-2.05,-21.25)), vec(0.225,0.325,0.6), Ba:toWorld(ang(0,0,0)), Green, "cube") holoAlpha(41,255) holoParent(41,37)
+    holoCreate(42, Ba:toWorld(vec(0.3,2.05,-21.25)), vec(0.225,0.325,0.6), Ba:toWorld(ang(0,0,0)), Green, "cube") holoAlpha(42,255) holoParent(42,38)
+    holoCreate(43, Ba:toWorld(vec(1.2,-2.05,-25.1)), vec(0.05,0.25,0.35), Ba:toWorld(ang(95,0,0)), vec(115,117,30), "prism") holoAlpha(43,255) holoParent(43,37)
+    holoCreate(44, Ba:toWorld(vec(1.2,2.05,-25.1)), vec(0.05,0.25,0.35), Ba:toWorld(ang(95,0,0)), vec(115,117,30), "prism") holoAlpha(44,255) holoParent(44,38)
+    holoCreate(45, Ba:toWorld(vec(3.8,0,0.8)), vec(), Ba:toWorld(ang(90,0,0)), vec(255,255,255), "hq_torus") holoAlpha(45,0) holoParent(45,Bob)
+    holoCreate(46, Ba:toWorld(vec(3.8,0,0.85)), vec(), Ba:toWorld(ang(90,0,0)), vec(10,10,10), "hq_cylinder") holoAlpha(46,255) holoParent(46,Bob)
+    
+    runOnChat(1)
+    timer("reset1",1000)
+    reset()
+}
+interval(100)
+switch(holoEntity(0):pos():distance(O:pos()) < 80 | Stop | Stay)
+{
+    case 0,
+    B+=50
+    holoAng(0,(-heading(holoEntity(0):pos(),ang(0),O:pos()+vec(0,0,25))))
+    holoAng(31, Ba:toWorld(ang(0+(-30*sin(B)),0,0)))
+    holoAng(32, Ba:toWorld(ang(0+(30*sin(B)),0,0)))
+    holoAng(37, Ba:toWorld(ang(20+(-40*sin(B)),0,0)))
+    holoAng(38, Ba:toWorld(ang(20+(40*sin(B)),0,0)))
+    holoAng(100, Ba:toWorld(ang(-10+(40*sin(B)),0,0)))
+    holoAng(101, Ba:toWorld(ang(-10+(-40*sin(B)),0,0)))
+    switch(O:keySprint())
+    {
+        case 0,
+        Spd = 20
+        break
+        
+        case 1,
+        Spd = 31
+        break
+    }
+    holoPos(0, (holoEntity(0):pos()+holoEntity(0):forward()*Spd+vec(0,0,0)))
+    break
+    
+    case 1,
+    switch(clk()&!Vape)
+    {
+        case 1,
+        Up+=0.1
+        break
+    }
+    
+    switch(floor(Up))
+    {
+        case 0,
+        holoPos(2, Ba:toWorld(vec(0,0,-11)))
+        break
+        
+        case 1,
+        holoPos(2, Ba:toWorld(vec(0,0,-10.9)))
+        break
+        
+        case 2,
+        Up = 0
+        break
+    }
+    B = 0
+    holoAng(31, Ba:toWorld(ang()))
+    holoAng(32, Ba:toWorld(ang()))
+    holoAng(37, Ba:toWorld(ang()))
+    holoAng(38, Ba:toWorld(ang()))
+    holoAng(100, Ba:toWorld(ang()))
+    holoAng(101, Ba:toWorld(ang()))
+    break
+}
+
+switch(Vape)
+{
+    case 1,
+    switch(A>59)
+    {
+        case 0,
+        A+=15
+        break
+        case 1,
+        A = 60
+        timer("vape",5000)
+        holoScale(46, vec(0.03,0.03,0.3))
+        holoEntity(0):soundPlay(0,5, "ambient/gas/cannister_loop.wav")
+        soundPitch(0,200)
+        Vape = 2
+        break
+    }
+    holoAng(100, Ba:toWorld(ang(-A*2,A,0)))
+    break
+    
+    case 2,
+    switch(clk("vape"))
+    {
+        case 1,
+        timer("blow",2000)
+        holoAng(2,Ba:toWorld(ang(-30,0,0)))
+        holoScale(46, vec(0,0,0))
+        break
+    }
+    switch(clk("blow"))
+    {
+        case 1,
+        holoAlpha(45,90)
+        Vape = 3
+        A = 0
+        break
+    }
+    break
+    
+    case 3,
+    A+=2
+    holoPos(45, (holoEntity(45):pos()+holoEntity(45):up()*2+vec(0,0,0)))
+    holoScale(45, vec(A/100,A/100,0.5))
+    switch(A>100)
+    {
+        case 1,
+        holoAlpha(45,0)
+        holoAng(2,Ba:toWorld(ang()))
+        holoScale(45, vec())
+        holoPos(45, Ba:toWorld(vec(3.8,0,0.8)))
+        A = 0
+        Vape = 0
+        Stop = 0
+        break
+    }
+    break
+}
+
+switch(chatClk(O))
+{
+    case 1,
+    C = O:lastSaid():explode(" ")
+    switch(C[1,string] == "/creepy")
+    {
+        case 1,
+        hideChat(1)
+        holoMaterial(15, "models/monk/grigori_head")
+        holoColor(15,vec(255,255,255))
+        holoClipEnabled(15,0)
+        holoAlpha(19,0)
+        holoScale(16,vec())
+        holoScale(17,vec())
+        for(I=21,26)
+        {
+            holoAlpha(I,0)
+        }
+        holoPos(46, Ba:toWorld(vec(3.8,0,0.25)))
+        break
+    }
+    
+    switch(C[1,string] == "/normal")
+    {
+        case 1,
+        hideChat(1)
+        holoMaterial(15, "")
+        holoColor(15,Skin)
+        holoClipEnabled(15,1)
+        holoScale(16, vec(0.05,0.01,0.2))
+        holoScale(17, vec(0.05,0.01,0.2))
+        holoAlpha(19,255)
+        for(I=21,26)
+        {
+            holoAlpha(I,255)
+        }
+        holoPos(46, Ba:toWorld(vec(3.8,0,0.85)))
+        break
+    }
+    
+    switch(C[1,string] == "/stay")
+    {
+        case 1,
+        hideChat(1)
+        Stay = 1
+        break
+    }
+    switch(C[1,string] == "/follow")
+    {
+        case 1,
+        hideChat(1)
+        Stay = 0
+        break
+    }
+    switch(C[1,string] == "/vape" & !Vape)
+    {
+        case 1,
+        hideChat(1)
+        Vape = 1
+        Stop = 1
+        break
+    }
+    switch(C[1,string] == "/kill" & !Vape)
+    {
+        case 1,
+        hideChat(1)
+        holoEntity(0):soundPlay(1,0, "music/ravenholm_1.mp3")
+        holoPos(0, Ba:toWorld(vec(-25,0,-25)))
+        holoAng(0,Mo:toWorld(ang(-90,0,0)))
+        stopAllTimers()
+        runOnChat(0)
+        timer("delete",28000)
+        break
+    }
+    break
+}
+
+switch(clk("delete"))
+{
+    case 1,
+    selfDestruct()
+    break
+}

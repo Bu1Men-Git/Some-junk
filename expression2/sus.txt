@@ -1,0 +1,10 @@
+@name SUS
+@persist [O E]:entity V:vector
+
+if(first()){
+    O=owner()
+    runOnTick(1)
+    E=entity():isWeldedTo()
+}
+E:setPos(O:pos()+vec(0,0,O:height()+36))
+E:setAngles(O:forward():toAngle())

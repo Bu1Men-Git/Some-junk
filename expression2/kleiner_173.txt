@@ -1,0 +1,53 @@
+@name Kleiner 173
+@persist [E O Dumb]:entity [T It]:array C I [Pv V Dir]:vector Rng:ranger
+function entity vector:nearAlive(P:array){
+    local E=noentity()
+    for(I=1,P:count()){if(!E:isValid() || P[I,entity]:isAlive() && This:distance(E:pos())>This:distance(P[I,entity]:pos())){E=P[I,entity]}}
+    return E
+}
+
+function number entity:fov(O:entity,N){
+local V1 = (O:pos()-This:pos()):normalized()
+local V2 = (This:eye())
+local D = acos(1-V1:distance(V2)^2*0.5)
+return D<=N
+}
+function number entity:visChk(O:entity){
+    rangerFilter(This)
+    #rangerFlags("E")
+    local Dirr = (O:pos()+vec(0,0,O:height()/2)+O:vel()*tickInterval()-(This:attachmentPos("eyes")+This:vel()*tickInterval())):normalized()
+    local Rng = rangerOffsetHull(2^16,This:attachmentPos("eyes"),Dirr,vec(4))
+    return (Rng:entity()==O)
+}
+function number entity:visible(Ply:array,N){
+    for(I=1,Ply:count()){
+        local E = Ply[I,entity]
+            if(E:fov(This,N) && E:isAlive()){
+                if(E:visChk(This)){return 1}
+            }
+        }
+    return 0
+}
+
+if(first()){E=propSpawn("models/Kleiner.mdl",entity():pos(),ang(0),1) E:makeBoxical(E:pos()-vec(25,25,0),E:pos()+vec(25,25,72)) E:admPropFreeze(1) E:setAng(ang(0)) O=E:pos():nearAlive(players()) runOnTick(1) timer("chk",100) E:setNoCollideAll()
+    findIncludeClass("player") entity():setPos(vec(14324))
+    holoCreate(0,E:attachmentPos("chest")-vec(0,0,20),vec(1),ang(0,90,0),vec(255),"models/weapons/w_Physics.mdl") holoParent(0,E) Dumb = E #Dumb = entSpawn("gmt_instrument_piano",vec(14214),O)
+}
+if(E:isValid()){
+E:setModel("models/Kleiner.mdl")
+if(clk("chk")){It=navBasicPathGen(E:pos(),O:pos()) timer("chk",100)}
+Dir=(It[1,vector]-E:pos()):normalized()
+if(!E:visible(players(),80)){
+#Pv=V
+V=E:pos()+Dir*12.5
+if(V:distance(Pv)<=30){C++}else{C=0}
+if(C>=30){V=It[1,vector]+(It[2,vector]-It[1,vector]):normalized()}#
+E:setPos(V)
+E:setAng(Dir:toAngle())
+E:admPropFreeze(1)
+findInSphere(E:pos(),70)
+T=findToArray()
+}
+if(T:count()){for(I=1,T:count()){(T[I,entity]):admAttack(133722842,Dumb,Dumb,0)} T=array()}
+if(!first() && !timerRunning("change") && (!O:isAlive() || !O:visChk(E))){O=E:pos():nearAlive(players()) timer("change",16000) print(O:name())}
+}else{selfDestruct()}
