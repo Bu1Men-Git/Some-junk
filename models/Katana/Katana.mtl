@@ -21,7 +21,7 @@ Ni 1.000000
 d 1.000000
 illum 3
 
-newmtl Material
+newmtl Material.003
 Ns 416.160009
 Ka 1.000000 1.000000 1.000000
 Kd 0.075642 0.074772 0.072197
@@ -31,7 +31,7 @@ Ni 1.000000
 d 1.000000
 illum 3
 
-newmtl Material.003
+newmtl Material.004
 Ns 416.160009
 Ka 1.000000 1.000000 1.000000
 Kd 0.075642 0.074772 0.072197
