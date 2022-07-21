@@ -1,0 +1,34 @@
+@name BulLib 
+
+function vector2 cross(A:vector2,V1:vector2,B:vector2,V2:vector2){
+    
+    A1 = V1:y()
+    B1 = -V1:x()
+    C1 = (A1*A:x()) + (B1*A:y())
+    
+    A2 = V2:y()
+    B2 = -V2:x()
+    C2 = (A2*B:x()) + (B2*B:y())
+    
+    D = (A1 * B2) - (A2 * B1)
+    
+    if(D == 0) {return vec2(inf(),inf())}
+    
+    Cx = ( (B2 * C1) - (B1 * C2) ) /D
+    Cy = ( (A1 * C2) - (A2 * C1) ) /D
+    
+    return vec2(Cx,Cy)
+}
+
+function number vector:sum(){
+    return ( This:x() + This:y() + This:z() )
+}
+
+function vector cross(Ln:vector,Dr:vector,Pl:vector,Nr:vector){
+    Pl = Pl * Nr
+    local TLn = Ln * Nr
+    local TDr = Dr * Nr
+    
+    local T = -(TLn - Pl):sum() / TDr:sum()
+    return ( Ln + Dr*T )
+}

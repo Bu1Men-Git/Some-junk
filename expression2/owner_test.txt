@@ -1,0 +1,13 @@
+@name owner test
+@inputs 
+@outputs 
+@persist O:entity
+@trigger 
+if(first()){
+O = findPlayerByName("nerry")
+setOwner(O)
+interval(100)
+}
+else{
+    print(owner())
+}

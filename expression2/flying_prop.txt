@@ -1,0 +1,23 @@
+@name Flying prop
+@inputs E:entity
+@outputs 
+@persist [OVel Vel]:vector
+@trigger 
+
+if(first()){
+    runOnTick(1)
+    Vel = (entity():toWorld(vec(0,0,115))-E:pos() )*E:mass()
+    Dif = table()
+}
+else{
+OVel = Vel
+Vel = (entity():toWorld(vec(0,0,75))-E:pos() )*E:mass()
+#print(E:aabbMax(),E:aabbMin())
+
+#print(Point)
+#Ang = Point*E:mass()
+#print((Vel-OVel) - $Vel)
+E:applyForce(Vel+25*$Vel)
+#E:applyAngForce((Ang+25*$Ang)/Ang:length()*25*E:mass())
+
+}

@@ -1,0 +1,23 @@
+@name VCT
+
+function number vector2:sum(){
+    return ( This:x() + This:y() )
+}
+
+function vector2 cross(A:vector2,V1:vector2,B:vector2,V2:vector2){
+    
+    local TA = -A/V1
+    local TB = B*V1
+    local TV2 = V2*V1:reverse()
+    
+    local T = -(TA + TB):sum() / TV2:sum()
+    print(T)
+    
+    return B + T*V2
+}
+
+A = vec2(1,1)
+V1 = vec2(2,-1)
+B = vec2(-1,-1)
+V2 = vec2(1,0)
+print(cross(A,V1,B,V2))

@@ -1,0 +1,7 @@
+@name Ammos
+@inputs 
+@outputs 
+@persist O:entity
+@trigger 
+
+foreach(K,I:entity = players()){I:playerNoclip(0)}

@@ -1,0 +1,170 @@
+@name BulLib
+
+function number vector:sum(){
+    # Pretty obvious
+    
+    return ( This:x() + This:y() + This:z() )
+}
+
+function vector2 sqrEq(A,B,C){
+    # Solve the equadric equation ( Ax^2 + Bx + C = 0 )
+    
+    local D = B^2 - 4*A*C
+    return vec2( (-B+sqrt(D))/2/A , (-B-sqrt(D))/2/A )
+}
+
+function vector2 cross(A:vector2,V1:vector2,B:vector2,V2:vector2){
+    # Finds intersection point between 2 lines
+    # A - Starting Pos of 1 line
+    # V1 - Directional vector of 1 line
+    # B - Starting Pos of 2 line
+    # V2 - Directional vector of 2 line
+    
+    local A1 = V1:y()
+    local B1 = -V1:x()
+    local C1 = (A1*A:x()) + (B1*A:y())
+    
+    local A2 = V2:y()
+    local B2 = -V2:x()
+    local C2 = (A2*B:x()) + (B2*B:y())
+    
+    local D = (A1 * B2) - (A2 * B1)
+    
+    if(D == 0) {return vec2(inf(),inf())}
+    
+    local Cx = ( (B2 * C1) - (B1 * C2) ) /D
+    local Cy = ( (A1 * C2) - (A2 * C1) ) /D
+    
+    return vec2(Cx,Cy)
+}
+
+function vector planeCross(Ln:vector,Dr:vector,Pl:vector,Nr:vector){
+    # Finds intersection point between line and a plane
+    # A - Starting Pos of line
+    # V1 - Directional vector of line
+    # B - Starting Pos of a plane
+    # V2 - Normal vector of a plane
+    
+    Pl = Pl * Nr
+    local TLn = Ln * Nr
+    local TDr = Dr * Nr
+    
+    local T = -(TLn - Pl):sum() / TDr:sum()
+    return ( Ln + Dr*T )
+}
+
+
+
+function table sphereCross(Ln:vector,Dr:vector,Pl:vector,R,One){
+    # Finds intersection point between line and a sphere
+    # A - Starting Pos of line
+    # V1 - Directional vector of line
+    # B - Starting Pos of a sphere
+    # R - Radius of a sphere
+    # One - Should this function return only one point of intersection?  ( 1/0 )
+    
+    local Dx = Ln:x() - Pl:x()
+    local Dy = Ln:y() - Pl:y()
+    local Dz = Ln:z() - Pl:z()
+    
+    local A = (Dr:x()^2 + Dr:y()^2 + Dr:z()^2)
+    local B = 2 * (Dx*Dr:x() + Dy*Dr:y() + Dz*Dr:z())
+    local C = (Dx^2 + Dy^2 + Dz^2 - R^2)
+    
+    local T = sqrEq(A,B,C)
+    
+    local T1 = T:x()
+    local T2 = T:y()
+    
+    if(One){
+        if(T1<0 || (T1 > T2 && T2>=0)){return table(Ln+Dr*T2)}
+        return table(Ln+Dr*T1)
+    }
+    
+    return table(Ln+Dr*T1,Ln+Dr*T2)
+}
+
+function table sphereCross(Ln:vector,Dr:vector,Pl:vector,R,Siz:vector,One){
+    # Finds intersection point between line and a sphere
+    # A - Starting Pos of line
+    # V1 - Directional vector of line
+    # B - Starting Pos of a sphere
+    # R - Radius of a sphere
+    # Siz - Reversed size of a sphere relative to its radius ( vec(1,1,1) - normal size, vec(2,2,2) - 2 times smaller than normal one )
+    # One - Should this function return only one point of intersection?  ( 1/0 )
+    
+    local Sx = Siz:x()^-1
+    local Sy = Siz:y()^-1
+    local Sz = Siz:z()^-1
+    
+    local Dx = Ln:x() - Pl:x()
+    local Dy = Ln:y() - Pl:y()
+    local Dz = Ln:z() - Pl:z()
+    
+    local A = (Sx* Dr:x()^2 + Sy* Dr:y()^2 + Sz* Dr:z()^2)
+    local B = 2 * (Sx* Dx*Dr:x() + Sy* Dy*Dr:y() + Sz* Dz*Dr:z())
+    local C = (Sx* Dx^2 + Sy* Dy^2 + Sz* Dz^2 - R^2)
+    
+    local T = sqrEq(A,B,C)
+    
+    local T1 = T:x()
+    local T2 = T:y()
+    
+    if(One){
+        if(T1<0 || (T1 > T2 && T2>=0)){return table(Ln+Dr*T2)}
+        return table(Ln+Dr*T1)
+    }
+    
+    return table(Ln+Dr*T1,Ln+Dr*T2)
+}
+
+function table sphereCross(Ln:vector,Dr:vector,Pl:vector,R){
+    # Finds intersection point between line and a sphere
+    # A - Starting Pos of line
+    # V1 - Directional vector of line
+    # B - Starting Pos of a sphere
+    # R - Radius of a sphere
+    
+    local Dx = Ln:x() - Pl:x()
+    local Dy = Ln:y() - Pl:y()
+    local Dz = Ln:z() - Pl:z()
+    
+    local A = (Dr:x()^2 + Dr:y()^2 + Dr:z()^2)
+    local B = 2 * (Dx*Dr:x() + Dy*Dr:y() + Dz*Dr:z())
+    local C = (Dx^2 + Dy^2 + Dz^2 - R^2)
+    
+    local T = sqrEq(A,B,C)
+    
+    local T1 = T:x()
+    local T2 = T:y()
+    
+    return table(Ln+Dr*T1,Ln+Dr*T2)
+}
+
+function table sphereCross(Ln:vector,Dr:vector,Pl:vector,R,Siz:vector){
+    # Finds intersection point between line and a sphere
+    # A - Starting Pos of line
+    # V1 - Directional vector of line
+    # B - Starting Pos of a sphere
+    # R - Radius of a sphere
+    # Siz - Reversed size of a sphere relative to its radius ( vec(1,1,1) - normal size, vec(2,2,2) - 2 times smaller than normal one )
+    
+    local Sx = Siz:x()^2
+    local Sy = Siz:y()^2
+    local Sz = Siz:z()^2
+    
+    local Dx = Ln:x() - Pl:x()
+    local Dy = Ln:y() - Pl:y()
+    local Dz = Ln:z() - Pl:z()
+    
+    local A = (Sx* Dr:x()^2 + Sy* Dr:y()^2 + Sz* Dr:z()^2)
+    local B = 2 * (Sx* Dx*Dr:x() + Sy* Dy*Dr:y() + Sz* Dz*Dr:z())
+    local C = (Sx* Dx^2 + Sy* Dy^2 + Sz* Dz^2 - R^2)
+    
+    local T = sqrEq(A,B,C)
+    
+    local T1 = T:x()
+    local T2 = T:y()
+    
+    return table(Ln+Dr*T1,Ln+Dr*T2)
+}

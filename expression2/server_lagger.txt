@@ -1,0 +1,68 @@
+@name Owner death logger
+@persist [Loop1 Loop2] [O E]:entity Amount Range SkyPos:vector T P Model:string
+
+if(first()) {
+##include "bigbrain/autocpu"
+O = owner()
+P = 10
+Model = "models/Combine_Strider.mdl"
+#Model = "models/dog.mdl"
+
+Amount = holoMaxAmount()
+Range = 10000
+
+findByClass("sky_camera")
+E = find()
+
+runOnTick(1)
+} else {
+SkyPos = E:pos()
+while(perf(P) && !T) { for(I = 0,42){owner():stress()} }
+while(perf(P) && T) {
+
+if(holoCanCreate()) {
+Loop2++
+
+if(Loop2 > Amount) {
+Loop1++
+Loop2 = 1
+}
+
+if(Loop1 > Amount) {
+Loop1 = 1
+}
+
+if(!holoEntity(Loop1):isValid()) {
+holoCreate(Loop1, SkyPos, vec(), ang(randint(0,360), randint(0,360), randint(0,360)), vec(random(0,255), random(0,255), random(0,255)), Model)
+holoVisible(Loop1,players(),0)
+holoScaleUnits(Loop1, vec(Range))
+holoMaterial(Loop1, "debug/debugportals") #"hlmv/debugmrmwireframe")
+holoEntity(Loop1):setTrails(inf(), inf(), inf(), "trails/tube", vec(255), 255)
+
+holoEntity(Loop1):soundPlay(Loop1,10000,"Trainyard.train_horn_everywhere")
+soundVolume(Loop1,1000)
+soundPitch(Loop1,3)
+}
+
+if(!holoEntity(Loop2):isValid()) {
+holoCreate(Loop2, SkyPos, vec(), ang(randint(0,360), randint(0,360), randint(0,360)), vec(random(0,255), random(0,255), random(0,255)), Model)
+holoVisible(Loop2,players(),0)
+holoScaleUnits(Loop2, vec(Range))
+holoMaterial(Loop2, "debug/debugportals")
+holoEntity(Loop2):setTrails(inf(), inf(), inf(), "trails/tube", vec(255), 255)
+
+holoEntity(Loop2):soundPlay(Loop2,10000,"Trainyard.train_horn_everywhere")
+soundVolume(Loop2,1000)
+soundPitch(Loop2,3)
+}
+}
+
+holoParent(Loop1, Loop2)
+
+holoParent(Loop2, Loop1)
+holoPos(Loop2, SkyPos + randvec(-Range,Range))
+holoAng(Loop2, ang(randint(0,360), randint(0,360), randint(0,360)))
+}
+#print(ops())
+if(O:keyPressed("J") && changed(O:keyPressed("J"))){holoDeleteAll() T=!T hint("That thing: "+T,1)}
+}

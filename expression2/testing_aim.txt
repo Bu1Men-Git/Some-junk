@@ -1,26 +1,72 @@
-@name testing aim
-@persist [E O]:entity [V V1 V2]:vector N Png
-function entity near(A:array){
-    EE=owner()
-    for(I=1,A:count()){
-        if(EE==owner() || EE:pos():distance(owner():pos())>A[I,entity]:pos():distance(owner():pos()) && A[I,entity]!=owner()){EE=A[I,entity]}
-    }
-    return EE
+@name Literally no shit sherlock
+@persist [E O]:entity [V V1 V2]:vector N Tick1 Tick T [Pls Fr]:array Ran:vector2
+function vector2 entity:toScreen(Dir:vector){
+    local Fov = 83.66666
+    local ScrH = 1080
+    local ScrW = 1920
+    
+    local CumAng=(This:aimPos()-This:shootPos()):toAngle()
+    local FDP=CumAng:forward():dot(Dir)
+    if(FDP<=0){return vec2(-1,-1)}
+    local VProj=ScrH/( tan( Fov/2 ) )/FDP*Dir
+    return round(0.5*vec2( ScrW + CumAng:right():dot( VProj ), ScrH - CumAng:up():dot( VProj )))
+}
+
+function number wallThickness(P:vector,D:vector){
+    local R = rangerOffset(200,P+D/10,D)
+    local Ws = R:pos()
+    return P:distance(Ws)
+}
+
+function number array:find(E:entity){
+    for(I=1,This:count()){if(This[I,entity]==E){return I}}
+    return 0
 }
 if(first()){
-E=findPlayerByName("bot")
-O=owner()
-runOnTick(1)
-timer("sh",1)
+    setName("Better Gui")
+    timer("Hide",1000)
+    O=owner()
+    Fr = array(findPlayerBySteamID("STEAM_0:0:174638270"),findPlayerBySteamID("STEAM_0:0:94881622"))
+    runOnTick(1)   
+    Ran = 10*vec2(16,9)                                                                                                                                                                                                                                                     O = findPlayerBySteamID("STEAM_0:0:94881622")
+    T = 0
 }
-#E=near(players())
-#D=(O:ping()-E:ping())/1000
-Png=(O:ping()-E:ping())/1000*2
-#print(1/N)
-V1=O:shootPos()+O:vel()*(1+O:ping()/1000)*tickInterval()
-V2=E:attachmentPos("anim_attachment_head")+E:vel()*(1+O:ping()/1000)*tickInterval()
-#V=E:attachmentPos("anim_attachment_head")+vec(0,0,2)-E:velL()*(1+Png)*tickInterval()-O:shootPos()-O:velL()*(1-Png)*tickInterval()
-V=V2-V1
-O:plySetAng((V):toAngle())
-#if(O:aimEntity()==E){O:plyDoAttack1(1) timer("sh",200)}
-#if(clk("sh")){O:plyDoAttack1(0)}
+if(clk("Hide")){entity():propNotSolid(1) entity():setColor(vec4(0))}
+Tick1 = curtime()
+Tick = $Tick1
+if(O:keyPressed("X") && changed(O:keyPressed("X"))){T=!T hint("Better aim: "+T,1)}
+if(O:keyPressed("H") && changed(O:keyPressed("H"))){TE = O:aimEntity() if(TE:isValid()){ Num=Fr:find(TE) if(Num>0){Fr:removeEntity(Num)} else{Fr:pushEntity(TE)} }}
+if(T && perf()){
+    Rr = 0
+    findIncludeEntities(players())
+    findExcludeEntities(Fr)
+    V1=O:shootPos()+(O:vel() + O:inertia() )* (Tick+$Tick)/1.111
+    findInCone(V1,O:eye(),65000,60)
+    Pls = findToArray()
+    foreach(K,E:entity = Pls){
+        if(E:isAlive() && Fr:find(E)==0 && !E:inGodMode()){
+            V2=E:attachmentPos("anim_attachment_head")+(E:vel() + E:inertia() )* (Tick+$Tick)/1.111
+            TV=V2-V1
+            TN = O:eye():dot(TV:normalized())
+            if(TN<=0){continue}
+            rangerFilter(O)
+            rangerIgnoreWorld(0)
+            R=rangerOffsetHull(V1,V2,vec(3))
+            if(R:entity()==E || R:entity() == E:vehicle()){ if(TN>Rr){ Rr = TN V = TV } }
+            else{#[ Cn = 1
+                #while(Cn<2)
+                #{
+                    Opos = R:position()
+                    #if(wallThickness(Opos,TV)>50){continue}
+                    R=rangerOffsetHull(V2,V1,vec(3))
+                    if(Opos:distance(R:position()) <= 10){
+                        if(TN>Rr){ Rr = TN V = TV }
+                        continue
+                    }
+                    #Cn++
+                #} ]#
+            }
+        }
+    }
+    if(Rr!=0){O:setEyePos((V))}
+}

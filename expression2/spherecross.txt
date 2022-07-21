@@ -12,10 +12,15 @@ if(first()){
     Size = vec(1,1,1)
     Pos = E:pos()+vec(0,0,R*Size:z())
     S = propSpawn("models/Mechanics/gears2/bevel_36t1.mdl",Pos,1)
-    holoCreate(0,S:pos(),vec(1),ang(0),vec4(255,255,255,80),S:model())
-    #holoParent(0,S)
-    holoVisible(0,O,1)
-    S:propDraw(0)
+    #S:propDraw(0)
+    holoCreate(0,E:pos(),vec(1),Dir:toAngle())
+    holoCreate(1,E:pos(),vec(1),Dir:toAngle())
+    holoModel(0,"hq_sphere")
+    holoModel(1,"hq_sphere")
+    holoCreate(1337,Pos,vec(1))
+    holoModel(1337,"hq_sphere")
+    holoScaleUnits(1337,2*(Size)*R)
+    holoColor(1337,vec4(180,180,180,120))
     
 }
 else{
@@ -31,6 +36,8 @@ else{
                S:setPos(Pf+(Pos-Pf):normalized()*10)
                S:setAng((Pos-Pf):toAngle()-ang(90,0,0))
             }
+            #holoPos(0,P1)
+            #holoPos(1,P2)
         }
    # }
 }

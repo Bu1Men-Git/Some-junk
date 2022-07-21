@@ -1,0 +1,90 @@
+@name Vector cross
+@model models/props_phx/construct/metal_plate1.mdl
+@persist [E O]:entity [V Dir]:vector [M1 M2]:vector2 Ent:table N Pls:array C
+@trigger 
+
+function vector2 cross(A:vector2,V1:vector2,B:vector2,V2:vector2){
+    
+    A1 = V1:y()
+    B1 = -V1:x()
+    C1 = (A1*A:x()) + (B1*A:y())
+    
+    A2 = V2:y()
+    B2 = -V2:x()
+    C2 = (A2*B:x()) + (B2*B:y())
+    
+    D = (A1 * B2) - (A2 * B1)
+    
+    if(D == 0) {return vec2(inf(),inf())}
+    
+    Cx = ( (B2 * C1) - (B1 * C2) ) /D
+    Cy = ( (A1 * C2) - (A2 * C1) ) /D
+    
+    return vec2(Cx,Cy)
+}
+
+function vector cross(A:vector,V1:vector,B:vector,V2:vector){
+    
+    #A = shiftL(A) V1 = shiftL(V1) B = shiftL(B) V2 = shiftL(V2)
+    
+    Smp2D = cross(vec2(A),vec2(V1),vec2(B),vec2(V2))
+    
+    Smp3D = ( (Smp2D - vec2(A)) / vec2(V1) ):y() * V1 + A
+    
+    return Smp3D
+}
+
+function void check(){
+    for(I = 1, N){
+        if(!Ent[I,entity]:isValid()){local EE = propSpawn("models/props_lab/blastdoor001b.mdl",E:pos(),Dir:toAngle()+ang(0,-90,0),1) EE:setAlpha(1) Ent[I,entity] = EE}
+    }
+}
+
+if(first()){
+    O = owner()
+    E = entity()
+    N = 3
+    Ent = table()
+    
+    findByClass("gmod_wire_expression2")
+    findClipToPlayerProps(O)
+    findClipToModel("models/props_combine/combine_mine01.mdl")
+    Ms = findToTable()
+    
+    M1 = -positive(vec2(Ms[1,entity]:pos()))
+    M2 = positive(vec2(Ms[2,entity]:pos()))
+    if(!Ms[1,entity]:isValid()){M1 = vec2(-16000)}
+    if(!Ms[2,entity]:isValid()){M2 = vec2(16000)}
+    
+    
+    runOnLast(1)
+    runOnTick(1)
+    interval(200)
+    
+    Dir = O:eye():toAngle():right()
+    
+    for(I=1, N){
+        local EE = propSpawn("models/props_lab/blastdoor001b.mdl",E:pos(),Dir:toAngle()+ang(0,-90,0),1)
+        EE:setAlpha(1)
+        Ent:pushEntity(EE)
+    }
+}
+else{
+    Pls = players() C=1
+    foreach(K,I:entity = Pls){
+        if(C > N){break}
+        V = cross(I:shootPos(),I:eye(),E:pos(),Dir)
+        #V1 = $V
+        #V2 = $V1
+        Pos = V - vec(0,0,60)
+        if(I:isAlive() && I:eye():dot(E:pos()-I:pos()) > 0 && Pos:isInWorld() && inrange(vec2(Pos),M1,M2)){
+            Ent[C,entity]:setPos(Pos)
+            C++
+        } 
+    }
+    
+    #
+    
+    if(clk("interval")){check() interval(200)}
+}
+if(last()){for(I = 1, N){Ent[I,entity]:propDelete()}}

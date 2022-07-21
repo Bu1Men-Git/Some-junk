@@ -24,4 +24,4 @@ runOnTick(1)
 O=owner()
 }
 if(changed(players():count())){holoDeleteAll() for(J=1,players():count()){players()[J,entity]:holo(J)}}
-if(holoAmount()){rel()}
+#if(holoAmount()){rel()}

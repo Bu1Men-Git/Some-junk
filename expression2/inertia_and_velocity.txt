@@ -1,0 +1,16 @@
+@name Inertia and velocity
+@inputs 
+@outputs 
+@persist O:entity Vel:vector Tick1 Tick2
+@trigger 
+
+if(first()){
+    O = owner()
+    runOnTick(1)
+}
+Vel = O:vel()
+Tick1 = curtime()
+Tick2 = realtime()
+print($Tick1-$Tick2)
+#print(tickInterval()-$Tick)
+#print(($Vel - O:inertia())*$Tick)

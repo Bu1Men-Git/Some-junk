@@ -1,0 +1,107 @@
+@name Huinya
+@inputs W:wirelink
+@outputs 
+@persist O:entity T All:table [CPos Dir]:vector2 LOff
+@trigger 
+#include "DPanelLib"
+if(first()){
+All = table()
+W:egpClear()
+O = owner()
+T = 0
+LOff = 0
+runOnKeys(O,1,array("t"))
+    Maxxx = table("124131412","99231412","123141212314113372","1231412","1231412","25235","DDDDDDD","1231412")
+    #Maxxx = table()
+    #foreach(K,I:entity = players()){
+    #    Maxxx:pushEntity(I)
+    #}
+    B = W:dpanel(0,vec2(390,270),vec2(720,480))
+    All:pushTable(B)
+    B = W:dbutton(1,vec2(100),vec2(100,32),"ABCDEFGIHKLMNO")
+    W:dparent(B,All[1,table])
+    All:pushTable(B)
+    B = W:dbutton(2,vec2(300),vec2(75,42),"HATENIGGERS")
+    W:dparent(B,All[1,table])
+    All:pushTable(B)
+    B = W:dbutton(3,vec2(500),vec2(200,82),"NiggersNiggersNiggersNiggersNiggersNiggers")
+    W:dparent(B,All[1,table])
+    All:pushTable(B)
+    B = W:dlistbox(4,vec2(390,270),vec2(150,180),Maxxx)
+    W:dparent(B,All[1,table])
+    All:pushTable(B)
+    
+    All[1,table]:dvisible(W,T)
+}
+if(clk(clkName())){
+    Tmp = clkName():explode("_")
+    N = Tmp[2,string]:toNumber()
+    switch(Tmp[1,string]){
+        case("click"),
+            switch(All[N,table]["Type",string]){
+                case("listbox"),
+                    El = All[N,table]
+                    Sy = El["Size",vector2]:y()
+                    Py = W:egpPos(El["Parent",number]):y() + El["Pos",vector2]:y()
+                    Y = Tmp[4,string]:toNumber() - Py + Sy/2
+                    if(N == 5){
+                        if(inrange(Y,0,21)){LOff-- W:dupdatelist(El,LOff) LOff = El["Offset",number] break}
+                        elseif(inrange(Y,Sy-21,Sy)){LOff++ W:dupdatelist(El,LOff) LOff = El["Offset",number] break}
+                        Id = ceil( (Y-21)/18 ) + LOff
+                        print(El["Source",table][Id,string])
+                    }
+                break,
+            }
+        break,
+        
+        case("move"),
+            El = All[N,table]
+            CPos = O:toScreen(O:eye())
+            El:dmove(W,CPos+Dir+$CPos/2)
+            timer("move_"+N,50)
+        break,
+    }
+}
+
+if(keyClk(O)==-1){
+    stoptimer("move_1")
+    switch(keyClkPressed()){
+        case("t"),
+            T=!T
+            All[1,table]:dvisible(W,T)
+            if(T){ runOnKeys(O,1,array("t","mouse_left")) }
+            else { runOnKeys(O,1,array("t")) }
+        break,
+        
+        case("mouse_left"),
+            CPos = O:toScreen(O:eye())
+            for(I = 1, All:count()){
+                NI = All:count()-I+1
+                Additional = ""
+                Nig = All[NI,table]
+                if(!W:dcheck(Nig,CPos)){ continue }
+                if(All[NI,table]["Type",string] == "listbox"){Additional = "_"+CPos:x()+"_"+CPos:y()}
+                timer("click_"+NI+Additional,10)
+                
+                break
+            }
+        break,
+    }
+}
+
+if(keyClk(O)==1){
+    switch(keyClkPressed()){
+        case("mouse_left"),
+            CPos = O:toScreen(O:eye())
+            for(I = 1, All:count()){
+                Type = All[I,table]["Type",string]
+                if(Type != "panel"){continue}
+                N = All[I,table]["Id",number]
+                if(!W:egpObjectContainsPoint(N,CPos)){ continue }
+                Dir = W:egpPos(N) - CPos
+                timer("move_"+I,25)
+                break
+            }
+        break,
+    }
+}

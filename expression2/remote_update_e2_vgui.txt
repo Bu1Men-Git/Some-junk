@@ -1,0 +1,147 @@
+@name remote update e2 Vgui
+@persist [E O]:entity Fr:dframe T [E2s]:array [Lt]:dlistview Pn:dpanel Te:dtextentry Btn:table
+
+function entity sentSpawn(S:string,P:vector,F){return entity(1)}
+
+if(first() || dupefinished()){
+    O = owner()
+    E = entity()
+    runOnVgui(1)
+    runOnKeys(O,1,array("x"))
+    runOnLast(1)
+    T = 0
+    
+    Fr = dframe(0)
+    Fr:makePopup()
+    Fr:addPlayer(O)
+    Fr:setPos(vec2(50))
+    local Size = vec2(480,300)
+    Fr:setMinSize(Size)
+    Fr:showCloseButton(1)
+    Fr:create()
+    Fr:setDeleteOnClose(0)
+    Fr:setVisible(T)
+    Fr:enableMouseInput(1)
+    #Fr:enableKeyboardInput(1)
+    Fr:modify()
+    
+    Pn = dpanel(1,Fr)
+    Off = vec2(2.5,2.5)
+    Pn:setPos(Off+vec2(0,25))
+    Pn:setMinSize(Size-2*Off-vec2(0,25))
+    Pn:create()
+    
+    Lt = dlistview(2,Pn)
+    Lt:setPos(Off)
+    Lt:setSize(Size:setX(220))
+    Lt:addColumn("Id",0)
+    Lt:addColumn("Name",150)
+    Lt:addPlayer(O)
+    Lt:addLine("Id","Name")
+    Lt:create()
+    timer("list",50)
+    
+    Te = dtextentry(3,Pn)
+    Te:setPos(Off+vec2(225,0))
+    Te:setSize(vec2(245,24))
+    Te:setText("13")
+    Te:setNumeric(0)
+    Te:create()
+    
+    Btn = table()
+    
+    B = dbutton(4,Pn)
+    B:setPos(Off+vec2(225,29))
+    B:setSize(vec2(120,32))
+    B:setText("Upload to")
+    B:create()
+    Btn:pushDbutton(B)
+    
+    B = dbutton(5,Pn)
+    B:setPos(Off+vec2(350,29))
+    B:setSize(vec2(120,32))
+    B:setText("Hide it")
+    B:create()
+    Btn:pushDbutton(B)
+    
+    B = dbutton(6,Pn)
+    B:setPos(Off+vec2(225,63))
+    B:setSize(vec2(120,32))
+    B:setText("Create new")
+    B:create()
+    Btn:pushDbutton(B)
+    
+    B = dbutton(7,Pn)
+    B:setPos(Off+vec2(350,63))
+    B:setSize(vec2(120,32))
+    B:setText("Delete it")
+    B:create()
+    Btn:pushDbutton(B)
+    
+    B = dbutton(8,Pn)
+    B:setPos(Off+vec2(185,235))
+    B:setSize(vec2(32,32))
+    B:setText("R")
+    B:create()
+    Btn:pushDbutton(B)
+    
+}
+
+if(keyClk(O)>0){
+    T=!Fr:isVisible(O)
+    Fr:setVisible(T)
+    #Fr:enableMouseInput(T)
+    #Fr:enableKeyboardInput(T)
+    Fr:modify()
+}
+
+if(clk("list")){
+    findByClass("gmod_wire_expression2")
+    findClipToPlayerProps(O)
+    E2s = findToArray()
+    #if(changed(E2s:toString())){
+        Lt:clear()
+        Lt:addLine(E:id(),"This E2")
+        foreach(I,E2:entity = E2s){
+            Id = E2:id()
+            Name = E2:getName()
+            Lt:addLine(Id,Name)
+        }
+    #}
+    Lt:modify()
+}
+if(vguiClk()){
+    switch(vguiClkPanelID()){
+        case(4),
+            local EE = entity( Lt:getValues(O)[1,table]["Id",number] )
+            local Text = Te:getText(O):replace(" ","_")
+            EE:remoteUpload(Text+".txt")
+            timer("list",250)
+        break,
+        
+        case(5),
+            local EE = entity( Lt:getValues(O)[1,table]["Id",number] )
+            EE:setColor(vec4(0))
+            EE:propNotSolid(1)
+            EE:setPos(EE:toWorld(vec(0,0,-10)))
+        break,
+        
+        case(6),
+            local EE = sentSpawn("gmod_wire_expression2",E:pos(),1)
+            Lt:addLine(EE:id(),EE:getName())
+        break,
+        
+        case(7),
+            local EE = entity( Lt:getValues(O)[1,table]["Id",number] )
+            EE:propDelete()
+            Lt:removeLine(Lt:getIndex(O))
+            Lt:modify()
+        break,
+        
+        case(8),
+            timer("list",250)
+        break,
+    }
+}
+
+if(last()){Fr:setVisible(0)}

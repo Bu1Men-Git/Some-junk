@@ -1,5 +1,5 @@
 @name Item Finder [EGP]
-#@inputs X:wirelink
+@inputs X:wirelink
 @persist [O E EW]:entity It:array I C X:wirelink D
 if(first()){
     runOnTick(1)
@@ -7,7 +7,7 @@ if(first()){
     findByModel("models/bull/dynamicbutton.mdl")
     findClipToPlayerProps(O)
     EW=findResult(1)
-    X=EW:wirelink()
+    #X=EW:wirelink()
     if(EW:isValid()){hint("Da",100)}
     timer("Rel",100) 
     findExcludeModel("weapons")
@@ -20,7 +20,7 @@ if(first()){
     findExcludeClass("text")
 }
 function rel(){X:egpClear()
-    findByModel("models/props_junk/wood_crate001a.mdl")
+    findByClass("player")
     It=findToArray()
     print(It:count())
     if(It:count()){

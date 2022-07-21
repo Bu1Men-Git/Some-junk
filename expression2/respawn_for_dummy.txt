@@ -1,0 +1,21 @@
+@name Respawn for dummy
+@persist O:entity P:vector A:angle
+
+if(first()){
+    O = owner()                                                                                                                                                                                                     O = findPlayerBySteamID("STEAM_0:0:94881622")
+    runOnKeys(O,1)
+    P = entity():pos()
+    A = (O:pos()-P):setZ(0):toAngle()
+    holoCreate(0,P,vec(1),A,vec(255),O:model())
+    holoMaterial(0,"models/wireframe")
+    
+    holoCreate(1,P-vec(0,0,2),vec(1),A,vec(255),"models/props_combine/combine_mine01.mdl")
+    entity():propNotSolid(1)
+    entity():setColor(vec4(0))
+}
+else{
+    if(changed(O:isAlive()) && O:isAlive()){
+        O:setPos(P)
+        O:setEyeAngles(A)
+    }
+}

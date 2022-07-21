@@ -1,0 +1,15 @@
+@name remote update e2
+@persist O:entity [Path Def]:string
+
+if(first() || dupefinished()){
+    O = owner()
+    runOnFile(1)
+    runOnKeys(O,1,array("t"))
+    fileLoad("e2path.txt")
+}
+if(fileClk()){
+    Path = fileRead()
+}
+if(keyClk(O)>0 && Path:length()>0){
+    entity():remoteSetCode(Path)
+}

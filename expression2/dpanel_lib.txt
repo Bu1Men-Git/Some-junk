@@ -1,0 +1,9 @@
+@name DPanel lib
+@persist 
+Active = table()
+Passive = table()
+Add = 10000
+function table wirelink:button(I,Pos:vector2,Size:vector2,Txt:string){
+    
+}
+

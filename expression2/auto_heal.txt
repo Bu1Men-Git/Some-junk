@@ -1,0 +1,15 @@
+@name Auto heal
+@persist O:entity
+
+if(first()){
+    O = owner()
+    runOnDmg(1,O)
+    entity():propNotSolid(1)
+    entity():setColor(vec4(0))
+}
+interval(100)
+if(dmgClk()){stoptimer("interval") interval(2500)}
+if(O:isAlive()){
+    if(O:health()<100){sentSpawn("item_healthkit",O:pos()+O:vel()*tickInterval(),1)}
+    if(O:armor()<100){sentSpawn("item_battery",O:pos()+O:vel()*tickInterval(),1)}
+}

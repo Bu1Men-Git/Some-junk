@@ -1,0 +1,31 @@
+@name tele-door
+@persist [P Dir S]:vector R O:entity T:table
+
+if(first()){
+    O = owner()
+    R = 150
+    P = entity():pos()
+    S = vec(10,5,0.2)
+    Dir = (P-O:pos()):setZ(0):normalized()
+    entity():reposition(P-vec(0,0,25))
+    timer("do",25)
+    holoCreate(0,P+vec(0,0,60),S,Dir:toAngle()+ang(90,0,0),vec4(20,20,120,120),"hq_cylinder")
+}
+else{
+    timer("do",25)
+    if(clk("reload")){holoColor(0,vec4(20,20,120,120))}
+    findIncludeEntities(players())
+    findInBox(P+vec(0,0,60)-20*Dir-vec(50,20,100),P+vec(0,0,60)-20*Dir+vec(50,20,100))
+    T = findToTable()
+    for(I=1,T:count()){
+        E=T[I,entity]
+        if(Dir:dot(E:vel():normalized()) > 0.2){
+            print(E:name())
+            E:setPos(E:pos()+Dir*R)
+            stoptimer("do")
+            timer("reload",1500)
+            holoColor(0,vec4(120,20,20,120))
+            break
+        }
+    }
+}

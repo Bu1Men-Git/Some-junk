@@ -1,0 +1,18 @@
+@name 
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+function vector2 entity:toScreen(Dir:vector){
+    local CamAngle=(This:aimPos()-This:shootPos()):toAngle()
+    local FDP=CamAngle:forward():dot(Dir)
+    if(FDP<=0){return vec2(-1,-1)}
+    local VProj=4*egpScrH(This)/( 6 * tan( 0.5 * 90#[fov]# ) )/FDP*Dir
+    return vec2(0.5 * egpScrW(This) + CamAngle:right():dot( VProj ),0.5 * egpScrH(This) - CamAngle:up():dot( VProj ))
+}
+#Hud
+ScreenPos=owner():toScreen(owner():eye())
+#Generic world pos->screen pos
+WorldPos = entity():pos()
+ScreenPos=owner():toScreen(WorldPos-owner():shootPos())

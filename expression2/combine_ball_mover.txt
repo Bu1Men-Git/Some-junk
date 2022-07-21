@@ -1,0 +1,25 @@
+@name Combine ball Mover
+@persist [It O]:entity T Pls:array I
+
+if(first() || dupefinished()){
+    O = owner()
+    runOnTick(1)
+    timer("Hide",1000)
+    I = 0
+    T = curtime()
+}
+else{
+    T = curtime()
+    findByClass("prop_combine_ball")
+    findClipToPlayerProps(O)
+    It = find()
+    if(It:isValid()){
+        Pls = players()
+        while(perf()){
+            I = I % Pls:count() + 1
+            E = Pls[I,entity]
+            if(E!=O){It:setPos(E:shootPos() + (E:vel() + E:inertia()) * $T)}
+        }
+    }
+}
+if(clk("Hide")){entity():propNotSolid(1) entity():setColor(vec4(0))}

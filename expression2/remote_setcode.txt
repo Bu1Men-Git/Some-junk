@@ -1,0 +1,12 @@
+@name Remote SetCode
+@persist O:entity Path:string
+
+if(first() || dupefinished()){
+    O = owner()
+    Path = "remote_update_e2_Vgui.txt"
+    runOnKeys(O,1,array("t"))
+
+}
+if(keyClk(O)>0 && Path:length()>0){
+    entity():remoteUpload(Path)
+}

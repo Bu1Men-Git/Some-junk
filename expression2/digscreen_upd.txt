@@ -1,10 +1,11 @@
 @name DigScreen upd
 @model models/led2.mdl
+@inputs Scr:wirelink
 @outputs Data:string
 @persist X Y Scr:wirelink V:vector Data:string Cl DEnd DStr:string DDel:array Name:string Res:vector2 C Load Rx Ry
 if(first()){runOnFile(1) runOnTick(1)
     Name="7.txt"
-    Scr=entity():isWeldedTo():wirelink() 
+    #Scr=entity():isWeldedTo():wirelink() 
     function wirelink:init(Res:vector2){
         This[1048574]=1
         This[1048574]=0

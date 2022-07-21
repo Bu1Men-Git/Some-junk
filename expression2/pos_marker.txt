@@ -1,0 +1,4 @@
+@name Pos marker
+@model models/props_combine/combine_mine01.mdl
+entity():setPos(entity():toWorld(vec(0,0,-10)))
+entity():propNotSolid(1)

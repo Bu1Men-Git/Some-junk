@@ -4,7 +4,7 @@ function string toUnic(S:string,It:array){
     local St=""
     local I=1
     while(I<=S:length()){
-        if(97<=toByte(S[I]) && toByte(S[I])<=122 || 65<= toByte(S[I]) && toByte(S[I])<=90  || 0<It:getIndex(toByte(S[I]))){Ch=S[I]
+        if(97<=toByte(S[I]) && toByte(S[I])<=122 || 65<= toByte(S[I]) && toByte(S[I])<=90  || 0<It:exists(toByte(S[I]))){Ch=S[I]
             #print(Ch)
             St+=Ch
             I++

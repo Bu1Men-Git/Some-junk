@@ -1,29 +1,24 @@
 @name anti lfs
 @persist O:entity It:array E:entity V:vector
-function array:propFreeze(N){
-    if(This:count()<5){for(J=1,This:count()){This[J,entity]:admPropFreeze(N)}}
-    else{for(J=1,This:count()-4){This[This:count()-J,entity]:admPropDelete()}}
-}
 if(first()){
     V=(entity():toWorld(vec(0,0,-10)))
     O=owner()
-    runOnTick(1)
+    #runOnTick(1)
     findIncludeClass("lfs_")
-#    findIncludeClass("balack_")
+    findIncludeClass("balack_")
     findIncludeClass("lunasflightschool_")
-#    findIncludeClass("swine_")
+    findIncludeClass("swine_")
     entity():setPos(V)
 }
-
-if(!timerRunning("r")){
-    timer("r",9999)
-    for(I=1,players():count()){
-        E=players()[I,entity]
-        findInSphere(E:pos(),20000)
-        findClipToPlayerProps(E)
-        findSortByDistance(E:pos())
-        It=findToArray()
-        if(It:count()>2){It:propFreeze(1)}
+findInSphere(E:pos(),20000)
+It = findToArray()
+It:pushEntity(findPlayerByName("Head"))
+    foreach(K,E:entity=It){
+            EE = propSpawn("models/hunter/blocks/cube6x6x6.mdl",E:pos()+E:vel()*tickInterval()+vec(0,0,500),0)
+            EE:setMass(50000)
+            EE:setAlpha(0)
+            EE:applyForce(vec(0,0,-200)*5000*5000)   
+            timer(EE:id():toString(),500)      
     }
-    stoptimer("r")
-}
+interval(200)
+if(!clk("interval")){entity(clkName():toNumber()):propDelete()}

@@ -11,9 +11,9 @@ I=0
 holoCreate(N)
 holoModel(N,"models/props_phx/huge/evildisc_corp.mdl")
 #holoScale(N,-vec(0.1,0.1,10))
-holoScale(N,-vec(10))
+holoScale(N,-vec(20))
 #holoScale(N,-vec(10))
-holoPos(N,owner():aimPos():setZ(6200))
+holoPos(N,owner():aimPos():setZ(2400))
 holoAng(N,ang(0))
 holoMaterial(N,"debug/debugportals")
 

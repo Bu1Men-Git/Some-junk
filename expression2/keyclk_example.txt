@@ -1,0 +1,13 @@
+@name KeyClk example
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+if(first()){
+    runOnKeys(owner(),1,array("t"))
+}
+elseif(keyClk(keyClk())==1){
+    print(keyClkPressed())
+    runOnKeys(owner(),1) #  <--- just dont do this outside of 'if first'
+}

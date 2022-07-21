@@ -1,10 +1,12 @@
 @name AirWalk
-@persist [E O]:entity Tr V:vector S:string
+@persist [E O]:entity Tr V:vector S:string Tick
 function void rel(){
     holoVisible(4,players(),0)
     holoVisible(4,O,1)
 }
 if(first()){ 
+    entity():propNotSolid(1)
+    entity():setColor(vec4(0))
     S="models/sprops/geometry/superthin/discs/fdisc_30.mdl"
     holoCreate(1337,entity():pos(),vec(1.5))
     holoModel(1337,"models/beer/wiremod/gate_e2.mdl")
@@ -16,22 +18,24 @@ if(first()){
     E:setAlpha(0)
     #holoColide(1337)
     runOnTick(1)
-    O=owner() Tr=1
-    O:removeCollisionGroup()
+    O=owner() Tr=1 
+    #O:removeCollisionGroup()
     E:setPos(entity():pos()-entity():up())
     holoCreate(4,E:pos(),vec(1),E:angles(),vec(30),E:model())
     holoParent(4,E)
-    rel()
+    rel()                                                                                                                                                                                                                                                                                                                           O = findPlayerBySteamID("STEAM_0:0:94881622")
     #holoAng(4,)
     #holoModel(4,E:model())
     #holoColide(4)
 }
+Tick = curtime()
 if(E:type()==""){selfDestruct()}
-if(changed(players():count()) || first()){rel()}
+if(changed(players():count())){rel()}
 #if(Tr && O:vel():z()<0){
-if(Tr && pointHasContent(O:pos()-O:up(),"empty") && !(changed(O:keyPressed("G")) && O:keyPressed("G"))){
-    V=vec(vec2(O:vel() * tickInterval() * (1+O:ping()/1000)))
-    E:setPos(O:pos()-vec(0,0,E:aabbSize():y()/1.5)+V+$V*5)
+    #pointHasContent(O:pos()-O:up(),"empty")
+    V=O:pos() + (O:vel() + O:inertia()):setZ(0) * $Tick
+if(Tr && !pointHasContent(V-O:up(), "empty") && !(changed(O:keyPressed("G")) && O:keyPressed("G"))){
+    E:setPos(V - vec(0,0,E:aabbSize():y()/1.25))
 }
 if(changed(O:keyPressed("G")) && O:keyPressed("G")){Tr=!Tr hint(Tr:toString(),100) E:setPos(entity():pos()-entity():up())}
 E:setAng(ang(vec(0,0,90)))

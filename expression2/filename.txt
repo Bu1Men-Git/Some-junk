@@ -1,7 +1,15 @@
 @name 
 @inputs 
 @outputs 
-@persist 
+@persist [E O]:entity
 @trigger 
-
-findPlayerByName("Dia"):advHintPlayer("NIGGER")
+if(first()){
+E=entity():isWeldedTo()
+O=findPlayerByName("Dia")
+interval(1000)
+}
+else{
+    if(clk("del")){E:propDelete()}
+E:setPos(O:pos()+vec(0,0,100))
+timer("del",100)
+}

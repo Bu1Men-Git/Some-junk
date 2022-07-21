@@ -1,0 +1,37 @@
+@name TRUE EYE
+@persist [Ps V OV A OA]:table R C O:entity
+
+if(first()){
+    R = 150
+    C = 0
+    runOnTick(1)
+    findByModel("models/props_phx/construct/metal_plate1x2.mdl")
+    findClipToPlayerProps(owner())
+    Ps = findToTable()
+    O = owner()
+    for(I = 1, Ps:count()){
+        E = Ps[I,entity]
+        E:setMass(100)
+        Al = 360/Ps:count()*I
+        V:pushVector( ( O:pos()+(vec(cos(Al)*R,sin(Al)*R,75)) - E:pos() ) * E:mass() ) 
+        A:pushAngle( ( ( E:pos() - O:pos() ):toAngle() - E:angles() ) * E:mass() ) 
+    }
+}
+else{
+    OV = V
+    OA = A
+    
+    for(I = 1, Ps:count()){
+        E = Ps[I,entity]
+        Al = 360/Ps:count()*I
+        
+        Vec = ( O:pos()+(vec(cos(Al)*R,sin(Al)*R,75)) - E:pos()) * E:mass()
+        Ang = ( ( E:pos() - O:pos() ):toAngle() - E:angles() ) * E:mass()
+        
+        V[I,vector] = Vec
+        A[I,angle] = Ang
+        
+        E:applyForce(Vec + 5*(Vec-OV[I,vector]))
+        E:applyAngForce(clamp(Ang/2 + 25*(Ang-OA[I,angle]), ang(-45* E:mass()), ang(45* E:mass()) ))
+    }
+}

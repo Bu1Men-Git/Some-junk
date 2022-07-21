@@ -1,0 +1,167 @@
+@name DPanelLib
+@persist [Add Off]:number
+if(first()){
+    Add = 8
+    Off = 20
+}
+function table wirelink:dpanel(I,Pos:vector2,Size:vector2){
+    N = Off + I*Add
+    This:egpBox(N+1,vec2(0,Size:y()/2-10),Size)
+    This:egpColor(N+1,vec(170))
+    
+    This:egpBox(N,vec2(Pos:x(),Pos:y()-Size:y()/2+10),vec2(Size:x(),20))
+    This:egpColor(N,vec(80))
+    
+    This:egpBoxOutline(N+2,vec2(0,Size:y()/2-10),Size)
+    This:egpColor(N+2,vec(20))
+
+    This:egpParent(N+2,N)
+    This:egpParent(N+1,N)
+    
+    return table(
+        "Type" = "panel",
+        "Id" = N,
+        "Pos" = vec2(Pos:x(),Pos:y()-Size:y()/2+10),
+        "Size" = Size,
+        "Used" = 2,
+        "Hidden" = 0
+    )
+}
+
+function table wirelink:dbutton(I,Pos:vector2,Size:vector2,Text:string){
+    N = Off + I*Add
+    This:egpBox(N,Pos,Size)
+    This:egpColor(N,vec(210))
+    
+    This:egpBoxOutline(N+2,vec2(0),Size)
+    This:egpColor(N+2,vec(20))
+    
+    This:egpText(N+1, Text:left(floor(Size:x()/10)) ,vec2(0))
+    This:egpColor(N+1,vec(20))
+    This:egpAlign(N+1,1,1)
+    
+    This:egpParent(N+1,N)
+    This:egpParent(N+2,N)
+    
+    
+    return table(
+        "Type" = "button",
+        "Id" = N,
+        "Pos" = Pos,
+        "Size" = Size,
+        "Text" = Text,
+        "Used" = 2 # N + 2
+    )
+}
+
+function table wirelink:dlistbox(I,Pos:vector2,Size:vector2,Src:table){
+    N = Off + I*Add
+    Text = ""
+    for(I = 1, min(Src:count(), floor( (Size:y()-48)/16 ) )){
+        if(Src[I,entity]:isValid()){
+            Text+=( Src[I,entity]:name():left(floor((Size:x()-8)/10)) + "\n" )
+            continue
+        }
+        Text+=( Src[I,string]:left(floor((Size:x()-8)/10)) + "\n" )
+        
+    }
+    
+    This:egpBox(N,Pos,Size)
+    This:egpColor(N,vec(210))
+    
+    This:egpTextLayout(N+1, Text ,-Size/2+vec2(4,24) ,Size-vec2(8,48))
+    This:egpColor(N+1,vec(20))
+    
+    This:egpBox(N+2,vec2(0,12-Size:y()/2),vec2(Size:x(),24))
+    This:egpColor(N+2,vec(120))
+    
+    This:egpBox(N+3,vec2(0,Size:y()/2-12),vec2(Size:x(),24))
+    This:egpColor(N+3,vec(120))
+    
+    This:egpBoxOutline(N+4,vec2(0),Size)
+    This:egpColor(N+4,vec(20))
+    
+    This:egpParent(N+1,N)
+    This:egpParent(N+2,N)
+    This:egpParent(N+3,N)
+    This:egpParent(N+4,N)
+    
+    
+    return table(
+        "Type" = "listbox",
+        "Id" = N,
+        "Pos" = Pos,
+        "Size" = Size,
+        "Source" = Src,
+        "Offset" = 0,
+        "Selected" = -1,
+        "Used" = 4 # N + 4
+    )
+}
+
+
+function void wirelink:dremove(El:table){
+    N = El["Id",number]
+    F = El["Used",number]
+    for(I = 0,F){ This:egpRemove(N+I) }
+}
+
+function void wirelink:dparent(C:table,P:table){
+    Dir = C["Pos",vector2]-P["Pos",vector2]
+    This:egpParent(C["Id",number],P["Id",number])
+    This:egpPos(C["Id",number],Dir)
+    C["Pos",vector2] = Dir
+    C["Parent",number] = P["Id",number]
+}
+
+function void table:dmove(W:wirelink,Pos:vector2){
+    W:egpPos(This["Id",number],Pos)
+    This["Pos",vector2] = Pos
+}
+
+function void table:dvisible(W:wirelink,O){
+    This["Hidden",number]=!This["Hidden",number]
+    N = This["Id",number]
+    if(This["Hidden",number]){ W:egpPos(N,This["Pos",vector2]+vec2(2000)) }
+    else{W:egpPos(N,This["Pos",vector2])}
+}
+
+function number wirelink:dcheck(El:table,Cp:vector2){
+    S = El["Size",vector2]/2
+    Par = El["Parent",number]
+    if(Par>0){P = This:egpPos(Par) + El["Pos",vector2]}
+    else{P = El["Pos",vector2]}
+    return inrange(Cp,P-S,P+S)
+}
+
+function void wirelink:dupdatelist(El:table,Offset){
+    Src = El["Source",table]
+    Size = El["Size",vector2]
+    Offset = clamp(Offset,0,Src:count()-floor( (Size:y()-48)/16 )+1)
+    El["Offset",number] = Offset
+    Text = ""
+    Limit = min(Src:count() , floor( (Size:y()-48)/16 ) +Offset ) 
+    for(I = Offset, Limit){
+        NI = I % Limit + 1
+        if(Src[NI,entity]:isValid()){
+            Text+=( Src[NI,entity]:name():left(floor((Size:x()-8)/10)) + "\n" )
+            continue
+        }
+        Text+=( Src[NI,string]:left(floor((Size:x()-8)/10)) + "\n" )
+        
+    }
+    This:egpSetText(El["Id",number]+1 , Text)
+}
+
+function vector2 entity:toScreen(Dir:vector){
+    local Fov = 83.66666
+    local ScrH = 1080
+    local ScrW = 1920
+    
+    local CumAng=(This:aimPos()-This:shootPos()):toAngle()
+    local FDP=CumAng:forward():dot(Dir)
+    if(FDP<=0){return vec2(-1,-1)}
+    local VProj=ScrH/( tan( Fov/2 ) )/FDP*Dir
+    return round(0.5*vec2( ScrW + CumAng:right():dot( VProj ), ScrH - CumAng:up():dot( VProj )))
+}
+

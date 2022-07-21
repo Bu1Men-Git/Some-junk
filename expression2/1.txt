@@ -4,6 +4,7 @@ if(first() || duped()){
 O=owner()
 runOnTick(1)
 holoCreate(0,entity():pos()+vec(0,0,25))
-holoColide(0)
+#holoColide(0)
+print("HOla")
 }
 if(O:keyPressed("B")){holoPos(0,holoEntity(0):pos()+vec(0,0,100))}

@@ -1,0 +1,14 @@
+@name Booom
+@inputs 
+@outputs 
+@persist E:entity
+@trigger 
+
+E = findPlayerByName("Head")
+while(E:isAlive() && perf()){
+EE = propSpawn("models/props_c17/oildrum001_explosive.mdl",E:shootPos()+E:vel()*tickInterval(),1)
+EE:setAlpha(0)
+EE:propNotSolid(1)
+EE:propBreak()
+}
+interval(100)

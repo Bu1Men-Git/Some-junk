@@ -1,0 +1,7 @@
+@name Sample chip
+@persist [E O]:entity
+
+if(first()){
+    O = owner()
+    E = entity()
+}

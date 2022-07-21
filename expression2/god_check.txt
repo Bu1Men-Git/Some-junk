@@ -1,0 +1,15 @@
+@name God check
+@inputs 
+@outputs 
+@persist I
+@trigger 
+if(first()){
+   print("---------------------------")
+I = 1
+}
+
+E = players()[I,entity]
+print(E:name()+" : "+E:hasGodMode())
+interval(125)
+I++
+#print("---------------------------")

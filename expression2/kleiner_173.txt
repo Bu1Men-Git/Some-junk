@@ -29,7 +29,7 @@ function number entity:visible(Ply:array,N){
     return 0
 }
 
-if(first()){E=propSpawn("models/Kleiner.mdl",entity():pos(),ang(0),1) E:makeBoxical(E:pos()-vec(25,25,0),E:pos()+vec(25,25,72)) E:admPropFreeze(1) E:setAng(ang(0)) O=E:pos():nearAlive(players()) runOnTick(1) timer("chk",100) E:setNoCollideAll()
+if(first()){E=propSpawn("models/Kleiner.mdl",entity():pos(),ang(0),1) E:makeBoxical(E:pos()-vec(25,25,0),E:pos()+vec(25,25,72)) E:propFreeze(1) E:setAng(ang(0)) O=E:pos():nearAlive(players()) runOnTick(1) timer("chk",100) E:setNoCollideAll()
     findIncludeClass("player") entity():setPos(vec(14324))
     holoCreate(0,E:attachmentPos("chest")-vec(0,0,20),vec(1),ang(0,90,0),vec(255),"models/weapons/w_Physics.mdl") holoParent(0,E) Dumb = E #Dumb = entSpawn("gmt_instrument_piano",vec(14214),O)
 }

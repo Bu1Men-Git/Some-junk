@@ -1,0 +1,19 @@
+@name Vector cross 3D
+@persist [E O]:entity [Ps Dir]:vector
+#include "BulLib"
+
+
+if(first()){
+    runOnTick(1)
+    O = owner()
+    E = entity()
+    Dir = (O:shootPos()-E:pos())
+    holoCreate(0,E:pos(),vec(1),Dir:toAngle())
+}
+else{
+    local OP = O:shootPos()
+    if(O:eye():dot(E:pos()-OP)>0){
+        Ps = cross(OP,O:eye(),E:pos(),Dir)
+        holoPos(0,Ps)
+    }
+}
