@@ -90,7 +90,7 @@ function table sphereCross(Ln:vector,Dr:vector,Pl:vector,R,Siz:vector,One){
     # V1 - Directional vector of line
     # B - Starting Pos of a sphere
     # R - Radius of a sphere
-    # Siz - Reversed size of a sphere relative to its radius ( vec(1,1,1) - normal size, vec(2,2,2) - 2 times smaller than normal one )
+    # Siz - Size of a sphere relative to its radius ( vec(1,1,1) - normal size, vec(2,2,2) - 2 times bigger than normal one )
     # One - Should this function return only one point of intersection?  ( 1/0 )
     
     local Sx = Siz:x()^-1
@@ -147,7 +147,7 @@ function table sphereCross(Ln:vector,Dr:vector,Pl:vector,R,Siz:vector){
     # V1 - Directional vector of line
     # B - Starting Pos of a sphere
     # R - Radius of a sphere
-    # Siz - Reversed size of a sphere relative to its radius ( vec(1,1,1) - normal size, vec(2,2,2) - 2 times smaller than normal one )
+    # Siz - Size of a sphere relative to its radius ( vec(1,1,1) - normal size, vec(2,2,2) - 2 times bigger than normal one )
     
     local Sx = Siz:x()^2
     local Sy = Siz:y()^2
