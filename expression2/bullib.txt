@@ -5,8 +5,18 @@ function number vector:sum(){
     
     return ( This:x() + This:y() + This:z() )
 }
+function number vector:max(){
+    # Pretty obvious
+    
+    return max( This:x(), This:y(), This:z() )
+}
+function number vector:min(){
+    # Pretty obvious
+    
+    return min( This:x(), This:y(), This:z() )
+}
 
-function vector2 sqrEq(A,B,C){
+function vector2 sqrEq(A:number, B:number, C:number){
     # Solve the equadric equation ( Ax^2 + Bx + C = 0 )
     
     local D = B^2 - 4*A*C
@@ -55,7 +65,7 @@ function vector planeCross(Ln:vector,Dr:vector,Pl:vector,Nr:vector){
 
 
 
-function table sphereCross(Ln:vector,Dr:vector,Pl:vector,R,One){
+function table sphereCross(Ln:vector,Dr:vector,Pl:vector,R:number,One:number){
     # Finds intersection point between line and a sphere
     # A - Starting Pos of line
     # V1 - Directional vector of line
@@ -84,7 +94,7 @@ function table sphereCross(Ln:vector,Dr:vector,Pl:vector,R,One){
     return table(Ln+Dr*T1,Ln+Dr*T2)
 }
 
-function table sphereCross(Ln:vector,Dr:vector,Pl:vector,R,Siz:vector,One){
+function table sphereCross(Ln:vector,Dr:vector,Pl:vector,R:number,Siz:vector,One:number){
     # Finds intersection point between line and a sphere
     # A - Starting Pos of line
     # V1 - Directional vector of line
@@ -118,7 +128,7 @@ function table sphereCross(Ln:vector,Dr:vector,Pl:vector,R,Siz:vector,One){
     return table(Ln+Dr*T1,Ln+Dr*T2)
 }
 
-function table sphereCross(Ln:vector,Dr:vector,Pl:vector,R){
+function table sphereCross(Ln:vector,Dr:vector,Pl:vector,R:number){
     # Finds intersection point between line and a sphere
     # A - Starting Pos of line
     # V1 - Directional vector of line
@@ -141,7 +151,7 @@ function table sphereCross(Ln:vector,Dr:vector,Pl:vector,R){
     return table(Ln+Dr*T1,Ln+Dr*T2)
 }
 
-function table sphereCross(Ln:vector,Dr:vector,Pl:vector,R,Siz:vector){
+function table sphereCross(Ln:vector,Dr:vector,Pl:vector,R:number,Siz:vector){
     # Finds intersection point between line and a sphere
     # A - Starting Pos of line
     # V1 - Directional vector of line
@@ -167,4 +177,27 @@ function table sphereCross(Ln:vector,Dr:vector,Pl:vector,R,Siz:vector){
     local T2 = T:y()
     
     return table(Ln+Dr*T1,Ln+Dr*T2)
+}
+
+function table boxCross(Ln:vector,Dr:vector,Pl:vector,Siz:vector){
+    # Finds intersection point between line and a cube
+    # A - Starting Pos of line
+    # V1 - Directional vector of line
+    # B - Starting Pos of a cube
+    # Siz - Size of a cube
+    
+    local Sz = Siz / 2
+    
+    local D = Pl - Ln
+    
+    local A = D - Sz
+    local B = D + Sz
+    
+    #print(A / Dr)
+    
+    local T2 = (B / Dr):min()
+    local T1 = (A / Dr):max()
+    
+    local P1 = Ln+Dr*T1, P2 = Ln+Dr*T2
+    return table(P1, P2)
 }

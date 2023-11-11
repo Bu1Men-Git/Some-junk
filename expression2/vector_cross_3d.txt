@@ -1,19 +1,29 @@
 @name Vector cross 3D
-@persist [E O]:entity [Ps Dir]:vector
+@persist [E O]:entity [Pos Sz]:vector
 #include "BulLib"
 
 
-if(first()){
-    runOnTick(1)
+
     O = owner()
     E = entity()
     Dir = (O:shootPos()-E:pos())
-    holoCreate(0,E:pos(),vec(1),Dir:toAngle())
-}
-else{
+    Sz = vec(200)
+    Pos = E:pos() + vec(0,0,Sz:z()/2)
+    holoCreate(1,Pos,vec(-1),Dir:toAngle())
+    holoCreate(0,Pos,vec(-1),Dir:toAngle())
+    holoCreate(1337, Pos)
+    holoColor(1337, vec4(128,128,192,96))
+    holoScaleUnits(1337, -Sz)
+
+event tick(){
     local OP = O:shootPos()
-    if(O:eye():dot(E:pos()-OP)>0){
-        Ps = cross(OP,O:eye(),E:pos(),Dir)
-        holoPos(0,Ps)
-    }
+    #if(O:eye():dot(Pos-OP)>0){
+        local TPs = boxCross(OP,O:eye(),Pos,Sz)
+        local V = TPs[1, vector]
+        print(V)
+        if(V:sum()){
+            holoPos(0,V)
+            holoPos(1, TPs[2, vector])
+        }
+    #}
 }
