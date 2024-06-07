@@ -1,0 +1,6 @@
+--@name adress
+--@author
+--@shared
+
+dwLocalPlayer = 0xDEA98C;
+print(_G[dwLocalPlayer])

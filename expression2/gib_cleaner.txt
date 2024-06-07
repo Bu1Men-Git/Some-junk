@@ -1,0 +1,9 @@
+@name GIB cleaner
+findByClass("gib")
+
+NPC = findToArray()
+
+foreach(K:number,E:entity=NPC){
+    E:admPropDelete()
+}
+selfDestruct()

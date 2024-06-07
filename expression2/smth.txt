@@ -1,0 +1,24 @@
+@name smth
+@inputs 
+@outputs 
+@persist P:entity
+@trigger 
+@strict
+
+P = propSpawn("models/props_c17/FurnitureChair001a.mdl", entity():toWorld(vec(0,0,50)), ang(0), 0)
+P:propGravity(0)
+
+function entity:applyAngVelA(A:angle){
+    This:applyTorque(shiftR(vec(A)))
+}
+
+function entity:applyAngVelV(V:vector){
+    This:applyTorque(V)
+}
+
+event tick() {
+    if(!P:isValid()){selfDestruct()}
+    else{
+        P:applyTorque(-shiftR(vec(P:angles() + P:angVel())) * P:mass())
+    }
+}

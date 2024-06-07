@@ -1,0 +1,25 @@
+@name ball sack lovest best 
+@inputs 
+@outputs 
+@persist  O:entity
+@trigger 
+@strict
+
+if(first()) {
+    runOnDmg(1)
+    O = owner()
+ #   owner():disableFallDamage()
+}
+if(dmgClk() && O:isAlive() && dmgVictim() == O){
+   # event tick(){
+        E = lastDamageVictim() 
+        #DMG = lastDamage()
+        GMG = dmgAttacker()
+        
+       if(dmgAttacker():isValid()){ 
+        if(dmgVictim() == O && dmgAttacker():isAlive() && O != GMG) {
+              shootBolt(GMG:boxCenterW(), GMG:vel(), inf())
+              
+      }   
+  }
+}

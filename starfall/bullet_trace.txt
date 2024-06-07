@@ -1,0 +1,9 @@
+--@name bullet trace
+--@author
+--@server
+shit = prop.create(chip():getPos(), Angle(), "models/sprops/geometry/fdisc_18.mdl", true)
+hook.add("EntityFireBullets", "bul", function(ply, dat)
+    tr = trace.line(dat.Src, dat.Src + dat.Dir * 25000, function(e) return false end)
+    shit:setPos(tr.HitPos)
+    shit:setAngles(tr.HitNormal:getAngle() + Angle(0, 90, 0))
+end)

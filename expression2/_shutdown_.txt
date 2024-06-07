@@ -1,36 +1,29 @@
-@name E2 Shield
-@persist [E S O]:entity [Dir Size Pos Eye P1]:vector Ps:table R
-#include "BulLib"
-
-
+@name HoholAnim ragdoll
+@persist [E O]:entity I V:vector
 if(first()){
-    runOnTick(1)
-    O = owner()
-    E = entity()
-    R = 80
-    Dir = (O:shootPos()-E:pos())
-    Size = vec(1,1,1)
-    Pos = E:pos()+vec(0,0,R*Size:z())
-    S = propSpawn("models/Mechanics/gears2/bevel_36t1.mdl",Pos,1)
-    holoCreate(0,S:pos(),vec(1),ang(0),vec4(255,255,255,80),S:model())
-    #holoParent(0,S)
-    holoVisible(0,O,1)
-    S:propDraw(0)
+    #O=owner()
+    O=findPlayerByName("Diablo")
+    E = entity():isWeldedTo()
+    E:propFreeze(1)
+    holoCreate(2,entity():pos()-entity():up()*25,vec(1),O:weapon():angles(),vec(255),O:weapon():model())
+    runOnTick(1) 
+    #timer("A",100)
+    E:setPos(entity():pos()+vec(0,0,O:height()/2))
     
 }
-else{
-    local OP = O:shootPos() + (O:vel() + O:inertia())*tickInterval()
-    Eye = O:eye()
-    #if(O:eye():dot(E:pos()-OP)>0){
-        Ps = sphereCross(OP,Eye + 2*$Eye,Pos,R,1)
-        if(Ps:count()>0){
-            P1 = Ps[1,vector]
-            local Pf = P1# + $P1/4
-            #local P2 = Ps[2,vector]
-            if(Pf:isInWorld()){
-               S:setPos(Pf+(Pos-Pf):normalized()*10)
-               S:setAng((Pos-Pf):toAngle()-ang(90,0,0))
-            }
-        }
-   # }
+#if(clk("A")){E:animate(O:getAnimation())}
+#if(changed(O:isAlive()) && O:isAlive()){O:plySetArmor(9099)}
+#if(changed(O:getAnimation())){
+    E:animate(O:getAnimation())
+#}
+E:setAng(vec(vec2(O:aimPos()-E:pos())):toAngle())
+#print(O:aimPos()-E:pos())
+if(changed(O:weapon():type())){
+    holoModel(2,O:weapon():model())
+    holoPos(2,O:bone(5):pos())
+    holoEntity(2):parentToBone(E,5)
 }
+if(changed(O:model())){holoModel(1,O:model())}
+#if((O:getAnimation()>124 && O:getAnimation()<128) || O:getAnimation()==114 || O:getAnimation()==119 || O:getAnimation()==131 || O:getAnimation()==130 ){
+#    holoPos(1,E:pos()+vec(0,0,O:vel():z()/O:mass()*(O:vel():z()>=-190)))
+#}

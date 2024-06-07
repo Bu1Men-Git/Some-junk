@@ -1,0 +1,55 @@
+--@name anims
+--@author
+--@shared
+
+o = owner()
+if SERVER then
+    ce = chip()
+    cp = ce:getPos() - ce:getUp()*7
+    ce:setPos(cp)
+    anims = {}
+    curAnim = {}
+    t = 0
+    Activ = o:getSequenceInfo(o:getSequence()).activityname
+    oPos = o:getPos()
+    aWep = o:getActiveWeapon()
+    aHold = aWep:getHoldType()
+    aPos = aWep:getPos()
+    aAng = aWep:getAngles()
+    hbone = 11
+    
+    clone = hologram.create(cp + ce:getUp()*7, o:getAngles(), o:getModel())
+    //clone:setAnimation(Activ, 0, 1)
+    wepBon = {clone:getBonePosition(hbone)}
+    wForw = aWep:obbSize() * (wepBon[2]:getForward()/3 - wepBon[2]:getUp()/2)
+    cwep = hologram.create(wepBon[1] + wForw/4, wepBon[2] + Angle(0, 0, 180), aWep:getModel())
+    cwep:setParent(clone, nil, hbone)
+    //clone:setAnimation(Activ, 0, 1)
+    tick = game.getTickInterval()
+    
+    hook.add("think", "anim", function()
+        an = o:getSequenceInfo(o:getSequence())
+        if an.activityname ~= Activ then
+            Activ = an.activityname
+            clone:setAnimation(Activ, 0, 1)
+            k = 0
+            
+        else
+            nPos = o:getPos()
+            clone:setPos(clone:getPos() + nPos - oPos)
+            //clone:setAngles(o:getAngles())
+            oPos = nPos
+        end
+    end)
+    
+    hook.add("PlayerSwitchWeapon", "weapS", function(ply, ow, nw)
+        aWep = nw
+        aPos = nw:getPos()
+        aAng = nw:getAngles()
+        print(aPos, aAng)
+    end)
+    
+    //timer.create("nagger", 0.5, 0, function() printTable(an) end)
+else
+    
+end

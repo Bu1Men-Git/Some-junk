@@ -1,0 +1,12 @@
+--@name 1
+--@author
+--@server
+
+o = owner()
+
+holo = hologram.create(Vector(0, 0, 0), Angle(0, 0, 0), "models/props_junk/PopCan01a.mdl", Vector(1, 1, 1))
+
+hook.add("tick", "", function()
+    pos = o:getPos()
+    holo:setPos(pos)
+end)

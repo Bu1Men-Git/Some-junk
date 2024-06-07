@@ -1,0 +1,20 @@
+@name 
+@inputs DATA:table
+@persist 
+@trigger 
+@strict
+
+E = entity():isWeldedTo()
+W = E:wirelink()
+T = table()
+T["ID"] = "Amongus"
+T["DATA"] = "LOH"
+T["SEND_TO"] = entity()
+#W["Set"] = T
+W["Get"] = T
+#W["Set"] = T
+
+event input(InputName:string) {
+    printTable(DATA)
+    break
+}

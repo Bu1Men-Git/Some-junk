@@ -1,0 +1,43 @@
+@name niga
+@inputs 
+@outputs 
+@persist [P]:vector [E O]:entity
+@trigger 
+@strict
+if(first()){
+    O = owner()
+    #timer("check", 10)
+}
+#[if(clk("check")){
+    if(!E:isValid()){
+        E = seatSpawn("models/props_junk/PopCan01a.mdl", O:pos(), ang(0), 1)
+        E:propDraw(0)
+    }
+    if(E:driver():isValid()){
+        if(E:driver() == O){
+            E:ejectPodTemp(E:pos())
+            #E:setPos(vec(0))
+            E:setCollisionGroup("he he he ha")
+        } else {
+            E:killPod()
+            timer("check", 10)
+        }
+    }
+    else { timer("check", 10) }
+}
+
+if(clk("tp")){
+    O:ejectPodTemp(P)
+}
+]#
+event tick(){
+local N = 2147483647
+if(O:isAlive()){
+    P = O:pos()
+} else {
+    O:plySpawn()
+    #O:returnDriver()
+    #timer("tp", 500)
+}
+O:setHealth(N)
+}

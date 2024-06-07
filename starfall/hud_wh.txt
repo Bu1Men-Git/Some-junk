@@ -1,0 +1,70 @@
+--@name polygon draw
+--@author
+--@shared
+
+o = owner()
+if SERVER then
+    
+    function sendToClient(tbl)
+        net.start("JGDJAGJgasdgjdhjasd")
+        net.writeTable(tbl)
+        net.send(o, false)
+    end
+    
+    chip():setPos(chip():localToWorld(Vector(0,0,-10)))
+    Hud = prop.createComponent(chip():getPos(), Angle(0, 0, 0), "starfall_hud", "models/bull/dynamicbutton.mdl", true)
+    Hud:setColor(Color(0,0,0,0))
+    Hud:linkComponent(chip())
+    
+    plys = find.allPlayers()
+    timer.create("first", 0.5, 1, function() sendToClient(plys) end)
+    
+    hook.add("PlayerInitialSpawn", "add_player", function(ply, from_map)
+        table.insert(plys, ply)
+        sendToClient(plys)
+    end)
+    
+    hook.add("PlayerDisconnect", "remove_player", function(nid, name, ply, reason, isbot)
+        table.removeByValue(plys, ply)
+        sendToClient(plys)
+    end)
+else
+    normal_font = render.createFont("Times New Roman", 24, 800, true, false, false, true)
+    caseoh_ahhh_font = render.createFont("Times New Roman", 144, 800, true, false, false, true)
+    render.setFont(normal_font)
+    plys = {}
+    
+    net.receive("JGDJAGJgasdgjdhjasd", function(len, ply)
+        plys = net.readTable()
+    end)
+    
+    hook.add("inputPressed", "", function(n)
+        if n == 30 then
+            enableHud(o, not render.isHUDActive())
+        end
+    end)
+    
+    hook.add("postdrawopaquerenderables", "draw", function(d, s, s3d)
+        if player() ~= o then return end
+        render.setRenderTargetTexture("pp/sub")
+        for i, ply in pairs(plys) do
+            if ply == o then continue end
+            pos, ang = ply:getAttachment(15)
+            render.draw3DSphere(pos, 3, 12, 12)
+        end
+        render.setRenderTargetTexture()
+        --render.draw3DSphere(Vector pos, number radius, number longitudeSteps, number latitudeSteps)
+    end)
+    
+    hook.add("drawhud", "hud", function()
+        if player() ~= o then return end
+    end)
+    
+    hook.add("drawhud", "fckoff", function()
+        if player() == o then return end
+        w, h = render.getResolution()
+        render.setFont(caseoh_ahhh_font)
+        render.drawText(w / 2 + math.rand(-1, 1), h / 2 - 80 + math.rand(-1, 1), "Fuck off", TEXT_ALIGN.CENTER)
+        render.setFont(normal_font)
+    end)
+end

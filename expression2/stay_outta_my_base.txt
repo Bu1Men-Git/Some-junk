@@ -1,0 +1,146 @@
+@name stay outta my base
+@persist CringBabys:array 
+@inputs 
+@outputs 
+
+runOnDmg(1, owner())
+
+Distance = 1850
+Model = "models/hunter/misc/sphere2x2.mdl"
+Mat = "models/player/shared/ice_player"
+if(first()){
+CringBabys = array()
+
+CringBabys:pushEntity(findPlayerBySteamID("STEAM_0:0:174638270"))
+
+
+#CringBabys:pushEntity(owner())
+
+#owner():plySetAng(ang(0))
+
+#owner():disableFallDamage()
+
+holoCreate(1)
+holoModel(1, Model)
+holoScaleUnits(1, vec(Distance))
+holoMaterial(1, Mat)
+holoDisableShading(1, 1)
+
+holoCreate(2)
+holoModel(2, Model)
+holoScaleUnits(2, -vec(Distance))
+holoDisableShading(2, 1)
+holoMaterial(2, Mat)
+holoAlpha(2, 25)
+
+holoCreate(3)
+holoScaleUnits(3, vec(0))
+
+
+holoVisible(1, owner(), 0)
+
+for(_ = 1, CringBabys:count()){
+#print(CringBabys[I,entity]:name())
+
+#
+}
+
+function void punish(Child:entity){
+Child:plySpawn()
+
+Child:plySetPos(vec(0, 0, inf()))
+#Child:plySetAng(ang(0, 0, 90))
+
+#Child:plySetSpeed(0)
+#Child:plySetWalkSpeed(0)
+#Child:plySetRunSpeed(0)
+#Child:plySetGravity(0)
+#Child:plySetJumpPower(0)
+
+Child:applyPlayerForce(vec(0, 0, -inf()))
+#Child:enableFallDamage()
+
+Child:plySetHealth(0)
+Child:plySetArmor(-inf())
+
+Child:plyIgnite(10)
+Child:plyNoclip(0)
+
+print(Child:name()+" tried it lol")
+
+holoPos(3, Child:pos())
+holoParent(3, Child)
+
+holoEntity(3):soundPlay(1, 20, "Trainyard.train_horn_everywhere")
+}
+}
+
+
+
+
+findExcludePlayer(owner())
+findExcludePlayer("diablo")
+ findByClass("player")
+ 
+
+
+
+
+
+for(_ = 1, CringBabys:count()){
+local CringBaby = findClosest(entity():pos())
+
+
+if(CringBaby:shootPos():distance(entity():pos()) <= Distance){
+punish(CringBaby)
+}
+
+if(CringBaby:aimEntity() == owner() & owner():shootPos():distance(entity():pos()) <= Distance){
+punish(CringBaby)
+}
+
+if(CringBaby == dmgAttacker() & dmgClk()){
+punish(CringBaby)
+}
+
+
+}
+#[if(!owner():isAlive()){
+for(I = 1, CringBabys:count()){
+local CringBaby = CringBabys[I,entity]
+
+if(CringBaby == dmgAttacker()){
+punish(CringBaby)
+}
+}
+}]#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+interval(50)
+

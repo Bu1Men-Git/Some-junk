@@ -1,0 +1,16 @@
+@name Halo 3
+@persist MaxHolos
+runOnLast(1)
+MaxHolos = 10
+if(last()){
+    for(I=1, MaxHolos){
+        holoEntity(I):removeHalo()
+        holoDelete(I)
+    }
+}
+else{
+    for(I=1, MaxHolos){
+        holoCreate(I, entity():toWorld(vec(0,0, 100)), vec(4))
+        holoEntity(I):setHalo(vec(100,100,240))
+    }
+}

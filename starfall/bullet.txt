@@ -1,0 +1,33 @@
+--@name Bullet
+--@author
+--@shared
+o = owner()
+ang = Angle(0,-90,0)
+vec1 = Vector(1, 1, 1)
+if SERVER then
+    randomized = {}
+    hook.add("think", "lol", function()
+        //o:setEyeAngles(ang)
+    end)
+    hook.add("EntityFireBullets", "bullet", function(e, bul)
+        eyez = o:getEyeTrace()
+        eyeCent = eyez["HitPos"]
+        dist = eyeCent:getDistance(bul["Src"])
+        eyeStart = bul["Src"]
+        eyesDir = -bul["Dir"]
+        spread = bul["Spread"]
+        r = {}
+        //randomized = Vector(math.rand(-spread[1], spread[1]), math.rand(-spread[2], spread[2]), math.rand(-spread[3], spread[3]))
+        for i=-1, 27 do
+            table.insert(r, math.sharedRandom(os.date(),-1,1, i) * spread[1])
+        end
+    end)
+    
+    hook.add("EntityTakeDamage", "_", function(tar, att, inf, amount, type, pos, f)
+        //print("Spread ", (pos - eyeCent)/dist)
+        print("daerpD ", (pos - eyeStart):setY(0)/dist)
+        //print("next vals ")
+        printTable(r)
+        return true
+    end)
+end

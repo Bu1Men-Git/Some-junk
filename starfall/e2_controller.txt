@@ -1,0 +1,22 @@
+--@name E2 controller
+--@author
+--@shared
+
+function allE2s()
+    return find.byClass("gmod_wire_expression2")
+end
+
+if SERVER then
+    Hud = find.byClass("starfall_hud",function(E) return E:getOwner()==owner() and E or nil end)[1]
+    chip():setPos(chip():localToWorld(Vector(0,0,-10)))
+    if Hud then
+    print(Color(25,160,25),"HUD have been found")
+    else 
+    Hud = prop.createComponent(chip():getPos(), Angle(0, 0, 0), "starfall_hud", "models/bull/dynamicbutton.mdl", true)
+    print(Color(25,25,160),"HUD have been created")
+    end
+    Hud:setColor(Color(0,0,0,0))
+    Hud:linkComponent(chip())
+else
+    
+end

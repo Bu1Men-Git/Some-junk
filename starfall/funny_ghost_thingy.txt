@@ -1,0 +1,58 @@
+--@name funny ghost thingy
+--@author
+--@server
+
+tick = game.getTickInterval()
+o = owner()
+
+ce = chip()
+    cp = ce:getPos() - ce:getUp()*7
+    ce:setPos(cp)
+
+e2 = prop.createSent(cp, Angle(), "gmod_wire_expression2", true, {
+_name = "collide",
+_original = "@inputs Name:string\n@trigger Name\nentity(".. tostring(o:entIndex()) .."):setCollisionGroup(Name)",
+Model = "models/beer/wiremod/gate_e2_nano.mdl"
+})
+
+we2 = e2:getWirelink()
+
+
+
+function setCollisionGroup(g)
+    we2.Name = g
+end
+ 
+setCollisionGroup("")
+
+hook.add("Removed", "", function() setCollisionGroup("") e2:remove() end)
+    
+function bulletBlock(ply, dat)
+    if ply == o then return end
+    local dist = (o:getPos() - dat.Src)
+    local len = dist:getLength()
+    if 1 - dist:dot(dat.Dir) > 36 then return end
+    local time = 8
+    if dat.speed then
+        time = 1 / tick * (len + 50) / dat.speed
+    end
+    //elseif ply:isNPC() then
+        //if ply:getEnemy() != o then return end
+    //else
+        //return
+    //end
+    setCollisionGroup("he he he ha")
+    timer.remove("not he he he ha")
+    timer.create("not he he he ha", tick * time, 1, function() setCollisionGroup("") end)
+end
+
+ents = {"crossbow_bolt", "rpg_missile", "prop_combine_ball", "npc_grenade_frag"}
+
+
+hook.add("EntityFireBullets", "bul", bulletBlock)
+
+hook.add("OnEntityCreated", "bolts", function(e)
+    if e:isValid() and e:isValidPhys()/* and table.hasValue(ents, e:getClass())*/ then
+        bulletBlock(e:getOwner(), {Src = e:getPos(), Dir = e:getForward(), speed = e:getVelocity():getLength()})
+    end
+end)

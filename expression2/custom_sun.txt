@@ -1,0 +1,48 @@
+@name Custom sun
+@inputs 
+@outputs 
+@persist 
+@trigger 
+@strict
+#include "skybox_finder"
+
+function void createSegmentedSphere(Pos:vector, Sz:vector, Seg:number, ColB:vector, ColE:vector, ParentTo:number){
+    if(Seg < 1) {return}
+    local Id = ParentTo * 1000
+    local Mod = "models/sprops/geometry/sphere_144.mdl"
+    local Mat = ""#"models/player/shared/ice_player"
+    holoCreate(Id + 1, Pos, vec(1), ang(0), ColB, Mod)
+    holoMaterial(Id + 1, Mat)
+    holoScaleUnits(Id + 1, Sz)
+    holoParent(Id + 1,ParentTo)
+    PosB = Pos + vec(0,0,Sz:z()/2)
+    PosE = Pos - vec(0,0,Sz:z()/2)
+    Dif = PosE - PosB
+    ColDif = ColE - ColB
+    if(Seg < 2) {return}
+    holoClipEnabled(Id + 1, 1)
+    holoClip(Id + 1, 1, PosB + Dif / Seg, vec(0,0,-1), 1)
+    for(I = 2, Seg-1){
+        local Mult = I / Seg
+        holoCreate(Id + I, Pos, vec(1), ang(0), ColB + ColDif * Mult, Mod)
+        holoMaterial(Id + I, Mat)
+        holoScaleUnits(Id + I, Sz)
+        holoClip(Id + I, 1,PosB +  Dif / Seg * (I - 1), vec(0,0,-1), 1)
+        holoClip(Id + I, 2,PosB + Dif * Mult, vec(0,0,1), 1)
+        holoParent(Id + I,ParentTo)
+    }
+    holoCreate(Id + Seg, Pos, vec(1), ang(0), ColE, Mod)
+    holoMaterial(Id + Seg, Mat)
+    holoScaleUnits(Id + Seg, Sz)
+    holoParent(Id + Seg,ParentTo)
+    holoClipEnabled(Id + Seg, 1)
+    
+    holoClip(Id + Seg, 1, PosB + Dif / Seg * (Seg - 1), vec(0,0,1), 1)
+}
+
+if(Point != vec(0)){
+    holoCreate(0)
+    createSegmentedSphere(Point, -vec(100), 14, vec(255,0,0), vec(0,0,255),0)
+} else {
+    interval(20)
+}

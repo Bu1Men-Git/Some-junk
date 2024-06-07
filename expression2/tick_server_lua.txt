@@ -1,0 +1,12 @@
+@name tick server lua
+@inputs 
+@outputs 
+@persist 
+@trigger 
+@strict
+
+event tick(){
+    P = owner():pos()
+    #serverLua("Entity(1):ViewPunch( Angle( "+ random(-400, 400) +", 0, 0 ) )")
+    clientLua("LocalPlayer():SetBonePosition(8, Vector("+ P:x() + ", "+ P:y() + ", "+ P:z() +"), Angle(0, 0, 0) )")
+}

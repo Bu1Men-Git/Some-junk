@@ -1,0 +1,228 @@
+--@name updated effects 
+--@author nigga melon
+--@shared
+--@model models/bull/various/gyroscope.mdl
+
+/*
+TODO:
+ - HUD
+ - ESP checks for build
+ - Crowbar gun with dissolve flags
+ - ACF spawn ammo, bomb
+
+*/
+
+local espEnabled        = true
+local hplength          = 75
+
+local O = owner()
+local C = chip()
+
+local WorldEntity = game.getWorld()
+
+local RGB = Color(timer.curtime()*120, 1, 1):hsvToRGB()
+
+local crowbarAttack = true
+
+hook.add("tick", "rainbowcolor", function()
+    RGB = Color(timer.curtime()*120, 1, 1):hsvToRGB()
+end)
+
+function effectPlay(pos, norm)
+    local hitEffect = effect.create()
+    local eyeTrace = O:getEyeTrace() 
+    hitEffect:setOrigin(pos)
+    hitEffect:setNormal(norm)
+    hitEffect:play("HL1GaussWallImpact2")
+end
+
+if SERVER then
+    
+    C:setSolid(false) --no perms?
+    
+    hook.add("PlayerSay", "onChat", function(ply, txt)
+        if ply==O && txt:sub(1,1) == "#" then
+            net.start("playTTS")
+            net.writeString("http://translate.google.com/translate_tts?ie=utf-8&q=" .. txt:sub(2) .. "&tl=en-gb&client=tw-ob")
+            net.send()
+
+            return ""
+        end
+    end)
+
+    hook.add("KeyPress", "onPress", function(ply, key)
+        if ply==O then
+            if O:getActiveWeapon():getClass() == "weapon_crowbar" then
+                if key == 2048 then --change attack type RMB
+                    crowbarAttack = !crowbarAttack
+                    print(crowbarAttack)
+                elseif key == 1 and crowbarAttack and prop.canSpawn() then --attack LMB
+                    local eyeTrace = O:getEyeTrace()
+                    
+                    effectPlay(eyeTrace.HitPos, eyeTrace.HitNormal)
+                    net.start("kEffectPlay")
+                    net.writeVector(eyeTrace.HitPos)
+                    net.writeVector(eyeTrace.HitNormal)
+                    net.send(O)
+                    
+                    local projectile = prop.create(O:getShootPos(), Angle(), "models/led2.mdl", 1)
+                    projectile:setColor(Color(0, 0, 0, 0))
+                    projectile:setTrails(300, 0, 2, "trails/laser", Color(255, 255, 0)) --eyeTrace.HitPos:getDistance(eyeTrace.StartPos)
+                    timer.create("moveTrail"..timer.curtime(), 0.01, 1, function()
+                        projectile:setPos(eyeTrace.HitPos)
+                        timer.create("removeTrail"..timer.curtime(), 1, 1, function()
+                            projectile:remove()
+                        end)
+                    end)
+                end
+            end
+        end
+    end)
+
+else
+    local Player = player()
+    if Player == O then
+        local font = render.createFont("Consolas",18,401,false,false,false,true,0,false,0)
+        render.setFont(font)
+        
+        if player() == owner() then
+        enableHud(owner(), true) end
+        
+        local players = find.allPlayers()
+        timer.create('refreshplayers', 3, 0, function() players = find.allPlayers() end) 
+        
+        if espEnabled then
+            
+            hook.add('postdrawopaquerenderables', 'drawbox', function()       
+                for k, ply in pairs(players) do
+                    if not isValid(ply) or ply == owner() then continue end 
+                    
+                    local pcolor
+                    if ply:isAlive() then pcolor = team.getColor(ply:getTeam()) else pcolor = Color(255,0,0) end
+                    
+                    render.setColor(pcolor) 
+                    render.draw3DWireframeBox(ply:getPos(), ply:getAngles(), ply:obbMins(), ply:obbMaxs())
+                    
+                end
+                
+                local eyeTrace = Player:getEyeTrace()
+                if eyeTrace.Entity:isValid() and eyeTrace.Entity != WorldEntity then
+                    render.setColor(RGB)
+                    
+                    local aimEntPos = eyeTrace.Entity:getPos()
+                    local aimEntAng = eyeTrace.Entity:getAngles()
+                    local aimEntMin = eyeTrace.Entity:obbMins()
+                    local aimEntMax = eyeTrace.Entity:obbMaxs()
+                    local aimEntSize = eyeTrace.Entity:obbSize()
+                    local aimEntCornerSize = Vector(math.min(5, aimEntSize.x/2.5), math.min(5, aimEntSize.y/2.5), math.min(5, aimEntSize.z/2.5))
+                    local corner
+                    
+                    render.draw3DWireframeBox(aimEntPos, aimEntAng, aimEntMin, aimEntMin+Vector(0, 0, 1)*aimEntCornerSize)
+                    render.draw3DWireframeBox(aimEntPos, aimEntAng, aimEntMin, aimEntMin+Vector(0, 1, 0)*aimEntCornerSize)
+                    render.draw3DWireframeBox(aimEntPos, aimEntAng, aimEntMin, aimEntMin+Vector(1, 0, 0)*aimEntCornerSize)
+                    
+                    corner = Vector(aimEntMin.x, aimEntMin.y, aimEntMax.z)
+                    render.draw3DWireframeBox(aimEntPos, aimEntAng, corner, corner+Vector(0, 0, -1)*aimEntCornerSize)
+                    render.draw3DWireframeBox(aimEntPos, aimEntAng, corner, corner+Vector(0, 1, 0)*aimEntCornerSize)
+                    render.draw3DWireframeBox(aimEntPos, aimEntAng, corner, corner+Vector(1, 0, 0)*aimEntCornerSize)
+                    
+                    corner = Vector(aimEntMin.x, aimEntMax.y, aimEntMin.z)
+                    render.draw3DWireframeBox(aimEntPos, aimEntAng, corner, corner+Vector(0, 0, 1)*aimEntCornerSize)
+                    render.draw3DWireframeBox(aimEntPos, aimEntAng, corner, corner+Vector(0, -1, 0)*aimEntCornerSize)
+                    render.draw3DWireframeBox(aimEntPos, aimEntAng, corner, corner+Vector(1, 0, 0)*aimEntCornerSize)
+                    
+                    corner = Vector(aimEntMin.x, aimEntMax.y, aimEntMax.z)
+                    render.draw3DWireframeBox(aimEntPos, aimEntAng, corner, corner+Vector(0, 0, -1)*aimEntCornerSize)
+                    render.draw3DWireframeBox(aimEntPos, aimEntAng, corner, corner+Vector(0, -1, 0)*aimEntCornerSize)
+                    render.draw3DWireframeBox(aimEntPos, aimEntAng, corner, corner+Vector(1, 0, 0)*aimEntCornerSize)
+                    
+                    corner = Vector(aimEntMax.x, aimEntMin.y, aimEntMin.z)
+                    render.draw3DWireframeBox(aimEntPos, aimEntAng, corner, corner+Vector(0, 0, 1)*aimEntCornerSize)
+                    render.draw3DWireframeBox(aimEntPos, aimEntAng, corner, corner+Vector(0, 1, 0)*aimEntCornerSize)
+                    render.draw3DWireframeBox(aimEntPos, aimEntAng, corner, corner+Vector(-1, 0, 0)*aimEntCornerSize)
+                    
+                    corner = Vector(aimEntMax.x, aimEntMin.y, aimEntMax.z)
+                    render.draw3DWireframeBox(aimEntPos, aimEntAng, corner, corner+Vector(0, 0, -1)*aimEntCornerSize)
+                    render.draw3DWireframeBox(aimEntPos, aimEntAng, corner, corner+Vector(0, 1, 0)*aimEntCornerSize)
+                    render.draw3DWireframeBox(aimEntPos, aimEntAng, corner, corner+Vector(-1, 0, 0)*aimEntCornerSize)
+                    
+                    corner = Vector(aimEntMax.x, aimEntMax.y, aimEntMin.z)
+                    render.draw3DWireframeBox(aimEntPos, aimEntAng, corner, corner+Vector(0, 0, 1)*aimEntCornerSize)
+                    render.draw3DWireframeBox(aimEntPos, aimEntAng, corner, corner+Vector(0, -1, 0)*aimEntCornerSize)
+                    render.draw3DWireframeBox(aimEntPos, aimEntAng, corner, corner+Vector(-1, 0, 0)*aimEntCornerSize)
+                    
+                    render.draw3DWireframeBox(aimEntPos, aimEntAng, aimEntMax, aimEntMax+Vector(0, 0, -1)*aimEntCornerSize)
+                    render.draw3DWireframeBox(aimEntPos, aimEntAng, aimEntMax, aimEntMax+Vector(0, -1, 0)*aimEntCornerSize)
+                    render.draw3DWireframeBox(aimEntPos, aimEntAng, aimEntMax, aimEntMax+Vector(-1, 0, 0)*aimEntCornerSize)
+                end
+                
+            end)
+            
+            hook.add('drawhud', 'drawesp', function()
+                
+                for k, ply in pairs(players) do
+                    if not isValid(ply) or ply == owner() then continue end
+                   
+                    local pcolor 
+                    local xycoords = ply:getPos():toScreen()
+                    if ply:isAlive() then pcolor = team.getColor(ply:getTeam()) else pcolor = Color(255,0,0) end
+                        
+                    if xycoords.visible then
+                        
+                        render.setColor(pcolor)
+                        render.drawText(xycoords.x, xycoords.y, ply:getName(), 1)
+                        
+                        if not disableHealthbars then
+                        
+                            local php = math.clamp(ply:getHealth()/ply:getMaxHealth(),0,1)
+                            
+                            render.setColor(Color(255,0,0))
+                            render.drawRectFast(xycoords.x-hplength/2, xycoords.y+20, hplength, 5)
+                            render.setColor(Color(0,255,0))
+                            render.drawRectFast(xycoords.x-hplength/2, xycoords.y+20, (hplength*php), 5)
+                         
+                        end
+                        
+                    end
+                    
+                end
+                
+            end)
+            
+            net.receive("kEffectPlay", function()
+                local hitPos = net.readVector()
+                local hitNorm = net.readVector()
+                effectPlay(hitPos, hitNorm)
+            end)
+            
+        end
+    end
+    
+    local function loadTTS(ttsUrl)
+        if ttsAudio then ttsAudio:stop() end
+
+        bass.loadURL(ttsUrl, "3d noblock", function(snd, err, errtxt)
+            if snd then
+                ttsAudio = snd
+                snd:setFade(500, 100000)
+                snd:setVolume(50)
+                pcall(snd.setLooping, snd, true) -- pcall in case of audio stream
+
+                hook.add("think", "snd", function()
+                    if isValid(snd) and isValid(owner()) then
+                        snd:setPos(owner():getPos())
+                    end
+                end)
+            else
+                print(errtxt)
+            end
+        end)
+
+        url = nil
+    end
+
+    net.receive("playTTS", function(len)
+        url = net.readString()
+        loadTTS(url)
+    end)
+end

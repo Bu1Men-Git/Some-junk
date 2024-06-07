@@ -1,0 +1,7 @@
+--@name DataSampler
+--@author
+--@shared
+p = find.allPlayers()
+hook.add("think", "", function()
+    
+end)

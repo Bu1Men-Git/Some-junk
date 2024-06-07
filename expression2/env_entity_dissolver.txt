@@ -1,0 +1,18 @@
+@name env_entity_dissolver
+@inputs 
+@outputs 
+@persist Dmg:entity
+@trigger 
+@strict
+
+Dmg = sentSpawn("env_entity_dissolver", entity():pos(), ang(0), 1)
+#findIncludeClass("player")
+findIncludeClass("NPC")
+findInSphere(entity():pos(), 1337228)
+Ents = findToArray()
+foreach(I,Ent:entity = Ents){
+    if(Ent:isValid()){
+    Ent:dmgApplyDamage(99999999999999)
+    }
+}
+

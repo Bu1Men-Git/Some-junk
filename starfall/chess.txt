@@ -1,0 +1,97 @@
+--@name Neg
+--@author
+--@server
+
+function legit(x, y)
+    return x > 0 and x < 9 and y > 0 and y < 9
+end
+
+function getPiece(x, y)
+    if not legit(x, y) then return end
+    return place[x-4][y-4]
+end
+
+function addPiece(piece, x, y)
+    if not legit(x, y) then return end
+    place[x-4][y-4] = piece
+end
+
+function movePiece(x1, y1, x2, y2)
+    if not legit(x2, y2) then return end
+    local pc = getPiece(x1, y1)
+    place[x2-4][y2-4] = pc
+end
+
+function deletePiece(x, y) 
+    if not legit(x, y) then return end
+    place[x-4][y-4] = nil
+end
+
+function fromBoardCords(x, y)
+    return (bcell * Vector(x-0.5, y-0.5, 1)):setZ(bh)
+end
+
+function renderBoard()
+    hologram.removeAll()
+    for x=-3, 4 do
+        for y, pc in pairs(place[x]) do
+            local ppos = fromBoardCords(x, y)
+            print(y, pc[1], pc[2])
+            if table.hasValue(pcs, pc[1]) then
+                dat = pcs[pc[1]]
+            else
+                dat = pcs.error
+            end
+            local h = hologram.create(ppos, Angle(), dat)
+            h:setMaterial(mat)
+            h:setColor(cols[pc[2]])
+        end
+    end
+end
+
+if chip():isWeldedTo() then
+    ce = chip():isWeldedTo()
+    _, cp = ce:getPhysicsObject():getAABB()
+    cp = ce:getPos() + Vector(0, 0, cp[3])
+else
+    ce = chip()
+    cp = ce:getPos()
+end
+
+cup = ce:getUp()
+chip():setCollisionGroup(2)
+chip():setNoDraw(1)
+chip():setPos(cp - cup*7)
+sz = Vector(0.1, 0.1, 0.1)
+baoff = Angle(-90, 0, 0)
+board = hologram.create(cp, ce:getAngles() + baoff, "models/props_phx/games/chess/board.mdl", sz)
+board:setParent(ce)
+
+bsz = Vector(143.83433532715, 141.47796630859, 23.166015625) * sz
+bh = bsz[3]
+bcell = bsz:setZ(0) / 9.8 / 2
+
+place = {}
+for i=-3, 4 do
+    place[i] = {}
+end
+
+// cell = 10, border = 4, half of the cell = 5
+// 4 + 5 + 10 * 8 + 5 + 4 = 98
+
+mat = "models/player/shared/ice_player"
+ppath = "models/props_phx/games/chess/"
+
+pcs = {
+    pawn = "black_pawn.mdl",
+    bishop = "black_bishop.mdl",
+    knight = "black_knight.mdl",
+    rook = "black_rook.mdl",
+    queen = "black_queen.mdl",
+    error = "models/error.mdl"
+}
+
+cols = {white = Color(255, 200, 160), black = Color(60, 50, 20)}
+
+addPiece({"pawn", "white"}, 4, 4)
+renderBoard()

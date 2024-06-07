@@ -5,7 +5,7 @@
 
 if(O:isAlive()){
     O=owner()
-    owner():disableFallDamage()
+    #owner():disableFallDamage()
     runOnTick(1)
     #entity():setPos(entity():pos()-entity():up()*10)
     
@@ -74,4 +74,5 @@ runOnTick(100)
 runOnDmg(1)
 O = owner()
 if (O:isAlive() && O:isAlive()){O:plySetArmor(100) 
-    O:disableFallDamage()}
+    #O:disableFallDamage()
+    }

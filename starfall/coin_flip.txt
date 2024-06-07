@@ -1,0 +1,175 @@
+--@name coin flip
+--@author fagger niggot
+--@shared
+--@include firebulletlib.txt
+
+if SERVER then
+    dofile("firebulletlib.txt")
+end
+
+Count = 0
+tick = game.getTickInterval()
+coinMass = 1
+interval = 5
+
+coinModel = "models/beer/wiremod/watersensor_mini.mdl"
+coinMat = "models/player/shared/ice_player"
+if SERVER then
+function setSameCollision(ent, ply)
+    local e2 = prop.createSent(chip():getPos(), Angle(), "gmod_wire_expression2", true, {
+        _name = "collide",
+        _original = "entity(".. tostring(ent:entIndex()) .."):setCollisionGroup(entity(".. ply:entIndex() .."):getCollisionGroup()) entity(".. ply:entIndex() .."):plyBuild(0)",
+        Model = "models/beer/wiremod/gate_e2_nano.mdl"
+    })
+    //
+    timer.create(tostring(e2), 0.2, 1, function() e2:remove() end)
+end
+
+function printAll(text, pos, radius)
+    local vec = "vec(" .. tostring(pos[1]) .. ", " .. tostring(pos[2]) .. ", " .. tostring(pos[3]) .. ")"
+    local e2 = prop.createSent(chip():getPos(), Angle(), "gmod_wire_expression2", true, {
+        _name = "print to all",
+        _original = "foreach(I, E:entity = players()){if(E:pos():distance(" .. vec .. ") <= " .. tostring(radius) .. ") {E:hintPlayer(\"".. text .."\", 2)}}",
+        Model = "models/beer/wiremod/gate_e2_nano.mdl"
+    })
+    timer.create(tostring(e2), 0.2, 1, function() e2:remove() end)
+end
+
+function CoinFlip(own)
+    if not prop.canSpawn() or own.lastCoin then return false end
+
+    own.lastCoin = true
+    ovel = own:getVelocity()
+    timer.create(tostring(own), 0.5, 1, function() own.lastCoin = false end)
+    //local coin = prop.createSent( own:getShootPos() + ovel * tick * interval * (1 + own:getPing()/500) , Angle(0, 90, 0), "gmod_wire_turret", false, coinData )
+    local coin = prop.create(own:getShootPos() + ovel * tick * interval * (1 + own:getPing()/500), Angle(0, 90, 0),coinModel , false)
+    coin.hit = true
+    coin:setNocollideAll(true)
+    coin:setMaterial(coinMat)
+    coin:setColor(Color(230, 185, 72))
+    coin.id = tostring(Count)
+    Count = Count + 1 % 1000
+    coin.owner = own
+    coin.type = "coin"
+    local cp = coin:getPhysicsObject()
+    cp:setMass(coinMass)
+    cp:applyForceCenter(ovel * coinMass + math.random(200, 250) * own:getEyeAngles():getForward() * coinMass// + math.random(-40, 40) * own:getRight()
+    + math.random(100, 150) * own:getUp() * coinMass)
+    coin:applyAngForce(coinMass * Angle(math.random(-360, 360),math.random(-360, 360),math.random(-360, 360)))
+    coin:setPhysMaterial("gmod_silent")
+    //cp:addGameFlags(FVPHYSICS.DMG_DISSOLVE)
+    cp:addGameFlags(FVPHYSICS.NO_PLAYER_PICKUP)
+    //coin:setTrails(36, 0, 32, "trails/laser", Color(255, 200, 80), nil, true)
+    coin:addCollisionListener(function() coin:removeTrails() end)
+    
+    timer.create("check" .. coin.id, 0.3, 0, function()
+        if(coin and (coin:getVelocity():getLength() < 1 or coin:getWaterLevel() > 0)) then
+            coin:removeCollisionListener()
+            hook.remove("EntityTakeDamage", "chk"..coin.id)
+            timer.remove("check" .. coin.id)
+            timer.remove("uncol" .. coin.id)
+            coin:removeTrails()
+            
+            if(math.random( 360) < 180) then
+                printAll("Head", coin:getPos(), 2000)
+            else
+                printAll("Tails", coin:getPos(), 2000)
+            end
+            
+            timer.create("del" .. coin.id, 2.5, 1, function() coin:remove() end)
+        end
+    end)
+    return true
+end
+
+function canBeShot(ent)
+    if ent:isValid() and ent:isVehicle() then
+        return ent:getDriver()
+    end
+    return ent:isValid() and ent:isPlayer()
+end
+
+function coinShoot(ply, coin)
+    if not coin.hit then return end
+    //target = find.sortByClosest(find.allPlayers(function(e) return e != ply and trace.line(coin:getPos(),e:getBonePosition(e:getHitBoxBone(0, 0)),
+    //    function(e) return e != coin end).Entity == e end), coin:getPos())
+    target = find.sortByClosest(find.allPlayers(function(e) return e != ply and canBeShot(trace.line(coin:getPos(),e:getBonePosition(e:getHitBoxBone(0, 0)),
+    function(e) return e != coin end).Entity) end), coin:getPos())
+    if target[1] then
+        //coin:setNoDraw(true)
+        //coin:setNocollideAll(false)
+        target = target[1]
+        //dmg = target:getHealth()
+        //setSameCollision(coin, target)
+        startP = coin:getPos()// + coin:getVelocity() * tick// * interval
+        endP = target:getBonePosition(target:getHitBoxBone(0, 0))// + target:getVelocity() * tick// * interval
+        dir = (endP - startP)
+        //coin:enableGravity(false)
+        //local dist = dir:dot(target:getPhysicsObject():getAABB()/2) + 25
+        //coin:setPos(endP - dir * dist)
+        //local cp = coin:getPhysicsObject()
+        //cp:applyForceCenter(dir*dmg*len*5)
+        fireBullet(startP, dir, 75, 10, 1, 0)
+        len = dir:getLength()
+        dir = dir / len
+        coin:applyForceCenter(-dir*50-coin:getVelocity()*0.8)
+        //timer.create("stopShooting"..coin.id, 0.07, 1, function() coinW.Fire = 0 end)
+        hook.remove("EntityTakeDamage", "chk"..coin.id)
+        timer.remove("check" .. coin.id)
+        timer.remove("uncol" .. coin.id)
+        timer.create("del" .. coin.id, 1.5, 1, function() coin:remove() end)
+            net.start("death")
+            net.writeEntity(target)
+            net.send()
+            if(coin.collision) then coin:removeCollisionListener() end
+        if(coin.hit and not coin.collision) then coin:addCollisionListener(function() coin:setFrozen(true) end) coin.collision = true end
+        coin.hit = false
+    end
+end
+
+
+    
+    net.receive("hittt", function() coinShoot(net.readEntity(), net.readEntity()) end)
+    
+    hook.add("KeyPress", "key", function(ply, n)
+        wep = ply:getActiveWeapon()
+        if string.endsWith(tostring(wep), "weapon_357]") then
+            if(n == IN_KEY.ATTACK2) then
+                if CoinFlip(ply) then
+                    net.start("throw")
+                    net.writeEntity(ply)
+                    net.send()
+                end
+            end
+        end
+    end)
+else
+    BulletSize = Vector(20, 20, 20)
+    hook.add("EntityFireBullets", "bul", function(ply, dat)
+        if not ply:isPlayer() or dat.AmmoType != "357" then return end
+        tr = trace.hull(dat.Src, dat.Src + dat.Dir*25000, -BulletSize, BulletSize, function(e) return e:getModel() == coinModel and e:getMaterial() == coinMat end)
+        if tr.Entity:isValid() then
+            local coin = tr.Entity
+            net.start("hittt")
+            net.writeEntity(ply)
+            net.writeEntity(coin)
+            net.send()
+            ply:emitSound("physics/metal/metal_canister_impact_soft" .. tostring(math.floor(math.random(1, 3))) ..".wav", 150, 150, 1)
+        end
+    end)
+    mater = material.load("models/props_c17/fisheyelens")
+    net.receive("death", function()
+        local tar = net.readEntity()
+        //tar:emitSound("common/bass.wav", 150, 90, 1)
+        //tar:emitSound("Trainyard.train_horn_everywhere", 180, 100, 2)
+        local emit = particle.create(chip():getPos(),false)
+         head = tar:getBonePosition(tar:getHitBoxBone(0, 0)) + tar:getVelocity() * tick * 10
+        emit:add(mater, head, 42,0, 0,0, 255,255, 0.25)
+        emit:destroy()
+    end)
+    net.receive("throw", function()
+           local own = net.readEntity()
+        own:emitSound("phx/hmetal" .. tostring(math.floor(math.random(1, 3))) ..".wav", 90, 250, 1)     
+    end)
+    
+end

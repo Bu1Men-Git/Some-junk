@@ -1,0 +1,32 @@
+--@name spinnyyy
+--@author
+--@server
+
+ce = chip()
+cup = ce:getUp()
+cp = ce:getPos() + cup * 200
+ce:setPos(cp)
+len = 150
+ep = cp - cup * len
+
+e = prop.create(ep, Angle(), "models/hunter/misc/sphere1x1.mdl", false)
+
+constraint.rope(1, ce, e, 0, 0, Vector(0), Vector(0, 0, 20), len - 20, 0, 0, 2)
+//constraint.keepupright(e, Angle())
+//print(KEY.T)
+
+t = prop.createSent(ep - ce:getRight()*25, Angle(0, 0, -90), "gmod_thruster", false, {toggle = true, key = 30, soundname = ""})
+
+constraint.weld(t, e)
+
+/*
+
+> gmod_thruster
+boolean damageable = false
+string effect = "fire"
+number force = 1500
+number key = -1
+number key_bck = -1
+string Model = "models/props_phx2/garbage_metalcan001a.mdl"
+string soundname = "PhysicsCannister.ThrusterLoop"
+boolean toggle = false

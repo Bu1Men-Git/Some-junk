@@ -1,0 +1,6 @@
+--@name
+--@author
+--@server
+
+o = find.playersByName("bot")[1]
+hook.add("tick", "", function() a = o:getBonePosition(8) print(a) end)

@@ -1,0 +1,226 @@
+--@name TrainDrive SF
+--@author Haniasita
+--@shared
+
+-- Core variables
+local isInitialized = 0
+local idleState = 0
+local governorCooldown = 4
+local governorTicks = 0
+local trainIdentifier = "Lagtrain V.0"
+local versionNumber = 0
+-- Speed variables
+local speedMax = 200
+local speedMin = -50
+local speedMargin = 1.1
+local speedTarget = 0
+local speedCurrent = 0
+local speedDelta = 0
+local speedDeltaAbs = 0
+-- Thrust variables
+local thrustMax =  0.2
+local thrustMin = 0.1
+-- Suspension variables
+local suspensionOffset = 0
+local suspensionMaxOffset = 7
+local suspensionAngle = 0
+-- Display variables
+local displaySpeedPos = 2
+local displayGovernorPos = 5
+local displayDebugPos = 9
+-- Pod variables
+local podValidated = 1
+local podUsers = {
+"STEAM_0:0:94881622",   --Haniasita
+" STEAM_0:0:174638270",  --CasePeak
+"STEAM_0:0:462042646",  --BessBoss
+"STEAM_0:0:181455209"   --Trainyoy
+}
+-- Radio variables
+local radioActive = 0
+
+-- Authenticate the player trying to control the train
+local function coreAuthenticate()
+-- Return early if check already performed
+if podValidated==1 then return end
+-- Check if a driver is indeed seated
+if wire.ports.Pod.Driver then
+    -- Iterate over allowed user list
+    for N=1,#podUsers,1 do
+        -- If seated user's SteamID is in the list, allow control
+        if(wire.ports.Pod.Driver:getSteamID()== owner() /*podUsers[N]*/) then
+            podValidated = 1
+            wire.ports.Pod.Eject = 0
+            wire.ports.Alarm.A = 0
+            return
+        end
+    end
+    -- If control was not allowed, inform owner and eject the user
+    print(wire.ports.Pod.Driver:getName() .. " (" .. wire.ports.Pod.Driver:getSteamID() .. ") tried to take control of the train!")
+    podValidated = 0
+    wire.ports.Pod.Eject = 1
+    wire.ports.Alarm.A = 1
+end
+end
+
+-- Pilot input interpretation
+local function coreDrive()
+    print("controll")
+-- Governor control
+if wire.ports.Pod.W==1 || wire.ports.Pod.S==1 then
+    if governorTicks >= governorCooldown then
+        if speedTarget<=speedMax && speedTarget >= speedMin then
+            if wire.ports.Pod.Shift==1 then speedTarget = speedTarget + 25*(wire.ports.Pod.W-wire.ports.Pod.S)
+            else speedTarget = speedTarget + 5*(wire.ports.Pod.W-wire.ports.Pod.S) end
+        end
+        speedTarget = math.clamp(speedTarget,speedMin,speedMax)
+        governorTicks = 0
+    else
+    governorTicks = governorTicks+1
+    end
+else
+    governorTicks = governorTicks+2
+end
+-- Panic
+if wire.ports.Pod.Space==1 then
+    wire.ports.Thrust = 0
+    speedTarget = 0
+end
+-- Radio toggle
+if wire.ports.Pod.R==1 then
+    if radioActive==1 then radioActive = 0
+    else radioActive = 1 end
+end
+end
+
+-- Radio communications
+local function coreRadio()
+-- TO BE IMPLEMENTED
+end
+
+-- General train math
+local function coreMath()
+-- Get KMH from Source Units
+speedCurrent = wire.ports.Speedometer*0.01905*3.6
+-- Directional speed delta (derived from speedTarget)
+if speedCurrent>0 then speedDelta = math.clamp((speedTarget*speedMargin-speedCurrent)/speedCurrent,-1,1)
+else speedDelta = math.clamp((speedTarget*speedMargin-speedCurrent)/-speedCurrent,-1,1) end
+-- Absolute speed delta (derived from 0)
+speedDeltaAbs = math.clamp(math.abs(speedCurrent)/speedMax,0,1)
+
+end
+
+-- Suspension control
+local function coreSuspension()
+suspesionOffset = -speedDeltaAbs*suspensionMaxOffset
+wire.ports.SuspensionFront = suspensionOffset-suspensionAngle
+wire.ports.SuspensionRear = suspensionOffset+suspensionAngle
+end
+
+-- Thruster control
+local function coreThrust()
+-- Apply thrust
+if math.round(speedCurrent)==0 && speedTarget==0 then wire.ports.Thrust = 0
+elseif speedCurrent<5 then wire.ports.Thrust = thrustMax*speedDelta*0.1
+elseif speedCurrent<50 then wire.ports.Thrust = thrustMax*speedDelta*0.5
+elseif speedCurrent>130 then wire.ports.Thrust = thrustMax*speedDelta*3
+else wire.ports.Thrust = thrustMax*speedDelta end
+-- Apply downforce
+wire.ports.Downforce = math.abs(speedCurrent*0.003)
+end
+
+-- Sound control
+local function coreSound()
+wire.ports.Sound_A = 1
+wire.ports.Sound_Pitch = 0.05+speedDeltaAbs*2
+end
+
+-- Light control
+local function coreLights(toggle)
+if toggle==1 then
+    -- Driving mode
+    wire.ports.Lights = Vector(256,32,128)
+    wire.ports.Headlights = Vector(256,220,128)
+    wire.ports.HeadlightsOn = 1
+else
+    -- Parked mode
+    wire.ports.Lights = Vector(128,32,256)
+    wire.ports.Headlights = Vector(0,0,0)
+    wire.ports.HeadlightsOn = 0
+end
+end
+
+if SERVER then
+-- Wire inputs & outputs
+wire.adjustInputs({"Pod", "Speedometer", "Radio", "Alarm"}, {"wirelink","normal","wirelink","wirelink"})
+wire.adjustOutputs({"Thrust", "Downforce", "SuspensionFront", "SuspensionRear","Sound_A", "Sound_Pitch", "Lights", "Headlights", "HeadlightsOn"}, {"normal","normal","normal","normal","normal","normal","vector","vector","normal"})
+
+-- Server program loop
+timer.create( "MainLoop", 0.01, 0, function()
+    if wire.ports.Pod.Active==1 then
+        -- Train is active
+        -- Switch state if necessary
+        if idleState==1 then
+            coreAuthenticate()
+            coreLights(1)
+            idleState = 0
+        end
+        -- Run core functions
+        coreDrive()
+        coreRadio()
+        coreMath()
+        coreSuspension()
+        coreThrust()
+        coreSound()
+        -- Sync with client
+        net.start("Sync")
+        net.writeFloat(speedCurrent)
+        net.writeFloat(speedTarget)
+        net.send()
+    else
+        -- Train is off
+        -- Switch state if necessary
+        if idleState==0 then
+            podValidated = 0
+            coreLights(0)
+            wire.ports.Sound_A = 0
+            wire.ports.Thrust = 0
+            wire.ports.Downforce = 0
+            idleState = 1
+        end
+    end
+end)
+end
+
+if CLIENT then
+-- Initialize font
+local font = render.createFont("Default", 30)
+-- Notice owner of successful start
+if player()==owner() then
+    print("TrainDrive SF initialized!")
+end
+-- Sync with server
+net.receive("Sync", function()
+    speedCurrent = net.readFloat()
+    speedTarget = net.readFloat()
+    -- Draw interface
+    hook.add('render','HUD',function()
+        render.setFont(font)
+        
+        render.drawText(20,332,"[ " .. trainIdentifier .. " / TrainDriveSF V." .. versionNumber .. " ]")
+        
+        render.setColor(Color(128, 128, 128))
+        render.drawRect(20,20,20,302)
+        render.drawRect(472,20,20,302)
+        
+        render.setColor(Color(255, 255, 255))
+        governorHeight = 246-(speedTarget/speedMax*226)
+        render.drawRect(10,governorHeight,40,20)
+        render.drawText(60,governorHeight-5,"Target : " .. speedTarget .. " km/h")
+        
+        speedHeight = 246-(speedCurrent/speedMax*226)
+        render.drawRect(462,speedHeight,40,20)
+        render.drawText(276,speedHeight-5,"Speed : " .. math.round(speedCurrent) .. " km/h")
+        end) 
+end)
+end

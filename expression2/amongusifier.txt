@@ -27,7 +27,7 @@ if(first()){
 propSpawnUndo(0)
 propSpawnEffect(0)
 #propSpawnASync(1)
-enableConstraintUndo(0)
+#enableConstraintUndo(0)
 
 runOnLast(1)
 runOnTick(1)

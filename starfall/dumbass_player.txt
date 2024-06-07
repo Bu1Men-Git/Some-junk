@@ -1,0 +1,57 @@
+--@name dumbass player
+--@author Niggot Fagger
+--@shared
+o = owner()
+toggle = true
+if SERVER then
+    
+    ce = chip()
+    cup = ce:getUp()
+    cp = ce:getPos() - cup*7
+    ce:setPos(cp)
+    hud = prop.createComponent(cp, Angle(), "starfall_hud", ce:getModel(), 1)
+    hud:linkComponent(ce)
+    enableHud(o, toggle)
+    net.receive("rshift", function()
+        toggle = not toggle
+        enableHud(o, toggle)
+    end)
+else
+    inputMode = false
+    inputText = ""
+    len = 0
+    if player() == o then
+        hook.add("inputPressed", "negroes", function(n)
+            if n == 80 then
+                toggle = not toggle
+                net.start("rshift")
+                net.send(nil, true)
+            else
+                local key = input.getKeyName(n)
+                
+                if inputMode then
+                    if string.len(key) == 1 then
+                        if input.isShiftDown() then
+                            inputText = inputText .. string.upper(key)
+                        else
+                            inputText = inputText .. key
+                        end
+                        len = len +1
+                    else
+                        if key == "SPACE" then inputText = inputText .. " "
+                        elseif key == "ENTER" then print(inputText) inputText = "" len = 0
+                        elseif key == "BACKSPACE" then inputText = string.left(inputText, len - 1) len = len - 1
+                        elseif key == "ALT" then inputMode = 0 print(Color(255,255,255), "Input mode: ", Color(255 , 100, 0), "Deactivated") end
+                    end
+                else
+                    if key == "PGUP" and input.canLockControls() then
+                        inputMode = not inputMode
+                        print(Color(255,255,255),"Input mode: ", Color(0 , 255, 0), "Activated")
+                        input.lockControls(inputMode)
+                        return
+                    end
+                end
+            end
+        end)
+    end
+end

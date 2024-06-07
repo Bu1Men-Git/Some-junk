@@ -1,0 +1,96 @@
+@name Skybox finder
+@inputs 
+@outputs 
+@persist MAP:string [X_REPS Y_REPS REPS_PER_CYCLE CYCLES_PER_SEC REP HALF_X HALF_Y DIST LAST_REP X Y DOWN]:number
+@persist [Point Size]:vector
+@trigger 
+@strict
+
+event fileLoaded(FilePath:string, Data:string) {
+        Strs = Data:explode("\r\n")
+        foreach(_:number, S:string=Strs){
+            Ar = S:explode(" ")
+            
+            if(Ar:count() < 7){continue}
+            if(Ar[1, string]:endsWith( MAP )){
+                Point = vec(Ar[2,string]:toNumber(10), Ar[3,string]:toNumber(10), Ar[4,string]:toNumber(10))
+                Size = vec(Ar[5,string]:toNumber(10), Ar[6,string]:toNumber(10), Ar[7,string]:toNumber(10))
+                break
+            }
+        }
+        if(Point == vec(0)){
+            timer("find_skybox", CYCLES_PER_SEC)
+        }
+    }
+
+if(first()){
+    MAP = map()
+    #Starting params
+    X_REPS = 100
+    Y_REPS = 100
+    REPS_PER_CYCLE = 10
+    CYCLES_PER_SEC = 100
+    DIST = 1000
+    #End starting params
+    REP = 0
+    CYCLES_PER_SEC = 1000 / CYCLES_PER_SEC
+    HALF_X = X_REPS / 2
+    HALF_Y = Y_REPS / 2
+    LAST_REP = X_REPS * Y_REPS
+    DOWN = -1
+    X = 0
+    Y = 0
+    Point = vec(0)
+    
+    fileLoad("map_skybox.txt")
+    function vector find_room_center(V:vector){
+        Z1 = rangerOffset(30000, V, vec(0,0,1))
+        Z2 = rangerOffset(30000, V, vec(0,0,-1))
+        ZF = (Z1:pos() + Z2:pos()):z()/2
+
+        X1 = rangerOffset(40000, V, vec(1,0,0))
+        X2 = rangerOffset(40000, V, vec(-1,0,0))
+        XF = (X1:pos() + X2:pos()):x()/2
+        
+        Y1 = rangerOffset(400000, V, vec(0,1,0))
+        Y2 = rangerOffset(40000, V, vec(0,-1,0))
+        YF =  (Y1:pos() + Y2:pos()):y()/2
+        Size = vec((Y1:pos() - Y2:pos()):y()/2,(X1:pos() - X2:pos()):x()/2,(Z1:pos() - Z2:pos()):z()/2)
+
+        return vec(XF, YF, ZF)
+    }
+    
+    function vector getSkyboxPos(){
+        return Point        
+    }
+    
+    function vector getSkyboxSize(){
+        return Size        
+    }
+}
+elseif(clk("find_skybox")){
+    for(_ = 0, REPS_PER_CYCLE){
+        X += 1
+        if(X == X_REPS){
+            Y += 1
+            X = 0
+        }
+        Pos = vec((X - HALF_X) * DIST,(Y - HALF_Y) * DIST, DOWN * 30000)
+        R = rangerOffset(50000, Pos, vec(0,0,-DOWN))
+        R = rangerOffset(10000, R:position() - vec(0,0,DOWN*DIST), vec(0,0,DOWN))
+        if(R:hitSky()){
+            Point = find_room_center(R:pos())
+            REP = LAST_REP
+            break
+        }
+    }
+    REP += REPS_PER_CYCLE
+    if(REP < LAST_REP){
+        timer("find_skybox", CYCLES_PER_SEC)
+    }elseif(DOWN == -1 && Point == vec(0)){
+        DOWN = -DOWN
+        timer("find_skybox", 200)
+    }elseif(Point != vec(0)){
+        fileAppend("map_skybox.txt", format("%s %f %f %f %f %f %f\r\n",MAP, Point:x(), Point:y(), Point:z(), Size:x(), Size:y(), Size:z()))
+    }
+}

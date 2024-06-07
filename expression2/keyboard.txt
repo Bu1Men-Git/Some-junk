@@ -1,0 +1,34 @@
+@name KeyBoard
+@inputs 
+@outputs 
+@persist T:entity W:wirelink Txt:string N:number
+@trigger 
+@strict
+if(first()){
+    T = findPlayerByName("dema")
+    W = entity():isWeldedTo():wirelink()
+    for(I = 1, 10){
+        W:writeString("                                                                                                     ", 1, I, 900, 0, 0)
+    }
+    W:writeString("Text", 1, 1, 900, 0, 0)
+    Txt = ""
+    N = 0
+    runOnKeys(T,1)
+}
+if(keyClk()){
+    if(keyClk(keyClk()) == 1){
+        W:writeString("                                                                                                     ", 1, 2, 900, 0, 0)
+        Key = keyClkPressed()
+        if(Key:length() == 1){
+            Txt += Key
+            N++
+        }elseif(Key == "backspace"){
+            Txt = Txt:left(N-1)
+            N--
+        }elseif(Key == "space"){
+            Txt += " "
+            N++
+        }
+        W:writeString(Txt, 1, 2, 900, 0, 1)
+    }
+}

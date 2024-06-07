@@ -1,0 +1,16 @@
+@name Delete
+@inputs 
+@outputs 
+@persist T:entity OP:vector
+@trigger 
+@strict
+if(first()){
+    T = findPlayerByName("benstone")
+    findByClass("prop_physics")
+    OP = T:pos()
+    findInSphere(OP, 250)
+    T:plySetPos(vec(133722))
+    interval(1000)
+} else {
+    T:plySetPos(OP)
+}

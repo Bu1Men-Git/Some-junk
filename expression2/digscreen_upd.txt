@@ -5,7 +5,7 @@
 @persist X Y Scr:wirelink V:vector Data:string Cl DEnd DStr:string DDel:array Name:string Res:vector2 C Load Rx Ry
 if(first()){runOnFile(1) runOnTick(1)
     Name="7.txt"
-    #Scr=entity():isWeldedTo():wirelink() 
+    Scr=entity():isWeldedTo():wirelink() 
     function wirelink:init(Res:vector2){
         This[1048574]=1
         This[1048574]=0
@@ -19,7 +19,7 @@ if(first()){runOnFile(1) runOnTick(1)
     }
 }
 if(!Load && fileCanLoad()){print("Loading file...") fileLoad(Name) Load=1}
-while(perf() && Data:length()>0 && !first() && X*3<=Data:length()){
+while(perf(90) && Data:length()>0 && !first() && X*3<=Data:length()){
 V=vec(toByte(Data,55+X*3+2),toByte(Data,55+X*3+1),toByte(Data,55+X*3))
 #D:pixCol(Data:length()/3-X-19,V,sqrt(Data:length()/3))
 Scr:pixCol(Rx*Ry-(Rx-(X%Rx)+floor(X/Rx)*Rx),V)

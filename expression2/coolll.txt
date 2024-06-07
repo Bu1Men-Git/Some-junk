@@ -1,0 +1,15 @@
+@name noclip sheet chip
+@inputs 
+@outputs 
+@persist O:entity
+@trigger 
+@strict
+if(first()){
+    O = owner()
+    runOnKeys(owner(), 1)
+}
+if(keyClk(keyClk()) > 0){
+    if(keyClkPressed() == "v"){
+        
+    }
+}

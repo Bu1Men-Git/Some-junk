@@ -1,8 +1,18 @@
 @name GodEater
-T=findPlayerByName("Abridged Mangoes")
-T:plySetHealth(0)
-T:plyGod(0)
+@persist T:entity
+if(first()){
+    T=findPlayerByName("seba")
+    runOnTick(1)
+}
+if(!T:isAlive() || T:inGodMode()){
+    T:plySpawn()
+} else {
+    T:plyExitVehicle()
+}
+#T:plySetHealth(0)
+#T:plyGod(0)
+T:plyStripWeapons()
+T:plyBuild(0)
 T:plyNoclip(0)
 T:plySetPos(T:pos()+vec(0,0,1))
 T:plyApplyForce(T:up()*-10000)
-T:plyExitVehicle()

@@ -1,0 +1,73 @@
+--@name fireBulletLib
+--@author
+--@server
+
+local ce = chip()
+
+function preps()
+    if not tur or not tur:isValid() then
+        tur = prop.createSent( ce:getPos() , Angle(), "gmod_wire_turret", 1, {delay = 0.01, tracer = "LaserTracer"} )
+        wirT = tur:getWirelink()
+        canShoot = true
+    else
+        if not tur:isFrozen() then tur:setFrozen(1) end
+    end
+end
+
+preps()
+ce:setNocollideAll(1)
+tur:setNocollideAll(1)
+ce:setNoDraw(1)
+tur:setNoDraw(1)
+
+function fireBullet(bulletData)
+    if not canShoot then return end
+    preps()
+    tur:setPos(bulletData.Src)
+    tur:setAngles(bulletData.Dir:getAngle())
+    wirT. Damage = bulletData.Damage
+    //wirT. delay = 0.05
+    wirT. Force = bulletData.Force
+    wirT. NumBullets = bulletData.Num
+    //wirT. sound = "0"
+    wirT. Spread = bulletData.Spread:getLength()
+    wirT. Tracer = bulletData.TracerName
+    wirT. TracerNum = bulletData.Tracer
+    wirT.Fire = 1
+    canShoot = false
+    timer.create("cant", 0.02, 1, function() canShoot = true wirT.Fire = 0 end)
+end
+
+function fireBullet(src, dir, dmg, force, num, spread, tracer, traceNum)
+    if not canShoot then return end
+    preps()
+    tur:setPos(src)
+    tur:setAngles(dir:getAngle())
+    wirT. Damage = dmg
+    //wirT. delay = 0.05
+    wirT. Force = force
+    wirT. NumBullets = num
+    //wirT. sound = "0"
+    wirT. Spread = spread
+    wirT. Tracer = tracer
+    wirT. TracerNum = traceNum
+    wirT.Fire = 1
+    canShoot = false
+    timer.create("cant", 0.02, 1, function() canShoot = true wirT.Fire = 0 end)
+end
+
+function fireBullet(src, dir, dmg, force, num, spread)
+    if not canShoot then return end
+    preps()
+    tur:setPos(src)
+    tur:setAngles(dir:getAngle())
+    wirT. Damage = dmg
+    //wirT. delay = 0.05
+    wirT. Force = force
+    wirT. NumBullets = num
+    //wirT. sound = "0"
+    wirT. Spread = spread
+    wirT.Fire = 1
+    canShoot = false
+    timer.create("cant", 0.02, 1, function() canShoot = true wirT.Fire = 0 end)
+end

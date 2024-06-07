@@ -1,0 +1,48 @@
+--@name Hud on E
+--@author
+--@shared
+if SERVER then
+function Find(t,e)
+    for i=1, table.count(t) do
+        if t[i] == e then return i end
+    end
+    return 0
+end
+Hud = find.byClass("starfall_hud",function(E) return E:getOwner()==owner() and E or nil end)[1]
+chip():setPos(chip():localToWorld(Vector(0,0,-10)))
+Plys = {}
+if Hud then
+print(Color(25,160,25),"HUD have been found")
+else 
+Hud = prop.createComponent(chip():getPos(), Angle(0, 0, 0), "starfall_hud", "models/bull/dynamicbutton.mdl", true)
+print(Color(25,25,160),"HUD have been created")
+end
+Hud:setColor(Color(0,0,0,0))
+Hud:linkComponent(chip())
+hook.add("keyPress","1",function(E,k)
+if(k == 32 and Hud and Find(Plys,E)==0) then
+_G.Tar = E
+Hud:setAngles(E:getEyeAngles()+Angle(90,0,0))
+Hud:setPos(E:getEyePos()+E:getEyeAngles():getForward()*25)
+hook.add("hudconnected","3",function() table.insert(Plys,_G.Tar) hook.remove("hudconnected","3") end)
+timer.create("hud",0.01,1,function() Hud:setPos(Vector(0,0,0)) end)
+end
+end)
+else
+Sz = 72
+
+Mat = render.createMaterial("debug/debugportals")
+Font = render.createFont("DejaVu Sans Mono",Sz)
+
+hook.add("drawhud","hud",function()
+render.setMaterial(Mat)
+render.setFont(Font)
+X,Y = render.getResolution()
+    render.setColor(Color(0,0,0,255))
+    render.drawRect(0,0,render.getResolution())
+    render.setColor(Color(255,255,255))
+    for i = 1, math.ceil(Y/Sz) do
+    render.drawText(X/2+i*36,i*Sz-Sz,"CUM CUM CUM CUM CUM CUM CUM CUM CUM CUM CUM CUM CUM CUM CUM CUM CUM CUM CUM CUM CUM CUM",1)
+    end
+end)
+end

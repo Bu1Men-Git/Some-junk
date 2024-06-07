@@ -1,0 +1,5 @@
+--@name trails
+--@author
+--@server
+
+timer.create("tral", 1, 0, function() chip():setTrails(100, 30, 1000, "effects/beam_generic01", Color(220, 172, 66, 255), 1, true) end)

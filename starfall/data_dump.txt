@@ -1,0 +1,38 @@
+--@name data_dump
+--@owneronly
+--@server
+
+chip():setPos(chip():localToWorld(Vector(0,0, -4)))
+defaultInputName = "DATA"
+data = {}
+
+inputs = {"Set", "Get"}
+input_types = {"table", "table"}
+wire.adjustInputs(inputs, input_types)
+
+hook.add("input", "", function(method, val)
+    if method == "Set" then
+        if not val then return end
+        ID = val["ID"]
+        if not ID then return end
+        DATA = val["DATA"]
+        data[ID] = DATA
+    elseif method == "Get" then
+        if not val then return end
+        ID = val["ID"]
+        if not ID then return end
+        SEND_TO = val["SEND_TO"]
+        TYPE = type(SEND_TO)
+        if TYPE == "Entity" then
+            SEND_TO = wire.getWirelink(SEND_TO)
+            TYPE = "Wirelink"
+        end
+        if not SEND_TO or TYPE ~= "Wirelink" then return end
+        INPUT_NAME = val["INPUT_NAME"] or defaultInputName
+        DATA = data[ID]
+        if type(DATA) ~= "table" then
+            DATA = {DATA}
+        end
+        SEND_TO[INPUT_NAME] = DATA
+    end
+end)

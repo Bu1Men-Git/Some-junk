@@ -1,0 +1,154 @@
+--@name da ball
+--@author
+--@name 
+--@author 
+--@shared
+mass = 100
+local BALL_MODEL = "models/hunter/misc/sphere2x2.mdl"
+if SERVER then
+    tick = game.getTickInterval()
+    interval = 5
+    allowed = {"weapon_annabelle", "weapon_357"}
+    local HIT_VELOCITY_THRESHOLD = 2
+    blurs = 30
+    blur_value = 150/blurs
+    
+    local ball = prop.create(chip():getPos(), Angle(), BALL_MODEL, true)
+        ball:setMaterial("debug/debugdrawflat")
+        ball:setColor(Color(255,255,255))
+        ball:setPhysMaterial("gmod_bouncy")
+        ball:enableSphere(true)
+        ball:setMass(mass)
+        ball.type = "ball"
+        physEnt = ball:getPhysicsObject()
+        physEnt:addGameFlags(FVPHYSICS.DMG_DISSOLVE)
+    local ball_outer = hologram.create(ball:getPos(), Angle(), BALL_MODEL, Vector(-1.1, -1.1, -1.1))
+        ball_outer:setMaterial("debug/debugdrawflat")
+        ball_outer:setColor(Color(255,255,255,100))
+        ball_outer:setParent(ball)
+    
+    local ball_motion_blur = {}
+    for i=1, blurs do
+        ball_motion_blur[i] = hologram.create(ball:getPos(), Angle(), BALL_MODEL, Vector(-1.1, -1.1, -1.1))
+            ball_motion_blur[i]:setMaterial("debug/debugdrawflat")
+            ball_motion_blur[i]:setColor(Color(i*blur_value, 1, 1):hsvToRGB():setA(100))
+    end
+    
+    local tri_sound = sound.create(ball, "synth/triangle_880.wav")
+    local tri_pitch = 110
+    local tri_volume = 1
+    
+    
+    function DoCollisionSound()
+        tri_sound:play()
+        tri_sound:setPitch(tri_pitch)
+        tri_sound:setVolume(tri_volume)
+        tri_sound:stop(0.3)
+    end
+    
+    function canBeShot(ent)
+        if ent:isValid() and ent:isVehicle() then
+            return false //ent:getDriver():isValid()
+        end
+        return ent:isValid() and ent:isPlayer()
+    end
+    
+    function ballShoot(ply, ball)
+    target = find.sortByClosest(find.allPlayers(function(e) return e != ply and canBeShot(trace.line(ball:getPos(),e:getBonePosition(e:getHitBoxBone(0, 0)),
+    function(e) return e != ball end).Entity) end), ball:getPos())
+    if target[1] then
+        ball:applyForceCenter(-ball:getVelocity())
+        target = target[1]
+        startP = ball:getPos() + ball:getVelocity() * tick * interval
+        endP = target:getBonePosition(target:getHitBoxBone(0, 0)) + target:getVelocity() * tick * interval
+        dir = (endP - startP)
+        len = dir:getLength()
+        dir = dir / len
+        local dist = dir:dot(target:getPhysicsObject():getAABB()/2) + 175
+        ball:setPos(endP - dir * dist)
+        local cp = ball:getPhysicsObject()
+        cp:applyForceCenter(dir*mass*len*5)
+    end
+end
+    
+    
+    ball:addCollisionListener(function(collision_data)
+        local hit_velocity = (collision_data.Speed / 50)
+        if hit_velocity < HIT_VELOCITY_THRESHOLD then return end
+        tri_pitch = 200 + hit_velocity
+        tri_volume = hit_velocity / 15
+        DoCollisionSound()
+        //ball:applyForceCenter(collision_data.OurNewVelocity * 1.2 * mass)
+        net.start("tocl_DoParticle")
+            net.writeVector(collision_data.HitPos)
+        net.send()
+    end)
+    
+    
+    net.receive("hitdaball", function() 
+        local ply = net.readEntity()
+        local ball = net.readEntity()
+        ballShoot(ply, ball)
+    end)
+    
+    hook.add("Tick", "", function()
+        
+        for i=1, blurs do
+            ball_motion_blur[i]:setColor(Color((timer.curtime() * 100) + (i * blur_value), 1, 1):hsvToRGB():setA((i/blurs) * 100))
+            ball_motion_blur[i]:setPos(math.lerpVector(i / blurs, ball_motion_blur[i]:getPos(), ball:getPos()))
+        end
+        
+    end)
+    
+    hook.add("KeyPress", "key", function(ply, n)
+        if not ply:getActiveWeapon():isValid() then return end
+        wep = ply:getActiveWeapon()
+        if table.hasValue(allowed, wep:getClass()) then
+            if(n == IN_KEY.ATTACK2) then
+                ball:applyForceCenter(-ball:getVelocity())
+                ball:getPhysicsObject():applyForceCenter((ply:getShootPos() - ball:getPos())*mass*5)
+            end
+        end
+    end)
+    
+else
+    
+    BulletSize = Vector(20, 20, 20)
+    local PARTICLE_MAT = material.load("effects/select_ring")
+    local emitter = particle.create(chip():getPos(), true)
+    local particles = {}
+    
+    hook.add("EntityFireBullets", "hoot", function(ply, dat)
+        tr = trace.hull(dat.Src, dat.Src + dat.Dir*25000, -BulletSize, BulletSize, function(e) return e:getModel() == BALL_MODEL end)
+        if tr.Entity:isValid() then
+            local ball = tr.Entity
+            if ball.dud then return end
+            net.start("hitdaball")
+            net.writeEntity(ply)
+            net.writeEntity(ball)
+            net.send()
+            ball.dud = true
+            timer.create("reset", 0.2, 1, function() ball.dud = false end)
+        end
+    end)
+    
+    net.receive("tocl_DoParticle", function()
+        local pos = net.readVector()
+        if emitter:getParticlesLeft() == 0 then return end
+        table.insert(particles, {
+            ["particle"] = emitter:add(PARTICLE_MAT, pos, 10, 50, 1, 1, 255, 0, 0.25),
+            ["dietime"] = timer.curtime() + 1.5,
+        })
+    end)
+    
+    
+    hook.add("Tick", "", function()
+        
+        for k,v in ipairs(particles) do
+            v["particle"]:setAngles((v["particle"]:getPos() - eyePos()):getAngle())
+            if timer.curtime() >= v["dietime"] then table.remove(particles, k) end
+        end
+        
+    end)
+    
+end

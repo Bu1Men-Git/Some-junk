@@ -1,0 +1,7 @@
+@name Cleaner
+findInSphere(entity():pos(), 15000)
+foreach(I,E:entity = findToArray()){
+    if(E:owner() == noentity()){
+        E:propDelete()
+    }
+}

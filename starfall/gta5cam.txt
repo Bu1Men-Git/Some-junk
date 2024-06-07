@@ -1,0 +1,125 @@
+--@name gta5cam
+--@shared
+
+--DEST = Vector(4318.359863, -657.620422, 64.031250)
+DEST = chip():getPos()
+
+if SERVER then
+    
+    ce = chip()
+    cup = ce:getUp()
+    cp = ce:getPos() - cup * 7
+    ce:setPos(cp)
+    tick = game.getTickInterval()
+    interval = 1
+    
+    e2 = prop.createSent(cp, Angle(), "gmod_wire_expression2", true, {
+    _name = "aim",
+    _original = "@inputs A:angle\n@trigger A\nowner():plySetAng(A)",
+    Model = "models/beer/wiremod/gate_e2_nano.mdl"
+    })
+
+    we2 = e2:getWirelink()
+    
+    
+    function aim(ang)
+        we2.A = ang
+    end
+    
+    net.receive("setPos", function(len, ply)
+        //ply:setPos(DEST)
+    end)
+    
+    local ang = {}
+    net.receive("lockAngles", function(len, ply)
+        ang[ply:getUserID()] = net.readAngle()
+        hook.add("think", "lock:"..ply:getUserID(), function()
+            aim(ang[ply:getUserID()])
+        end)
+    end)
+    net.receive("releaseLock", function(len, ply)
+        hook.remove("think", "lock:"..ply:getUserID())
+    end)
+else
+    if player() != owner() then return end
+    enableHud(nil, true)
+    
+    local started = false
+    
+    local cameraPos = Vector()
+    local cameraAngle = Angle()
+    local myPos
+    local myAngle
+    local stage = 0
+
+    hook.add("calcview", "", function(pos, ang, fov, znear, zfar)
+        local view = {}
+        
+        if started == false and stage == 0 then
+            myPos = player():getPos()
+            myAngle = player():getEyeAngles()
+            net.start("lockAngles")
+            net.writeVector(myAngle)
+            net.send()
+            started = true
+        end
+        
+        if not started then return end
+        
+        if stage == 0 then // zoom out back from player
+            cameraPos.x = math.lerp(0.1, cameraPos.x, 100)
+            cameraPos.y = 0
+            cameraPos.z = 0
+            view.origin = pos - ang:getForward() * cameraPos.x
+            view.drawviewer = true
+            if math.ceil(cameraPos.x) == 100 then cameraAngle = myAngle stage = 1 end
+        elseif stage == 1 then // zoom out into space
+            cameraPos.x = 0
+            cameraPos.y = 0
+            cameraPos.z = math.lerp(0.1, cameraPos.z, 10000)
+            cameraAngle = math.lerpAngle(0.1, cameraAngle, Angle(89, 0, 0))
+            --cameraAngle = Angle(89, 0, 0)
+            view.origin = myPos + cameraPos
+            view.angles = cameraAngle
+            //view.drawviewer = false
+            if math.ceil(cameraPos.z) == 10000 then
+                net.start("setPos") net.send()
+                cameraPos.x = myPos.x
+                cameraPos.y = myPos.y
+                stage = 2
+            end
+        elseif stage == 2 then
+            cameraPos.x = math.lerp(0.1, cameraPos.x, DEST.x)
+            cameraPos.y = math.lerp(0.1, cameraPos.y, DEST.y)
+            //cameraPos.z = 10000
+            view.origin = cameraPos
+            view.angles = cameraAngle
+            if math.ceil(cameraPos.x) == math.ceil(DEST.x) && math.ceil(cameraPos.y) == math.ceil(DEST.y) then stage = 3 end
+        elseif stage == 3 then
+            cameraPos.x = 0
+            cameraPos.y = 0
+            cameraPos.z = math.lerp(0.1, cameraPos.z, 0)
+            cameraAngle = math.lerpAngle(0.1, cameraAngle, myAngle)
+            view.origin = pos + cameraPos - (cameraAngle:getForward() * 100)
+            view.angles = cameraAngle
+            view.drawviewer = true
+            if math.ceil(cameraPos.z) == 1 then cameraPos.x = 100 stage = 4 end
+        elseif stage == 4 then
+            cameraPos.x = math.lerp(0.1, cameraPos.x, 0)
+            cameraPos.y = 0
+            cameraPos.z = 0
+            view.origin = pos - cameraAngle:getForward() * cameraPos.x
+            view.drawviewer = not (math.ceil(cameraPos.x) < 50)
+            if math.ceil(cameraPos.x) == 1 then stage = 5 end
+        elseif stage == 5 then
+            view.drawviewer = false
+            net.start("releaseLock")
+            net.send()
+            started = false
+            stage = 0
+            enableHud(player(), false)
+        end
+        
+        return view
+    end)
+end

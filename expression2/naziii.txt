@@ -7,27 +7,28 @@ if(first()){runOnTick(1) O=owner()}
 function entity spwnSaw(V:vector,A:angle,N,I){
 E=propSpawn("models/props_junk/sawblade001a.mdl",V,A,0)
 #N=2.5
-E:setModelScale(vec(N))
-E:setPhysScale(N)
+Col = randvec(vec(30), vec(255))
+#E:setModelScale(vec(N))
+#E:setPhysScale(N)
 E:setMass(2*N^3)
 holoCreate(I,E:pos(),vec(2.5,0.3,0.2)*N,E:angles())
-holoParent(I,E) holoColor(I,vec(30))
+holoParent(I,E) holoColor(I,Col)
 holoCreate(I+1,E:pos(),vec(0.3,2.5,0.2)*N,E:angles())
-holoParent(I+1,E) holoColor(I+1,vec(30))
+holoParent(I+1,E) holoColor(I+1,Col)
 holoCreate(I+2,E:toWorld(vec(13.75,-7,0)*N),vec(0.2,1,0.2)*N,E:angles())
-holoParent(I+2,E) holoColor(I+2,vec(30))
+holoParent(I+2,E) holoColor(I+2,Col)
 holoCreate(I+3,E:toWorld(vec(-7,-13.75,0)*N),vec(1,0.2,0.2)*N,E:angles())
-holoParent(I+3,E) holoColor(I+3,vec(30))
+holoParent(I+3,E) holoColor(I+3,Col)
 holoCreate(I+4,E:toWorld(vec(-13.75,7,0)*N),vec(0.2,1,0.2)*N,E:angles())
-holoParent(I+4,E) holoColor(I+4,vec(30))
+holoParent(I+4,E) holoColor(I+4,Col)
 holoCreate(I+5,E:toWorld(vec(7,13.75,0)*N),vec(1,0.2,0.2)*N,E:angles())
-holoParent(I+5,E) holoColor(I+5,vec(30))
+holoParent(I+5,E) holoColor(I+5,Col)
 holoMaterial(I,I+5,"debug/debugportals")
 E:propDraw(0)
 return E
 }
-if(O:weapon():type()=="none"){
+if(O:weapon():type()=="weapon_crowbar"){
     Aim=O:aimPos()-O:attachmentPos("eyes")
-    if(O:keyAttack1() && changed(O:keyAttack1())){E=spwnSaw(O:attachmentPos("anim_attachment_head")+25*Aim/Aim:length(),Aim:toAngle(),4.5,X) X+=6 E:applyForce(10000*E:mass()*Aim/Aim:length())}
+    if(O:keyAttack1() && changed(O:keyAttack1())){E=spwnSaw(O:attachmentPos("anim_attachment_head")+25*Aim/Aim:length(),Aim:toAngle(),random(3, 7),X) X+=6 E:applyForce(10000*E:mass()*Aim/Aim:length())}
     if(O:keyAttack2() && changed(O:keyAttack2())){propDeleteAll() X=0}
 }

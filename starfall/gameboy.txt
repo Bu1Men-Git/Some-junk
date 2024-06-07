@@ -1,0 +1,33 @@
+--@name Gameboy
+--@author
+--@client
+
+if CLIENT then
+    o = owner()
+    w = 160
+    h = 144
+    
+    if player() == o then
+        print("Trying to connect to websocket")
+        
+        ws = WebSocket("localhost", 6969)
+        
+        function ws:onConnected()
+            self:write("load|0")
+            print("Connected to websocket")
+        end
+        
+        function ws:onMessage(msg)
+            print("Websocket got message: " + msg)
+        end
+        
+        function ws:onDisconnected(errored)
+            print("Socket disconnected",  errored, self:getState())
+        end
+        
+        
+        ws:connect()
+        
+    end
+
+end

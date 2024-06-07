@@ -1,0 +1,50 @@
+--@name data_dump plugin
+--@author
+--@server
+
+wire.adjustInputs({"DATA"}, {"table"})
+w_self = wire.self()
+w_data = {}
+
+data_dump = nil
+
+hook.add("input", "input_write_down", function(name, val) w_data[name] = val end)
+
+function GetDataDump()
+    if not data_dump then
+        temp_data_dump = find.byClass("starfall_processor", function(E) return E:getChipName()=="data_dump" and E or nil end)
+        if table.count(temp_data_dump) > 0 then data_dump = temp_data_dump[1]:getWirelink()  end
+    end
+    return data_dump
+end
+
+function Get(ID, SEND_TO)
+    GetDataDump()
+    if not data_dump then return end
+    DATA = {}
+    DATA["ID"] = ID
+    DATA["SEND_TO"] = SEND_TO
+    data_dump["Get"] = DATA
+    return w_data["DATA"]
+end
+
+function Set(ID, DATA)
+    GetDataDump()
+    if not data_dump then return end
+    TABLE = {}
+    TABLE["ID"] = ID
+    if type(DATA) == "table" then TABLE["DATA"] = DATA
+    else TABLE["DATA"] = {DATA} end
+    data_dump["Set"] = TABLE
+end
+
+function Delete(ID)
+    Set(ID, nil)
+end
+
+T = {}
+T["1"] = 42
+Set("1", T)
+val = Get("1", w_self)
+if type(val) ~= "table" then print(val)
+else printTable(val) end

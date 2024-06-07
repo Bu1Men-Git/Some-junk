@@ -1,0 +1,50 @@
+--@name = fun lightning = laggerrrrr
+--@name Generic
+--@author
+--@server
+
+//if SERVER then
+    chip():setNoDraw(true)
+    chip():setSolid(false)
+    chip():setColor(Color(0, 0, 0, 0))
+    chip():setMaterial("Models/effects/vol_light001")
+    //return
+//else
+    
+    local TARGET_NAME = "Alaner"  -- Replace "Faze" with the target player's name
+    
+    local OO = owner()
+    local E = chip()
+    local worldE = game.getWorld()
+    
+    local effectData = effect:create()
+    
+    timer.create("kek", 0.01, 0, function()
+        //local target = find.playersByName(TARGET_NAME)[1]
+        //if player != target or not target or not target:isValid() then return end
+    plys = find.allPlayers()
+    for i, e in pairs(plys) do
+        if e == OO then return end
+        pcall(function()
+            local tr = e:getEyeTrace()
+            local hitPos = tr.HitPos
+            local hitNormal = tr.HitNormal
+    
+            effectData:setEntity(e)
+            effectData:setMagnitude(5000)
+            effectData:setScale(4)
+            effectData:setRadius(4000)
+    
+            effectData:setRadius(1)
+            effectData:setNormal(hitNormal)
+    
+            effectData:setFlags(1 + 5 + 7)
+            effectData:setSurfaceProp(-1)
+            effectData:setDamageType(2 ^ 35 - 1)
+    
+            effectData:setOrigin(hitPos)
+            effectData:play("TeslaHitboxes")
+        end)
+    end
+end)
+//end

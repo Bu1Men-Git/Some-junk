@@ -1,0 +1,39 @@
+--@name
+--@author
+--@client
+
+local TargName = "exodium"
+local HoloAmount = 100
+
+local Size = 30000
+local Dist = 20
+local Quads = 8192 -- can't be more than 8192
+
+if(player() != find.playersByName(TargName)[1]) then return end
+
+--if(player() == owner()) then return end
+
+function generateCringeMesh(Size, Dist, Quads)
+    local Mesh = mesh.createEmpty()
+    
+    local Div = Dist / Quads
+    
+    mesh.generate(Mesh, MATERIAL.QUADS, Quads, function()
+        for I = 1, Quads do 
+            mesh.writeQuad(Vector(-Size/2,-Size/2,-(Div * I)), Vector(-Size/2,Size/2,-(Div * I)), Vector(Size/2,Size/2,-(Div * I)), Vector(Size/2, -Size/2,-(Div * I)))
+        end
+    end)
+    
+    return Mesh
+end
+
+local CringeMesh = generateCringeMesh(Size, Dist, Quads)
+
+local Holos = {}
+for I = 1, HoloAmount do
+    local Holo = holograms.create(player():getShootPos(), player():getEyeAngles()+Angle(-90,0,0), "models/Combine_Helicopter/helicopter_bomb01.mdl")
+    Holo:setMesh(CringeMesh)
+    Holo:setRenderBounds(Vector(-Size), Vector(Size))
+    Holo:setMaterial("models/shadertest/shader3")
+    Holo:setParent(player())
+end

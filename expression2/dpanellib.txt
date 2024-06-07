@@ -1,11 +1,12 @@
 @name DPanelLib
-@persist [Add Off]:number
+@persist [Add Off]:number Elements:table
 if(first()){
     Add = 8
     Off = 20
+    Elements = table()
 }
-function table wirelink:dpanel(I,Pos:vector2,Size:vector2){
-    N = Off + I*Add
+function table wirelink:dpanel(I:number,Pos:vector2,Size:vector2){
+    local N = Off + I*Add
     This:egpBox(N+1,vec2(0,Size:y()/2-10),Size)
     This:egpColor(N+1,vec(170))
     
@@ -18,18 +19,21 @@ function table wirelink:dpanel(I,Pos:vector2,Size:vector2){
     This:egpParent(N+2,N)
     This:egpParent(N+1,N)
     
-    return table(
+    local Obj = table(
         "Type" = "panel",
-        "Id" = N,
         "Pos" = vec2(Pos:x(),Pos:y()-Size:y()/2+10),
         "Size" = Size,
         "Used" = 2,
         "Hidden" = 0
     )
+    
+    Elements[N, table] = Obj
+    
+    return Obj
 }
 
-function table wirelink:dbutton(I,Pos:vector2,Size:vector2,Text:string){
-    N = Off + I*Add
+function table wirelink:dbutton(I:number,Pos:vector2,Size:vector2,Text:string){
+    local N = Off + I*Add
     This:egpBox(N,Pos,Size)
     This:egpColor(N,vec(210))
     
@@ -44,19 +48,22 @@ function table wirelink:dbutton(I,Pos:vector2,Size:vector2,Text:string){
     This:egpParent(N+2,N)
     
     
-    return table(
+    local Obj =  table(
         "Type" = "button",
-        "Id" = N,
         "Pos" = Pos,
         "Size" = Size,
         "Text" = Text,
         "Used" = 2 # N + 2
     )
+    
+    Elements[N, table] = Obj
+    
+    return Obj
 }
 
-function table wirelink:dlistbox(I,Pos:vector2,Size:vector2,Src:table){
-    N = Off + I*Add
-    Text = ""
+function table wirelink:dlistbox(I:number,Pos:vector2,Size:vector2,Src:table){
+    local N = Off + I*Add
+    local Text = ""
     for(I = 1, min(Src:count(), floor( (Size:y()-48)/16 ) )){
         if(Src[I,entity]:isValid()){
             Text+=( Src[I,entity]:name():left(floor((Size:x()-8)/10)) + "\n" )
@@ -87,9 +94,8 @@ function table wirelink:dlistbox(I,Pos:vector2,Size:vector2,Src:table){
     This:egpParent(N+4,N)
     
     
-    return table(
+    local Obj =  table(
         "Type" = "listbox",
-        "Id" = N,
         "Pos" = Pos,
         "Size" = Size,
         "Source" = Src,
@@ -97,16 +103,24 @@ function table wirelink:dlistbox(I,Pos:vector2,Size:vector2,Src:table){
         "Selected" = -1,
         "Used" = 4 # N + 4
     )
+    
+    Elements[N, table] = Obj
+    
+    return Obj
 }
 
+function table getData(N:number){
+    return Elements[N, table]
+}
 
-function void wirelink:dremove(El:table){
-    N = El["Id",number]
-    F = El["Used",number]
+function void wirelink:dremove(N:number){
+    local F = Elements[N, table]["Used",number]
     for(I = 0,F){ This:egpRemove(N+I) }
 }
 
-function void wirelink:dparent(C:table,P:table){
+function void wirelink:dparent(CN:number,PN:number){
+    local C = Elements[CN, table]
+    local P = Elements[PN, table]
     Dir = C["Pos",vector2]-P["Pos",vector2]
     This:egpParent(C["Id",number],P["Id",number])
     This:egpPos(C["Id",number],Dir)
@@ -114,33 +128,36 @@ function void wirelink:dparent(C:table,P:table){
     C["Parent",number] = P["Id",number]
 }
 
-function void table:dmove(W:wirelink,Pos:vector2){
-    W:egpPos(This["Id",number],Pos)
-    This["Pos",vector2] = Pos
+function void wirelink:dmove(N:number,Pos:vector2){
+    local El = Elements[N, table]
+    This:egpPos(N,Pos)
+    El["Pos",vector2] = Pos
 }
 
-function void table:dvisible(W:wirelink,O){
-    This["Hidden",number]=!This["Hidden",number]
-    N = This["Id",number]
-    if(This["Hidden",number]){ W:egpPos(N,This["Pos",vector2]+vec2(2000)) }
-    else{W:egpPos(N,This["Pos",vector2])}
+function void wirelink:dvisible(N:number, T:number){
+    local El = Elements[N, table]
+    Elements[N, table]["Hidden",number]=T
+    if(T){ This:egpPos(N,El["Pos",vector2]+vec2(10000)) }
+    else{This:egpPos(N,El["Pos",vector2])}
 }
 
-function number wirelink:dcheck(El:table,Cp:vector2){
-    S = El["Size",vector2]/2
-    Par = El["Parent",number]
+function number wirelink:dcheck(N:number,Cp:vector2){
+    local El = Elements[N, table]
+    local S = El["Size",vector2]/2
+    local Par = El["Parent",number]
     if(Par>0){P = This:egpPos(Par) + El["Pos",vector2]}
     else{P = El["Pos",vector2]}
     return inrange(Cp,P-S,P+S)
 }
 
-function void wirelink:dupdatelist(El:table,Offset){
-    Src = El["Source",table]
-    Size = El["Size",vector2]
+function void wirelink:dupdatelist(N:number,Offset:number){
+    local El = Elements[N, table]
+    local Src = El["Source",table]
+    local Size = El["Size",vector2]
     Offset = clamp(Offset,0,Src:count()-floor( (Size:y()-48)/16 )+1)
     El["Offset",number] = Offset
-    Text = ""
-    Limit = min(Src:count() , floor( (Size:y()-48)/16 ) +Offset ) 
+    local Text = ""
+    local Limit = min(Src:count() , floor( (Size:y()-48)/16 ) +Offset ) 
     for(I = Offset, Limit){
         NI = I % Limit + 1
         if(Src[NI,entity]:isValid()){
@@ -150,13 +167,13 @@ function void wirelink:dupdatelist(El:table,Offset){
         Text+=( Src[NI,string]:left(floor((Size:x()-8)/10)) + "\n" )
         
     }
-    This:egpSetText(El["Id",number]+1 , Text)
+    This:egpSetText(N+1 , Text)
 }
 
 function vector2 entity:toScreen(Dir:vector){
-    local Fov = 83.66666
-    local ScrH = 1080
-    local ScrW = 1920
+    local Fov = 90
+    local ScrH = 1440
+    local ScrW = 3440
     
     local CumAng=(This:aimPos()-This:shootPos()):toAngle()
     local FDP=CumAng:forward():dot(Dir)

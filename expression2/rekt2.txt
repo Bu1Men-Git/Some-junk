@@ -1,0 +1,8 @@
+@name Rekt2
+if (first()) {
+    runOnTick(1)
+}
+if (duped()) {
+    selfDestruct()
+}
+entity():applyForce(vec(sinr(curtime() * 1e24) * 1e+24,cosr(curtime() * 1e24) * 1e+24,cosr(curtime() * 1e24) * 1e+24))

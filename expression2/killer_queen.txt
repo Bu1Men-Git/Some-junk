@@ -10,7 +10,7 @@ findInSphere(Tar:pos(),27500)
 findClipFromSphere(Tar:pos(),1500)
 if(BcL:length()){findIncludePlayerProps(findPlayerByName(BcL))}
 if(WhL:length()){findExcludePlayerProps(findPlayerByName(WhL))}
-if(!E:isValid()){OE:printPlayer("Killer Queen has already touched that "+Name:explode("_")[3,string]+" "+Name:explode("_")[2,string])  E=findResult(1) OE=E:owner() Name = E:type()}
+if(!E:isValid()){ #[OE:printPlayer("Killer Queen has already touched that "+Name:explode("_")[3,string]+" "+Name:explode("_")[2,string])]#  E=findResult(1) OE=E:owner() Name = E:type()}
 if(E:isValid() && !T){
 if(E:type():left(3)=="gb_"){T=1
 X=E:wirelink()

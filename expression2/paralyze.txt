@@ -1,0 +1,17 @@
+@name paralyze
+@inputs 
+@outputs 
+@persist T:entity D:damage
+@trigger 
+@strict
+
+T = findPlayerByName("Diablo")
+D = damage()
+D:setType(_DMG_PARALYZE)
+D:setForce(vec(-1337))
+D:setDamage(100)
+D:setAttacker(T)
+event tick() {
+    T:takeDamage(D)
+}
+

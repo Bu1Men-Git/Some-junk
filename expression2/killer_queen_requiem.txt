@@ -43,7 +43,7 @@ if(first()){
 if(O:keyPressed("9") && changed(O:keyPressed("9"))){JJ=!JJ}
 if(O:keyPressed("G") && changed(O:keyPressed("G"))){M=!M hint("Killer Queen: "+M,100) holoAlpha(1,M*60) if(!M){O:removeHalo()}}
 if(JJ && M){O:setHalo(vec(152-cos(J)*15, 0, 127-sin(J)*10),5-cos(J)*3,6-sin(J)*3) J=(J+2)%360} else{O:removeHalo()}
-if(M  && O:weapon():type()=="none"){
+if(M  && O:weapon():type()=="weapon_crowbar"){
 if(O:keyPressed("8") && changed(O:keyPressed("8"))){
         OW=OW:url("https://raw.githubusercontent.com/Bu1Men-Git/Some-junk/main/Sounds/KQ/"+Snd[4,string]+".mp3",O)
 }
@@ -52,7 +52,7 @@ if(O:keyPressed("7") && changed(O:keyPressed("7"))){
 }
 if(O:keyAttack1() && changed(O:keyAttack1()) && !timerRunning("plc")){
     if(!B && (O:aimPos():distance(O:shootPos())<=R)){
-        if(O:aimEntity():isValid() && !O:aimEntity():isWorld()){T = O:aimEntity() if(T:isAlive()){holoEntity(0):parentToBone(T,O:aimBone():index())}else{holoParent(0,T)} holoPos(0,O:aimPos()) print("Killer Queen touched "+T:type()) S=T:type()}
+        if(O:aimEntity():isValid() && !O:aimEntity():isWorld()){T = O:aimEntity() if(T:isAlive()){holoPos(0, O:aimPos()) holoEntity(0):parentTo(T)}else{holoParent(0,T)} holoPos(0,O:aimPos()) print("Killer Queen touched "+T:type()) S=T:type()}
         else{V=O:aimPos() print("Killer Queen touched that floor"+round(V,1)) holoPos(0,O:aimPos()) S = round(V,2):toString()}
         B=1
         holoAlpha(0,65)
@@ -68,7 +68,7 @@ if(O:keyAttack1() && changed(O:keyAttack1()) && !timerRunning("plc")){
         OW:play()
         TW:play()]#
         holoAlpha(0,0)
-        if(holoEntity(0):parent():health()>0){holoEntity(0):parent():admPropBreak()}
+        if(holoEntity(0):parent():health()>0){holoEntity(0):parent():propBreak()}
         holoUnparent(0)
         boom2(holoEntity(0):pos(),max(675,6.45*max(T:maxHealth(),1)),5250-max(75,0.75*max(T:maxHealth(),1)))
         #holoPos(0,vec(0))

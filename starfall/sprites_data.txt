@@ -1,0 +1,127 @@
+SpritesData = {
+    gachi = {
+        urls = {"https://i.imgur.com/ArqIrer.png"},
+        size = {5, 5},
+        frameCount = 5*5*1 - 1
+    },
+    micro = {
+        urls = {
+            "https://cdn.discordapp.com/attachments/607371740540305424/871456722873618442/1.png",
+            "https://cdn.discordapp.com/attachments/607371740540305424/871456756759404584/2.png",
+            "https://cdn.discordapp.com/attachments/607371740540305424/871456772580335737/3.png"
+        },
+        size = {8, 8},
+        frameCount = 8^2*3
+    },
+    kek = {
+        urls = {"https://i.imgur.com/IMSMlVL.png", "https://i.imgur.com/DhZl05n.png"},
+        size = {6, 6},
+        frameCount = 6*6*2 - 1
+    },
+    ricardo1   = {
+        urls = {
+            "https://i.imgur.com/z8Z3k8W.png",
+            "https://i.imgur.com/hqHzyNw.png",
+        },
+        size = {5, 5},
+        frameCount = 5^2*2
+    },
+    ricardo2   = {
+        urls = {"https://i.imgur.com/Kmh9Gei.png"},
+        size = {9, 9},
+        frameCount = 9^2 - 6
+    },
+    ricardo3   = {
+        urls = {"https://i.imgur.com/AQleZYI.png"},
+        size = {6, 4},
+        frameCount = 4*6 - 2
+    },
+    cat   = {
+        urls = {"https://i.imgur.com/p0xOiVg.png", "https://i.imgur.com/xuGjOXL.png"},
+        size = {9, 9},
+        frameCount = 9^2*2 - 4
+    },
+    catfire = {
+        urls = {"https://i.imgur.com/zXOiu2b.png"},
+        size = {2, 2},
+        frameCount = 2*2
+    },
+    triangle   = {
+        urls = {"https://i.imgur.com/zzOLE8F.png"},
+        size = {4, 4},
+        frameCount = 4^2 - 3
+    },
+    niggers   = {
+        urls = {"https://i.imgur.com/GIIuFK7.png", "https://i.imgur.com/ce3Zxak.png"},
+        size = {10, 10},
+        frameCount = 10^2*2 - 13
+    },
+    anime1   = {
+        urls = {"https://i.imgur.com/uOKZF7G.png"},
+        size = {3, 2},
+        frameCount = 3*2
+    },
+    anime2 = {
+        urls = {"https://i.imgur.com/Um7cGnH.png"},
+        size = {3, 4},
+        frameCount = 3*4
+    },
+    vlad1   = {
+        urls = {"https://i.imgur.com/GWS6M68.png"},
+        size = {8, 8},
+        frameCount = 8*8 - 4
+    },
+    ded1 = {
+        urls = {"https://i.imgur.com/dH4bUPO.png"},
+        size = {8, 6},
+        frameCount = 8*6 - 2
+    },
+    fat1 = {
+        urls = {"https://i.imgur.com/4JEW1c1.png"},
+        size = {6, 6},
+        frameCount = 6*6 - 5
+    },
+    fat2 = {
+        urls = {"https://i.imgur.com/KtNjxA1.png"},
+        size = {5, 4},
+        frameCount = 5*4 - 4
+    },
+    putin1 = {
+        urls = {"https://i.imgur.com/CDJoq0H.png"},
+        size = {9, 9},
+        frameCount = 9*9 - 2
+    },
+    tracer1 = {
+        urls = {"https://i.imgur.com/P0f0mk4.png"},
+        size = {1, 1},
+        frameCount = 1
+    },
+    dust = {
+        urls = {"https://media.discordapp.net/attachments/872194673689632818/872194879860670475/798627887502196747.gif"},
+        size = {1,1},
+        frameCount = 1
+    }
+
+}
+
+
+
+
+
+
+SpritesData2 = {
+    lol = "https://static1.e621.net/data/2b/ef/2bef1255f749d40e2b9688a970eb4eb1.gif",
+    gachi = "https://i.imgur.com/ArqIrer.png",
+    triangle = "https://i.imgur.com/wEGAreQ.gif",
+    cat = "https://i.imgur.com/m0bHjI5.gif",
+    scala = "https://i.imgur.com/1yfdoGt.gif",
+    
+    
+    eye = "https://i.imgur.com/hUHWwL9.gif",
+    room = "https://i.imgur.com/RBjURwd.gif",
+    room = "https://i.imgur.com/RBjURwd.gif",
+    tornado = "https://i.imgur.com/xIOeFDt.gif",
+    --dicaprio = "https://u.teknik.io/VoX0P.gif",
+    city = "https://i.imgur.com/ROf54Np.gif",
+    anime1 = "https://u.teknik.io/cN1eo.gif",
+}

@@ -18,6 +18,6 @@ function laser(V:vector,VN:vector,N){
     #elseif(N==0){boom(R:position(),150,150)}
 }
 interval(10)
-if(owner():weapon():type()=="none" && owner():keyAttack1() && changed(owner():keyAttack1())){
+if(owner():weapon():type()=="weapon_crowbar" && owner():keyAttack1() && changed(owner():keyAttack1())){
     laser(owner():attachmentPos("eyes")+owner():eye()*35,owner():eye(),10)
 }

@@ -1,0 +1,442 @@
+--@name advanced entity info
+--@author 
+--@shared
+
+local MaxOBBboxes = 10
+local ObbLifePlayer = 150
+local ObbLifeProp = 1
+
+local weapon_to_xyz = {
+    ["gmod_tool"] = true, 
+    ["weapon_physgun"] = true 
+}
+    
+
+if SERVER then
+
+    nextNet = 0
+    
+    function HUD_KillFeedNET( ply , wep, killer )
+        net.start("kill_feed_net")
+            net.writeUInt( ply:entIndex() , 13)
+            net.writeUInt( wep:entIndex() , 14)
+            net.writeUInt( killer:entIndex() , 15)
+        net.send()
+        
+    end
+    
+    hook.add( "PlayerDeath", "KillFeed_NET", HUD_KillFeedNET )
+    
+    function HUD_SpawnClearTextNET( ply )
+    
+        if !ply == owner() then return end
+        
+        net.start("spawn_net")
+            net.writeUInt( ply:entIndex() , 13)
+        net.send( )
+    end
+    
+    hook.add( "PlayerSpawn", "SpawnClearText_NET", HUD_SpawnClearTextNET )
+    
+    function HUD_Num_Damage(target, attacker, inflictor, amount, type, position, force )
+
+        if !attacker:isPlayer() then return end
+        
+        if !attacker == owner() then return end
+        
+        if timer.curtime() < nextNet then return end    
+        nextNet= timer.curtime() + 0.05
+        
+        net.start("num_damage_net")
+            net.writeUInt( attacker:entIndex() , 13)
+            net.writeUInt( amount , 14)
+            net.writeVector( position )
+        net.send()
+    end
+    
+    hook.add( "EntityTakeDamage", "HUD_Num_Damage_NET", HUD_Num_Damage )
+    
+end
+
+
+
+
+if CLIENT then
+    
+    local Players
+
+    local font = render.createFont("Roboto",16,500,true,false,false,true,0,true)
+    
+    local font2 = render.createFont("Roboto",14,500,true,false,false,true,0,true)
+    
+    local BigArial = render.createFont("Roboto",25,500,true,false,false,true,0,true)
+    
+    local Kill_Feed_Font = render.createFont("Roboto",18,500,true,false,true,true,0,false)
+    
+    local Dead_pos_Font = render.createFont("Roboto",12,1,false,false,true,true,0,false)
+    
+    local scrW, scrH
+    local scrW, scrH = render.getResolution()
+    local SizeCrossX,SizeCrossY = 4,4--scrW/150,scrH/200
+    
+    local Kill_Feed_Table = {}
+    local Kill_Feed_DownMod = 64    
+    
+    local Killer_Indicator = ""
+    local Killer_Name = ""
+    
+    local Damage_Numbers = {}
+    local Damage_Pos = Vector(0, 0, 0)
+    
+    local DEAD_POS = Vector(14110, 14636, 15544)
+    
+    function RunNets()
+        net.receive("kill_feed_net", function(len)
+            local ply =       entity(net.readUInt(13))
+            local wep =       entity(net.readUInt(14))
+            local killer =    entity(net.readUInt(15))
+            
+            timer.simple(15, function() table.remove(Kill_Feed_Table, 1) end)
+             
+            if isValid(killer) and killer:isPlayer() then PlayerKill(ply,wep,killer) else EntityKill(ply,wep,killer) end
+            
+            if player() == killer then 
+                
+                DEAD_POS = ply:getPos()
+                
+                Killer_Indicator = "You kill " .. ply:getName() 
+                
+                timer.simple(4, function() Killer_Indicator = "" end) 
+                
+                return 
+            end
+     
+            
+        end)
+        
+        net.receive("spawn_net", function(len)
+            ply =       entity(net.readUInt(13))
+            if ply == player() then Killer_Name = "" end
+        end)    
+        
+        net.receive("num_damage_net", function(len)
+            local attacker =       entity(net.readUInt(13))
+            local amount =       net.readUInt(14)
+            local pos =    net.readVector()
+            
+            if attacker == player() then
+            
+                table.insert(Damage_Numbers, {dmg = amount, pos = pos, startpos = attacker:getEyePos() } ) 
+                
+                timer.simple(1, function() table.remove(Damage_Numbers, 1) end)
+                
+            end
+            
+        end)    
+    end
+    
+    function PlayerKill(ply,wep,killer)
+    
+        local clr = Color(255,255,255)
+        
+        if killer == player() then clr = Color(255,0,0) end
+        
+        local killer = "[ " .. killer:getName() .. " ]"
+        
+        if wep:isValid() then
+        
+            if wep:isWeapon() then 
+                wep = "[ " ..wep:getPrintName() .. " ]"
+            else
+                wep = tostring(wep)
+            end
+        
+        else
+            wep = "[NIL]"
+        end
+        
+        if player() == ply then Killer_Name = killer .. " by " .. wep end 
+        
+        if ply ~= nil then ply = "[ " ..ply:getName().. " ]" else ply = "[Nil]" end
+        
+        local Kill_Feed_Text = killer .. " kill " .. ply .. " by " .. wep
+        
+        if ply == killer then Kill_Feed_Text = ply .. " Suicide!" end
+        
+        
+        
+        table.insert(Kill_Feed_Table, {text = Kill_Feed_Text, color = clr } )
+        
+        
+    end
+    
+    function EntityKill(ply,wep,killer)
+    
+        Kill_Feed_Text = tostring(killer) .. " kill " .. tostring(ply) .. " by " .. tostring(wep)
+        
+        table.insert(Kill_Feed_Table, {text = Kill_Feed_Text, color = Color(255,255,255) } )
+    end
+    
+    function ObbToSkreen( Ent )
+        if Ent:isValid() then
+            local Points = {
+            Vector( Ent:obbMaxs().x, Ent:obbMaxs().y, Ent:obbMaxs().z ),
+            Vector( Ent:obbMaxs().x, Ent:obbMaxs().y, Ent:obbMins().z ),
+            Vector( Ent:obbMaxs().x, Ent:obbMins().y, Ent:obbMins().z ),
+            Vector( Ent:obbMaxs().x, Ent:obbMins().y, Ent:obbMaxs().z ),
+            Vector( Ent:obbMins().x, Ent:obbMins().y, Ent:obbMins().z ),
+            Vector( Ent:obbMins().x, Ent:obbMins().y, Ent:obbMaxs().z ),
+            Vector( Ent:obbMins().x, Ent:obbMaxs().y, Ent:obbMins().z ),
+            Vector( Ent:obbMins().x, Ent:obbMaxs().y, Ent:obbMaxs().z )
+            }
+            local MaxX, MaxY, MinX, MinY
+        
+            for k, v in pairs( Points ) do
+                local ScreenPos = Ent:localToWorld( v ):toScreen()
+                if MaxX != nil then
+                    MaxX, MaxY, MinX, MinY = math.max( MaxX, ScreenPos.x ), math.max( MaxY, ScreenPos.y), math.min( MinX, ScreenPos.x ), math.min( MinY, ScreenPos.y)
+                    else
+                    MaxX, MaxY, MinX, MinY = ScreenPos.x, ScreenPos.y, ScreenPos.x, ScreenPos.y
+                    end
+                end
+            return MaxX, MaxY, MinX, MinY
+        end
+    end
+
+    --print( "|" .. tostring(killer) .. " kill " .. tostring(ply) .. "by" .. tostring(wep) )
+    
+    local modD = 15
+    
+    OddBox = class("OddBox")
+    OddBoxes = {}
+    
+    function OddBox:initialize( ent, life )
+        self.ent = ent 
+        self.Maxlife = life
+        self.life = life
+    end
+
+    function OddBox:process2D()
+        if !self.ent:isValid() then return end
+        self.life = self.life - 1
+        
+        local MaxX, MaxY, MinX, MinY = ObbToSkreen( self.ent )
+        
+        render.setColor( Color(255,255,255) )
+        render.drawLine( MaxX, MaxY, math.clamp(MinX, MaxX-modD , MaxX), MaxY )
+        render.drawLine( MinX, MaxY, math.clamp(MaxX, MinX , MinX+modD), MaxY )
+        
+        render.drawLine( MaxX, MinY, math.clamp(MinX, MaxX-modD , MaxX), MinY )
+        render.drawLine( MinX, MinY, math.clamp(MaxX, MinX , MinX+modD), MinY )
+        
+        render.drawLine( MaxX, MaxY, MaxX, math.clamp(MinY,MaxY-modD, MaxY) )
+        render.drawLine( MinX, MaxY, MinX, math.clamp(MinY,MaxY-modD, MaxY) )
+    
+    
+        render.drawLine( MinX, MinY, MinX, math.clamp(MaxY,MinY, MinY+modD) )
+        render.drawLine( MaxX, MinY, MaxX, math.clamp(MaxY,MinY, MinY+modD) )
+    
+
+        render.setFont( font ) 
+        
+        if self.ent:getHealth() ~= 0 then
+            render.setColor( Color(255,100,0) )
+            render.drawRect(MinX+4, MaxY-12, ((MaxX-MinX)-6)*math.clamp( self.ent:getHealth()/100 , 0, 1 ) , 10  )
+            
+            if self.ent:isPlayer() then
+        
+                render.setColor( Color(1,200,255) )
+                
+                render.drawRect(MinX+4, MaxY-12, ((MaxX-MinX)-7)*math.clamp( self.ent:getArmor()/100 , 0, 1 ) , 4  )
+                
+            end
+            
+            render.setColor( Color(255,255,255) )
+            
+            render.drawRectOutline(MinX+4, MaxY-12, (MaxX-MinX)-5, 10 )
+            
+        end
+        
+        
+    end
+
+    hook.add("drawhud","draw",function()
+        local eyeTrace = player():getEyeTrace()
+
+        local pos = eyeTrace.HitPos:toScreen() 
+        
+        local Dead_pos_scr = DEAD_POS:toScreen()  
+        
+        local ent = eyeTrace.Entity
+        
+        local wep = player():getActiveWeapon()
+        
+        
+        function HUD_CrossHair()
+                render.setColor(Color(2,2,2))
+                render.drawRect( pos.x-(SizeCrossX/2) , pos.y-(SizeCrossY/2), SizeCrossX, SizeCrossY)
+                
+                render.setColor(Color(255,255,255))
+                render.drawRect( pos.x-(SizeCrossX/2-1) , pos.y-(SizeCrossY/2-1), SizeCrossX-2, SizeCrossY-2)
+        end
+        
+        function HUD_Units()
+            local Dis = math.round(player():obbCenterW():getDistance(eyeTrace.HitPos), 2)
+            render.setFont(font)
+            render.drawText(scrW/2, scrH - 20, "Unit's : "..Dis, 1)
+        end
+        
+        function HUD_Waila()
+                
+                local owner = player()
+                
+                if eyeTrace.HitWorld then return end
+
+                if !ent:isValid() then return end
+                
+                if ent:getOwner()  then
+                    owner = ent:getOwner():getName()
+                else
+                    owner = "World"
+                end
+                
+                local Angles = ent:getAngles()
+                local EntPos = ent:getPos()
+                Angles:round( 2 )
+                local angleText = "Angle: " .. Angles.p .. ", " .. Angles.y .. ", " .. Angles.r
+                local PosText = "Pos: " .. EntPos.x .. ", " .. EntPos.y .. ", " .. EntPos.z
+                local modelText = "Model: " .. ent:getModel()
+
+                render.setColor( Color() )
+                render.setFont( font )
+                render.getTextSize( ent:getModel( ) or ent:getMaterial() )
+                render.drawText( 5, scrH / 2 + 5, "Owner: " .. owner )
+                render.drawText( 5, scrH / 2 + 25, "Class: " .. ent:getClass() )
+                render.drawText( 5, scrH / 2 + 45, "Color: " .. string.fromColor( ent:getColor() ) )
+                render.drawText( 5, scrH / 2 + 65, "Material: " .. ( ent:getMaterial() and "default" ) )
+                render.drawText( 5, scrH / 2 + 85, modelText )
+                render.drawText( 5, scrH / 2 + 105, angleText )
+                render.drawText( 5, scrH / 2 + 125, PosText )
+                if ent:isPlayer() then
+                    render.drawText( pos.x , pos.y+20, ent:getName(), 1 )
+                    --render.setFont( font2 )
+                    --render.setColor( Color(255,100,0) )
+                    --render.drawText( pos.x , pos.y+35, ent:getHealth() .. " " , 2 )
+                    --render.setColor( Color(1,200,255) )
+                    --render.drawText( pos.x , pos.y+35, " " .. ent:getArmor() , 0 )    
+                end
+
+                for k, v in pairs(OddBoxes) do
+
+                    if v.ent == ent then v.life = v.Maxlife return end
+                    
+                end
+                
+                if #OddBoxes > MaxOBBboxes then table.remove(OddBoxes, 1) end
+                
+                local a = ObbLifePlayer
+                
+                if ent:getHealth() < 1 then a = ObbLifeProp end
+                
+                local l = OddBox:new( ent, a )
+                
+                table.insert(OddBoxes, l)
+                
+                --else
+                    --OddBoxes[ent].life = 200
+                --end
+                
+        end
+     
+        function HUD_XYZ()
+                
+                if !isValid(wep) then return end
+                
+                if eyeTrace.HitWorld then return end
+                
+                if !isValid(ent) then return end
+                
+                if weapon_to_xyz[ wep:getClass() ] then
+                
+                
+                
+            
+                
+                end
+        end
+        
+        function HUD_KillIndicator()
+            if Killer_Indicator ~= "" then
+                render.setColor( Color(200,100,100) )
+                render.setFont( Dead_pos_Font )
+                render.drawText( Dead_pos_scr.x , Dead_pos_scr.y-20, Killer_Indicator, 1 )
+            end
+        end
+        
+        function HUD_Damage_Numbers()
+            for k, v in pairs(Damage_Numbers) do
+                local posD = v.pos:toScreen()  
+            
+                render.setColor( Color(255,255,255) )
+
+                render.setFont( Dead_pos_Font )
+                render.drawText( posD.x , posD.y, "-" .. v.dmg, 1 )
+                
+                
+            end
+        end
+        
+        function HUD_OddBoxes()
+            for k, v in pairs(OddBoxes) do
+                v:process2D()
+                if v.life < 0 then
+                    table.remove(OddBoxes, k)
+                end
+            end
+        end
+        
+        function HUD_KillFeed()
+            
+            
+            render.setFont(Kill_Feed_Font)
+            
+            for k, v in pairs(Kill_Feed_Table) do       
+             
+                render.setColor( v.color )
+                
+                render.drawText( scrW-5, Kill_Feed_DownMod + (20*(k-1)) , v.text ,2 )
+                
+            end
+            
+            render.setColor( Color(255,255,255) )
+            
+            render.setFont(BigArial)
+
+            render.drawText( scrW/2, Kill_Feed_DownMod , Killer_Name ,1 )
+        end
+        
+        HUD_OddBoxes()
+        
+        HUD_CrossHair()  
+        HUD_Units()
+        HUD_Waila()  
+        HUD_KillIndicator()
+        HUD_Damage_Numbers()
+        HUD_KillFeed()
+
+        HUD_XYZ()
+        
+        
+    end)
+    
+    hook.add( "hudconnected", "HudHook", function(ent,ply) 
+        RunNets()
+    end)
+    
+    
+    if player() == owner() then
+        enableHud(owner(),true)
+    end
+
+    
+end

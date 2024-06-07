@@ -1,0 +1,59 @@
+--@name aim for deez nuts
+--@author deez nuts
+--@shared
+o = owner()
+
+if SERVER then
+    ce = chip()
+    cup = ce:getUp()
+    cp = ce:getPos() - cup * 7
+    ce:setPos(cp)
+    tick = game.getTickInterval()
+    interval = 1
+    
+    e2 = prop.createSent(cp, Angle(), "gmod_wire_expression2", true, {
+    _name = "aim",
+    _original = "@inputs A:angle\n@trigger A\nowner():plySetAng(A)",
+    Model = "models/beer/wiremod/gate_e2_nano.mdl"
+    })
+
+    we2 = e2:getWirelink()
+    tick = game.getTickInterval()
+    
+    t = find.playersByName("Diab")[1] //find.byModel("models/hunter/misc/sphere175x175.mdl", function(e) return e:getOwner() == o end)[1]
+    tpo = t:getPhysicsObject()
+    opo = o:getPhysicsObject()
+    
+    function vel(ent)
+        local op = o:getPing() / 1000
+        return ent:getPhysicsObject():getVelocity() * (1 + op) * interval * tick
+    end
+    
+    function aim(ang)
+        we2.A = ang
+    end
+    
+    function aimAt(ent)
+        local e = ent:getPhysicsObject()
+        local evl = vel(ent)
+        local ehp = /*ent:getBonePosition(ent:getHitBoxBone(0, 0))*/ e:getPos() + Vector() + evl
+        
+        local ovl = vel(o)
+        _, funny = opo:getAABB()
+        local osp = opo:getPos() + Vector(0, 0, funny[3] / 9 * 8) + ovl
+        
+        local a = (ehp - osp):getAngle()
+        aim(a)
+    end
+
+    hook.add("tick", "aim", function()
+        aimAt(t)
+    end)
+    
+    hook.add("EntityFireBullets", "bul", function(ply, dat)
+        local tr = trace.line(dat.Src + dat.Dir * 35, dat.Src + dat.Dir * 10000)
+        printConsole(tr.Entity)
+    end)
+else
+    
+end

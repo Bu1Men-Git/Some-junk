@@ -1,0 +1,48 @@
+--@name test deez icles
+--@author
+--@shared
+o = owner()
+//e = hologram.create(o:getAttachment(1), Angle(0,0,0), "models/props_junk/PopCan01a.mdl", Vector(2, 2, 2))
+tick = game.getTickInterval()
+tickStep = 1
+if SERVER then
+    function getAccel(v1, v2)
+        l1 = v1:getLength()
+        l2 = v2:getLength()
+        a = (v2 * l2 - v1 * l1)/2
+        return a
+    end
+    vels = {}
+    plys = find.allPlayers()
+    for i, p in pairs(plys) do
+        vels[p] = {}
+        vels[p]["newVel"] = Vector(0, 0, 0)
+    end
+    //table.removeByValue(plys, o)
+    hook.add("PlayerInitialSpawn", "init_a_player", function(ply, t) table.insert(plys, ply)
+        vels[ply] = {}
+        vels[ply]["newVel"] = Vector(0, 0, 0)
+    end)
+    hook.add("PlayerDisconnected", "del_a_player", function(ply) table.removeByValue(plys, ply) print(ply) end)
+    hook.add("think", "velocity", function()
+        for i, p in pairs(plys) do
+            vels[p]["oldVel"] = vels[p]["newVel"]
+            vels[p]["newVel"] = p:getVelocity() * tick
+            vels[p]["accel"] = getAccel(vels[p]["oldVel"], vels[p]["newVel"]) * 4
+            //e:setPos(p:getPos() + vels[p]["newVel"] + vels[p]["accel"] )
+            //print(p, vels[p]["accel"])
+        end
+    end)
+    hook.add("think", "aim", function()
+        opos = o:getEyePos() + vels[o]["newVel"] + vels[o]["accel"]
+        for i, p in pairs(plys) do
+            if p == o then continue end
+            epos = p:getAttachment(1) + vels[p]["newVel"] + vels[p]["accel"]
+            ang = (epos - opos):getAngle()
+            o:setEyeAngles(ang)
+        end
+    end)
+    
+else
+    
+end

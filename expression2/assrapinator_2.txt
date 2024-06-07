@@ -2,23 +2,24 @@
 @persist Props:array P:entity
 
 if(first()){ O = owner()
-    runOnTick(1)
     runOnKeys(owner(),1)
     propSpawnUndo(0)
+    Props = array()
 
 }
 if(owner():keyPressed("r") && changed(owner():keyPressed("r"))){
-      P = entSpawn("prop_combine_ball",O:vel()*tickInterval()*2+O:shootPos()+O:eyeAngles():forward()*25,O:eyeAngles(),O)
+      P = sentSpawn("prop_combine_ball",O:vel()*tickInterval()*2+O:shootPos()+O:eyeAngles():forward()*25,O:eyeAngles(), 0)
     P:setMass(50000)
     Props:pushEntity(P)
 }
-
-for(I = 1,Props:count()){
-    Prop = Props[I,entity]
-    if (Props[I,entity]:isValid()) {
-     Prop:applyForce(3000*Prop:forward()*Prop:mass())
-
-    }else{
-        Props:remove(I)
+event tick(){
+    for(I = 1,Props:count()){
+        Prop = Props[I,entity]
+        if (Props[I,entity]:isValid()) {
+         Prop:applyForce(3000*Prop:forward()*Prop:mass())
+    
+        }else{
+            Props:remove(I)
+        }
     }
 }

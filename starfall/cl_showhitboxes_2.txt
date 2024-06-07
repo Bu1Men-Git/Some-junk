@@ -1,0 +1,70 @@
+--@name cl_showhitboxes
+--@author 
+--@client
+--add switch between all entities, certain types such as only props, players, or world, or just the entitiy you're looking at - currently only aim entity.
+
+local Variables = {
+ 
+    Skeleton = true   
+}
+
+local color_white = Color(255, 255, 255)
+local color_black = Color(0, 0, 0)
+local color_red = Color(255, 0, 0)
+local color_blue = Color(0,0,255)
+
+
+if player() != owner() then return end
+enableHud(owner(),true)
+    
+hook.add('postdrawopaquerenderables', 'drawbox', function() 
+    local aimTrace=owner():getEyeTrace()
+    
+    try(function() --removes any nil hitboxes that plaque most models
+        if aimTrace.Entity:isValid() and aimTrace.Entity!=chip() then
+            local boneCount=aimTrace.Entity:getHitBoxCount(0)
+            
+            render.setColor(color_blue) 
+            render.draw3DWireframeBox(aimTrace.Entity:getPos(),aimTrace.Entity:getAngles(),aimTrace.Entity:obbMins(),aimTrace.Entity:obbMaxs())
+            for i=0,boneCount,1 do
+                local min,max,_=aimTrace.Entity:getHitBoxBounds(i,0)
+                local pos,ang=aimTrace.Entity:getBonePosition(aimTrace.Entity:getHitBoxBone(i,0))
+                //render.setColor(Color(pos.z+i/boneCount*20,1,1):hsvToRGB()) 
+                render.draw3DWireframeBox(pos,ang,min,max)
+            end
+        end
+    end)
+end)
+hook.add("drawhud", "", function() 
+     local aimTrace=owner():getEyeTrace()
+    try(function() --removes any nil hitboxes that plaque most models
+        if aimTrace.Entity:isValid() and aimTrace.Entity!=chip() then
+              
+        if Variables.Skeleton then
+            render.setColor(color_red)
+            
+            for i = 0, aimTrace.Entity:getBoneCount() - 1 do
+                local parent = aimTrace.Entity:getBoneParent(i)
+        
+                         if not parent or parent == -1 then continue end
+        
+                         local pbm = aimTrace.Entity:getBoneMatrix(parent)
+                         local bm = aimTrace.Entity:getBoneMatrix(i)
+        
+                         if not pbm or not bm then continue end
+        
+                         local ppos = pbm:getTranslation()
+                         local pos = bm:getTranslation()
+        
+                         ppos = ppos:toScreen()
+                         pos = pos:toScreen()
+        
+                render.drawLine(ppos.x, ppos.y, pos.x, pos.y)
+                render.setColor(Color(255,255,255))
+                render.drawText(pos.x, pos.y, tostring(i), 2)
+                  end
+        end
+        
+        end
+    end)
+end)

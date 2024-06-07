@@ -1,0 +1,27 @@
+@name tp
+@inputs 
+@outputs 
+@persist [E O Seat]:entity [P]:vector Poses:array
+@trigger 
+@strict
+P = entity():toWorld(vec(0, 0, 50))
+Seat = seatSpawn("models/props_junk/PopCan01a.mdl", P, ang(0), 1)
+O = owner()
+E = findPlayerByName("Diablo")
+Poses = array(vec(72, 0, 36), vec(-72, 0, 36), vec(0, 72, 36), vec(0, 72, 36))
+
+event tick(){
+    if(!Seat:isValid()){selfDestruct()}
+    if(Seat:driver():isValid()){
+        if(Seat:driver() == O){
+            foreach(I,Pos:vector = Poses){
+                Ps = E:toWorld(Pos)
+                if(!pointHasContent(Ps,"solid")){Seat:setPos(Ps) break}
+            }
+            
+        } else { Seat:killPod()}
+        
+        timer("set", 0.1)
+    }
+}
+if(clk("set")){Seat:setPos(P) Seat:ejectPod()}

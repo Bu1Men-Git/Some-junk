@@ -1,53 +1,69 @@
 @name Huinya
-@inputs W:wirelink
 @outputs 
-@persist O:entity T All:table [CPos Dir]:vector2 LOff
+@persist [E O]:entity [T LOff Connected]:number [CPos Dir]:vector2 Open_key:string
 @trigger 
 #include "DPanelLib"
 if(first()){
 All = table()
-W:egpClear()
 O = owner()
 T = 0
 LOff = 0
-runOnKeys(O,1,array("t"))
+Connected = 0
+Open_key = "t"
+runOnKeys(O,1,array(Open_key, "e"))
+
+findIncludePlayerProps(O)
+findByClass("gmod_wire_egp_hud")
+E = find()
+if(!E:isValid()){
+    selfDestruct()
+    printColor(vec(255,100,100),"Can't find any of your egp hud, place one anywhere.")
+}
+    entity():setPos(entity():toWorld(vec(0,0,-10)))
+    E:setPos(entity():pos())
+    E:setColor(vec4(0))
+    E:noCollideAll(1)
+    W = E:wirelink()
+    W:egpClear()
+
     Maxxx = table("124131412","99231412","123141212314113372","1231412","1231412","25235","DDDDDDD","1231412")
     #Maxxx = table()
     #foreach(K,I:entity = players()){
     #    Maxxx:pushEntity(I)
     #}
-    B = W:dpanel(0,vec2(390,270),vec2(720,480))
-    All:pushTable(B)
-    B = W:dbutton(1,vec2(100),vec2(100,32),"ABCDEFGIHKLMNO")
-    W:dparent(B,All[1,table])
-    All:pushTable(B)
-    B = W:dbutton(2,vec2(300),vec2(75,42),"HATENIGGERS")
-    W:dparent(B,All[1,table])
-    All:pushTable(B)
-    B = W:dbutton(3,vec2(500),vec2(200,82),"NiggersNiggersNiggersNiggersNiggersNiggers")
-    W:dparent(B,All[1,table])
-    All:pushTable(B)
-    B = W:dlistbox(4,vec2(390,270),vec2(150,180),Maxxx)
-    W:dparent(B,All[1,table])
-    All:pushTable(B)
+    W:dpanel(0,vec2(390,270),vec2(720,480))
+    W:dbutton(1,vec2(100),vec2(100,32),"ABCDEFGIHKLMNO")
+    W:dparent(1,0)
+    W:dbutton(2,vec2(300),vec2(75,42),"HATENIGGERS")
+    W:dparent(2,0)
+    W:dbutton(3,vec2(500),vec2(200,82),"NiggersNiggersNiggersNiggersNiggersNiggers")
+    W:dparent(3,0)
+    W:dlistbox(4,vec2(390,270),vec2(150,180),Maxxx)
+    W:dparent(4,0)
     
-    All[1,table]:dvisible(W,T)
+    W:dvisible(0,T)
 }
-if(clk(clkName())){
+if(clk("hide")){
+    Connected = 1
+    E:setPos(entity():pos())
+    runOnKeys(O,1,array(Open_key))
+}
+
+elseif(clk()){
     Tmp = clkName():explode("_")
     N = Tmp[2,string]:toNumber()
     switch(Tmp[1,string]){
         case("click"),
-            switch(All[N,table]["Type",string]){
+            switch(Elements[N,table]["Type",string]){
                 case("listbox"),
-                    El = All[N,table]
-                    Sy = El["Size",vector2]:y()
-                    Py = W:egpPos(El["Parent",number]):y() + El["Pos",vector2]:y()
-                    Y = Tmp[4,string]:toNumber() - Py + Sy/2
+                    local El = Elements[N,table]
+                    local Sy = El["Size",vector2]:y()
+                    local Py = W:egpPos(El["Parent",number]):y() + El["Pos",vector2]:y()
+                    local Y = Tmp[4,string]:toNumber() - Py + Sy/2
                     if(N == 5){
-                        if(inrange(Y,0,21)){LOff-- W:dupdatelist(El,LOff) LOff = El["Offset",number] break}
-                        elseif(inrange(Y,Sy-21,Sy)){LOff++ W:dupdatelist(El,LOff) LOff = El["Offset",number] break}
-                        Id = ceil( (Y-21)/18 ) + LOff
+                        if(inrange(Y,0,21)){LOff-- W:dupdatelist(N,LOff) LOff = El["Offset",number] break}
+                        elseif(inrange(Y,Sy-21,Sy)){LOff++ W:dupdatelist(N,LOff) LOff = El["Offset",number] break}
+                        local Id = ceil( (Y-21)/18 ) + LOff
                         print(El["Source",table][Id,string])
                     }
                 break,
@@ -55,31 +71,30 @@ if(clk(clkName())){
         break,
         
         case("move"),
-            El = All[N,table]
             CPos = O:toScreen(O:eye())
-            El:dmove(W,CPos+Dir+$CPos/2)
+            W:dmove(N,CPos+Dir+$CPos/2)
             timer("move_"+N,50)
         break,
     }
 }
 
-if(keyClk(O)==-1){
+if(Connected && keyClk(O)==-1){
     stoptimer("move_1")
     switch(keyClkPressed()){
-        case("t"),
+        case(Open_key),
             T=!T
-            All[1,table]:dvisible(W,T)
-            if(T){ runOnKeys(O,1,array("t","mouse_left")) }
-            else { runOnKeys(O,1,array("t")) }
+            W:dvisible(N,T)
+            print(T)
+            if(T){ runOnKeys(O,1,array(Open_key,"mouse_left")) }
+            else { runOnKeys(O,1,array(Open_key)) }
         break,
         
         case("mouse_left"),
             CPos = O:toScreen(O:eye())
-            for(I = 1, All:count()){
-                NI = All:count()-I+1
+            for(I = 1, Elements:count()){
+                NI = Elements:count()-I+1
                 Additional = ""
-                Nig = All[NI,table]
-                if(!W:dcheck(Nig,CPos)){ continue }
+                if(!W:dcheck(N,CPos)){ continue }
                 if(All[NI,table]["Type",string] == "listbox"){Additional = "_"+CPos:x()+"_"+CPos:y()}
                 timer("click_"+NI+Additional,10)
                 
@@ -103,5 +118,22 @@ if(keyClk(O)==1){
                 break
             }
         break,
+        case("e"),
+            E:setPos(O:shootPos() + O:eye()*25)
+        break,
     }
 }
+
+event playerUse(Player:entity, Entity:entity) {
+    if(Entity == E){
+        if(Player == O){
+            timer("hide", 250)
+        } else {
+            selfDestruct()
+        }
+    }
+}
+
+
+
+

@@ -1,0 +1,10 @@
+--@name markup
+--@author
+--@client
+
+hook.add("render", "", function()
+    mark = render.parseMarkup("Migga Nelon", 1337)
+
+    siz = render.getResolution()
+    print(siz)
+end)

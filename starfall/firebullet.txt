@@ -1,0 +1,24 @@
+--@name a skull
+--@author
+--@server
+--@include fireBulletLib.txt
+
+dofile("fireBulletLib.txt")
+
+local turretData = {
+    damage = 150,
+    delay = 0.05,
+    force = 1,
+    Model = "models/Gibs/HGIBS.mdl",
+    numbullets = 1,
+    sound = "Trainyard.train_horn_everywhere",
+    spread = 0.0,
+    tracer = "Tracer",
+    tracernum = 10
+}
+local skull = prop.createSent( chip():localToWorld(Vector(0,0,72)) , Angle(), "gmod_wire_turret", false, turretData )
+constraint.keepupright(skull, Angle())
+skull:setNocollideAll(true)
+hook.add("think", "", function()
+fireBullet(skull:getPos(), skull:getForward(), 150, 1, 1, 0)
+end)

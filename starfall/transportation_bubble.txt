@@ -1,0 +1,199 @@
+--@name Transportation Bubble
+--@author SugarTurtle
+--@shared
+
+--Config
+slowSpeed=50
+moveSpeed=250
+fastSpeed=500
+turnSpeed=1
+
+--This is the server part of the code, it deals with things on the server or that everyone experience
+if SERVER then
+    ce = chip()
+    cup = ce:getUp()
+    cp = ce:getPos() - cup * 7
+    ce:setPos(cp)
+    tick = game.getTickInterval()
+    
+    e2 = prop.createSent(cp, Angle(), "gmod_wire_expression2", true, {
+    _name = "aim",
+    _original = "@inputs A:angle\n@trigger A\nowner():plySetAng(A)",
+    Model = "models/beer/wiremod/gate_e2_nano.mdl"
+    })
+
+    we2 = e2:getWirelink()
+    
+    function aim(ang)
+        we2.A = ang
+    end
+    
+    
+    --Initializes variables
+    forward=false
+    backward=false
+    left=false
+    right=false
+    driver=owner()
+    lastAng=Angle()
+    
+    --Default settings to give the camera controller when spawned
+    camSettings={
+        AllowZoom = false,
+        AutoMove = false,
+        AutoUnclip = false,
+        AutoUnclip_IgnoreWater = false,
+        DrawParent = true,
+        DrawPlayer = true,
+        FreeMove = false,
+        LocalMove = false,
+        Model = "models/bull/dynamicbutton_small.mdl",
+        ParentLocal = false
+    }
+    --Default settings to give the pod controller when spawned
+    podSettings={
+        Model="models/cheeze/beta/white_button.mdl"
+    }
+    
+    --Spawns the seat at the owner's position
+    seat=prop.createSeat(owner():getPos()+Vector(0,0,0),Angle(),"models/nova/chair_plastic01.mdl",true)
+    seat:use()
+    
+    --Spawns the camera controller at the seat's position and parents it
+    camCon=prop.createSent(seat:getPos(),Angle(),"gmod_wire_cameracontroller",true)
+    camCon:setParent(seat)
+    --Wirelinks serve to allow the chip to edit the inputs of the device in question
+    cWire=camCon:getWirelink()
+    cWire.Parent=seat
+    cWire.Angle=Angle(0,90,0)
+    cWire.Position=seat:getPos()+Vector(0,15,40)
+    cWire.FilterEntities={--[[owner()]]}
+    
+    --Creates the shell of the bubble at the owners position and makes it look pretty
+    shell=prop.create(owner():getPos(),Angle(),"models/hunter/misc/shell2x2.mdl",true)
+    shell:setParent(seat)
+    shell:setColor(Color(128,128,128,50))
+    shell:setMaterial("effects/flashlight/tech")
+    
+    --When this receives the net signal "keys", shift will be set to the boolian sent
+    net.receive("keys",function()
+        shift=net.readBool()
+    end)
+    
+    --This hook calls the function every time a player presses a key
+    hook.add("KeyPress","",function(ply,key)
+        if seat:isValid() and seat:getDriver():isValid() then
+            if ply==driver then
+                if key==8 then
+                    forward=true
+                end
+                
+                if key==512 then
+                    left=true
+                end
+                
+                if key==16 then
+                    backward=true
+                end
+                
+                if key==1024 then
+                    right=true
+                end
+            end
+        end
+    end)
+    --This hook calls the function every time a player releases a key
+    hook.add("KeyRelease","",function(ply,key)
+        if seat:isValid() and seat:getDriver():isValid() then
+            if ply==driver then
+                if key==8 then
+                    forward=false
+                end
+                
+                if key==512 then
+                    left=false
+                end
+                
+                if key==16 then
+                    backward=false
+                end
+                
+                if key==1024 then
+                    right=false
+                end
+            end
+        end
+    end)
+    
+    --Runs the function every tick, because server can't update as fast as think, but client can
+    hook.add("think","",function()
+        --Detects if the shift or alt key is pressed
+        local alt=driver:keyDown(262144)
+        local shift=driver:keyDown(131072)
+        
+        --If the seat is occupied by a valid entity, a player
+        if seat:getDriver():isValid() then
+            --cWire.Activated=1
+            driver=seat:getDriver()
+            
+            --Records the driver's eye angles and sets the seat angles accordingly
+            local _,ang=worldToLocal(Vector(),driver:getEyeAngles(),Vector(),seat:getAngles())
+            ang=Angle(ang[3],ang[2],-ang[1])
+            seat:setAngles(seat:getAngles()+ang-lastAng)
+            lastAng=ang
+            //aim(ang)
+            
+            shell:setNocollideAll(false)
+        else
+            --cWire.Activated=0
+            shell:setNocollideAll(true)
+        end
+        
+        --Sets the speed depending on the states of the shift and alt keys
+        if shift and alt then
+            speed=moveSpeed
+        elseif shift then
+            speed=fastSpeed
+        elseif alt then
+            speed=slowSpeed
+        else
+            speed=moveSpeed
+        end
+        
+        --If going forward or backward and not the other, then the chair will go in that direction relative to the chair
+        if not (forward and backward) then
+            if forward then
+                seat:setPos(seat:localToWorld(Vector(0,speed,0)))
+            elseif backward then
+                seat:setPos(seat:localToWorld(Vector(0,-speed,0)))
+            end
+        end
+        
+        --If going left or right and not the other, then the chair will go in that direction relative to the chair
+        if not (right and left) then
+            if right then
+                seat:setPos(seat:localToWorld(Vector(speed,0,0)))
+            elseif left then
+                seat:setPos(seat:localToWorld(Vector(-speed,0,0)))
+            end
+        end
+        
+    end)
+end
+
+/*
+> gmod_wire_cameracontroller
+boolean AllowZoom = false
+boolean AutoMove = false
+boolean AutoUnclip = false
+boolean AutoUnclip_IgnoreWater = false
+boolean DrawParent = true
+boolean DrawPlayer = true
+boolean FreeMove = false
+boolean LocalMove = false
+string Model = "models/jaanus/wiretool/wiretool_siren.mdl"
+boolean ParentLocal = false
+
+> gmod_wire_pod
+string Model = "models/jaanus/wiretool/wiretool_siren.mdl"
+*/

@@ -1,0 +1,79 @@
+--@name Bullet block
+--@author
+--@server
+
+function setCollisionGroup(ent, group)
+    local e2 = prop.createSent(chip():getPos(), Angle(), "gmod_wire_expression2", true, {
+        _name = "collide",
+        _original = "entity(".. tostring(ent:entIndex()) .."):setCollisionGroup(\"".. group .."\")",
+        Model = "models/beer/wiremod/gate_e2_nano.mdl"
+    })
+    timer.create(tostring(e2), 0.2, 1, function() e2:remove() end)
+end
+
+function bulletBlock(ply, dat)
+    if ply:isPlayer() then
+        if ply:getEyeTrace().Entity != own then return end
+    elseif ply:isNPC() then
+        if ply:getEnemy() != own then return end
+    else
+        return
+    end
+    if shitsIndx[ply:entIndex()] then
+        shit = shitsIndx[ply:entIndex()]
+    else
+        local sz = table.count(shits)
+        if sz > 0 then
+            for i=1, sz do
+                if shits[i] then
+                    shit = shits[i]
+                    shitsIndx[ply:entIndex()] = shit
+                    table.remove(shits, i)
+                    shitsIC = shitsIC + 1
+                end
+            end
+        else
+            for i, e in pairs(shitsIndx) do
+                if e and (not e.own:isValid() or os.time() - e.lastShot >= 3) then
+                    shit = e
+                    shitsIndx[ply:entIndex()] = shit
+                    shitsIndx[i] = nil
+                end
+            end
+        end
+        shit.own = ply
+    end
+    local dirr = (own:getPos() + own:getVelocity() * tick * 4 - dat.Src):getNormalized()
+    shit:setPos(dat.Src + dirr * 20 + ply:getVelocity() * tick * 20)
+    shit:setAngles(dat.Dir:getAngle() + Angle(0, 90, 0))
+    shit.lastShot = os.time()
+end
+
+blocks = 64
+ce = chip()
+own = owner()
+ce:setNoDraw(1)
+setCollisionGroup(ce, "bullet")
+shits = {}
+shitsIndx = {}
+shitsIC = 0
+tick = game.getTickInterval()
+ents = {"crossbow_bolt", "rpg_missile", "prop_combine_ball", "npc_grenade_frag"}
+
+hook.add("think", "restore", function()
+    local i = table.count(shits)
+    if i + shitsIC < blocks and prop.canSpawn() then
+        shits[i+1] = prop.create(ce:getPos(), Angle(), "models/sprops/geometry/fdisc_30.mdl", true)
+        shits[i+1]:setNoDraw(1)
+        shits[i+1]:setCollisionGroup(11)
+    end
+end)
+
+
+hook.add("EntityFireBullets", "bul", bulletBlock)
+
+hook.add("OnEntityCreated", "bolts", function(e)
+    if e:isValid() and table.hasValue(ents, e:getClass()) then
+        bulletBlock(e:entOwner(), {Src = e:getPos(), Dir = e:getForward()})
+    end
+end)

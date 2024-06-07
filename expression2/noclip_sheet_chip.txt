@@ -1,0 +1,16 @@
+@name noclip sheet chip
+@inputs 
+@outputs 
+@persist O:entity N
+@trigger 
+@strict
+if(first()){
+    O = owner()
+    runOnKeys(owner(), 1)
+}
+if(!O:plyHasBuild() && keyClk(keyClk()) > 0){
+    if(keyClkPressed() == "v"){
+        if(N) { O:setCollisionGroup(E:getCollisionGroup())}
+        else { }
+    }
+}

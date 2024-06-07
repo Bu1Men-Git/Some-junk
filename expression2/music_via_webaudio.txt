@@ -1,7 +1,7 @@
 @name Music via WebAudio
-@persist [E ET O]:entity Mus:array [URL T Sd]:string A:webaudio Vol FFT:array St V:vector Dist C Des Rad N It:array
-function string toUnic(S:string,It:array){
-    local St=""
+@persist [E ET O]:entity Mus:array [URL T]:string A:webaudio Vol FFT:array St V:vector Dist C Des Rad N
+function string toUnic(S:string){
+    #[local St=""
     local I=1
     while(I<=S:length()){
         if(97<=toByte(S[I]) && toByte(S[I])<=122 || 65<= toByte(S[I]) && toByte(S[I])<=90  || 0<It:exists(toByte(S[I]))){Ch=S[I]
@@ -13,56 +13,60 @@ function string toUnic(S:string,It:array){
             St+="%"+toByte(Ch,1):toString(16)+"%"+toByte(Ch,2):toString(16)
             I+=2
         }
-    }
-    return St
+    }]#
+    #S = S:left(S:length() - 1)
+    S = S:replace(" ", "%20")
+    return S
 }
-function number array:sum(P1,P2){
+function number array:sum(P1:number,P2:number){
     N=0
     for(I=min(P2,P1),min(min(P2,P1),This:count())){N+=This[I,number]}
     return N
 }
-if(first()){
-    It=array(32,45) # ' ' and '-'
-    runOnLast(1)
-    E=propSpawn("models/sligwolf/grocel/radio/jukebox.mdl",entity():pos(),owner():angles(),1)
-    E:setNoCollideAll()
+
+    #runOnLast(1)
+    E=propSpawn("models/props_lab/citizenradio.mdl",entity():pos(),owner():angles(),1)
+    E:setMass(50000)
+    #E:setNoCollideAll()
+    E:noCollideAll(1)
     E:setAlpha(0)
     entity():setPos(entity():pos()-entity():up()*10)
     O=owner()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       O=findPlayerBySteamID64("76561198150028972")
     ET=O
-    runOnFile(1)
-    runOnChat(1)
-    runOnTick(1)
+    #runOnFile(1)
+    #runOnChat(1)
+    #runOnTick(1)
     fileLoad("Mus.txt")
     URL="https://raw.githubusercontent.com/Bu1Men-Git/Some-junk/main/Music/"
-    Dist=50
+    Dist=150
     St=1
-    Vol=45
+    Vol=15
+    C=0
     A=nowebaudio()
-    A:destroy()
     Des=1
     Rad=1500
     V=vec(0)
-}
-if(fileClk()){Mus=fileRead():explode("\n")}
-if(chatClk(O) && changed(chatClk(O)) && O:lastSaid():sub(1,1)=="!"){#hideChat(1)
-switch(O:lastSaid():sub(2,4):lower()){
+event fileLoaded(FilePath:string, Data:string) {Mus=Data:explode("\r\n")}
+event chat(Player:entity, Sd:string, Team:number) {
+if(Player == O && Sd:sub(1,1)=="!"){#hideChat(1)
+switch(Sd:sub(2,4):lower()){
     case("pla"),
-    A:destroy()
+        A:destroy()
         E:setAlpha(255)
-        Sd=O:lastSaid()
+        
         hideChat(1)
-        A=webAudio(URL+toUnic(Mus[Sd:explode(" ")[2,string]:toNumber(),string],It)+".mp3")
-        print("Now playing: "+Mus[Sd:explode(" ")[2,string]:toNumber(),string])
+        Str = toUnic(Mus[Sd:explode(" ")[2,string]:toNumber(),string])
+        A=webAudio(URL + Str + ".mp3")
         A:setLooping(1)
-        A:setPos(E:pos()+vec(0,0,E:height()/2))
-        A:parentTo(E)
+        A:setParent(E)
         A:setVolume(Vol)
         A:setRadius(Rad)
         A:play()
-        A:update()
+        
+        print("Now playing: " + Str)
         #St=(!Des)
         #Des=0
+        #St=0
     break,
 
     case("mus"),
@@ -82,7 +86,7 @@ switch(O:lastSaid():sub(2,4):lower()){
     
     case("vol"),
     hideChat(1)
-    Sd=O:lastSaid()
+    
     Vol=Sd:explode(" ")[2,string]:toNumber()
     A:setVolume(Vol)
     A:update()
@@ -91,7 +95,7 @@ switch(O:lastSaid():sub(2,4):lower()){
     
     case("rad"),
     hideChat(1)
-    Sd=O:lastSaid()
+    
     Rad=Sd:explode(" ")[2,string]:toNumber()
     A:setRadius(Rad)
     A:update()
@@ -105,7 +109,7 @@ switch(O:lastSaid():sub(2,4):lower()){
     
     case("tim"),
     hideChat(1)
-    Sd=O:lastSaid()
+    
     if(A:isValid()){A:setTime(Sd:explode(" ")[2,string]:toNumber()) A:update()}
     print("Time: "+A:getTime()+" sec.")
     break,
@@ -117,12 +121,12 @@ switch(O:lastSaid():sub(2,4):lower()){
     
     case("dis"),
     hideChat(1)
-    Dist=O:lastSaid():explode(" ")[2,string]:toNumber()
+    Dist=Sd:explode(" ")[2,string]:toNumber()
     break,
     
     case("tra"),
     hideChat(1)
-    T=O:lastSaid():explode(" ")[2,string]
+    T=Sd:explode(" ")[2,string]
     if(findPlayerByName(T):isPlayer()){ET=findPlayerByName(T) hint("New owner is: "+ET:name(),100)}
     elseif(T=="^"){ET=owner() hint("New owner is: "+ET:name(),100)}
     else{hint("Couldnt find player",100)}
@@ -138,16 +142,28 @@ switch(O:lastSaid():sub(2,4):lower()){
     hideChat(1)
     E:setAlpha(!E:getAlpha()*255)
     break,
-}}
-E:setNoCollideAll()
-if(!St){
-    #---------------------------Thats bullshit \/----------------------------
-    V=(ET:pos()+vec(0,0,ET:height()/2+sin(C%360)*30)-E:pos())/(1000/min(max(E:pos():distance(ET:pos()+vec(0,0,ET:height()/2))-Dist,0.0001),1000))
-    E:setPos(E:pos()+V)
-    E:setAng(vec(vec2(ET:pos()+vec(0,0,ET:height()/2)-E:pos())):toAngle())
-    #E:setColor(hsv2rgb(rgb2hsv(E:getColor()):x()+C/10000*max(E:pos():distance(ET:pos()+vec(0,0,ET:height()/2))-Dist,0.05)%360,1,2))
-    C+=2.5
+}}}
+event tick(){
+    E:noCollideAll(1)
+    if(!St){
+        #---------------------------Thats bullshit \/----------------------------
+        V=(ET:pos()+vec(0,0,ET:height()/2+sin(C%360)*30)-E:pos())/(1000/min(max(E:pos():distance(ET:pos()+vec(0,0,ET:height()/2))-Dist,0.0001),1000))
+        E:setPos(E:pos()+V)
+        E:setAng(vec(vec2(ET:pos()+vec(0,0,ET:height()/2)-E:pos())):toAngle())
+        #E:setColor(hsv2rgb(rgb2hsv(E:getColor()):x()+C/10000*max(E:pos():distance(ET:pos()+vec(0,0,ET:height()/2))-Dist,0.05)%360,1,2))
+        C+=2.5
+    }
+    else{E:propFreeze(0)}
+    if(A:isValid() && A:getState()){
+        FFT=A:getFFT()
+        L = FFT:count()
+        Bnd = L - 8
+        Volume = 1+A:getVolume()/3
+        Dif = FFT:max()-FFT:min()+1
+        E:setColor(hsv2rgb(10*Volume*FFT:sum(1,Bnd)/(FFT:max()-FFT:min()+1),FFT:sum(Bnd+1,Bnd - 4)/4+0.5,FFT:sum(Bnd - 5, L)/4+0.5))
+    }
+    if(E:type()==""){A:destroy() selfDestruct()}
 }
-else{E:propFreeze(0)}
-if(A:isValid() && A:getState()){A:update() FFT=A:getFFT() E:setColor(hsv2rgb(2*(4+A:getVolume())*FFT:sum(1,48)/(FFT:max()-FFT:min()+1),(1+A:getVolume()/3)*FFT:sum(49,56)/4+0.5,(1+A:getVolume()/3)*FFT:sum(57,64)/4+0.5)) }
-if(E:type()=="" || last()){A:destroy() selfDestruct()}
+event removed(Resetting:number) {
+    A:destroy() selfDestruct()
+}

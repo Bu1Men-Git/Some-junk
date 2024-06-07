@@ -1,0 +1,15 @@
+@name chat commands 
+@inputs 
+@outputs 
+@persist 
+@trigger 
+@strict
+
+event chat(Ply:entity, Said:string, Team:number) {
+ if(Ply == owner() & Said == "!"){
+    
+    print("cunt")
+    
+    
+    }
+}

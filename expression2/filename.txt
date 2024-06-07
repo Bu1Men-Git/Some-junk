@@ -1,15 +1,11 @@
 @name 
 @inputs 
 @outputs 
-@persist [E O]:entity
+@persist 
 @trigger 
-if(first()){
-E=entity():isWeldedTo()
-O=findPlayerByName("Dia")
-interval(1000)
-}
-else{
-    if(clk("del")){E:propDelete()}
-E:setPos(O:pos()+vec(0,0,100))
-timer("del",100)
+@strict
+event tick(){
+    if(owner():aimEntity()){
+       print(owner():aimEntity():id())
+    }
 }

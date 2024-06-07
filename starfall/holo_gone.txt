@@ -1,0 +1,9 @@
+--@name holo gone
+--@author
+--@server
+hook.add("think", "begone", function()
+    All = find.byClass("gmod_wire_hologram")
+    for i, e in pairs(All) do
+        e:remove()
+    end
+end)

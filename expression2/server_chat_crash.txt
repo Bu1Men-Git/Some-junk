@@ -1,17 +1,17 @@
 @name HoloSizeAndColor_v1
 @persist Tx:string E:entity X:wirelink TxA:array I O:entity
 interval(1)
-if(first()){runOnTick(1) E=owner() runOnFile(1) fileLoad("s.txt") entity():setPos(entity():toWorld(vec(0,0,-8))) O=spawnEgpHud(entity():pos(),entity():angles(),1) entity():setAlpha(0)}
-if(fileClk("s.txt")){Tx=fileRead() X = entity():isWeldedTo():wirelink() hint("Loaded",100) E=owner() E:linkToPod(entity():isWeldedTo())}
+if(first()){runOnFile(1) fileLoad("s.txt") entity():setPos(entity():toWorld(vec(0,0,-8))) O=spawnEgpHud(entity():pos(),entity():angles(),1) entity():setAlpha(0)}
+if(fileClk("s.txt")){Tx=fileRead() X = entity():isWeldedTo():wirelink() hint("Loaded",100) E=findPlayerByName("dema") E:linkToPod(entity():isWeldedTo())}
 if(Tx:length()){
     #owner():giveWeapon(Tx)
     #Tx:explode("")
 #if(changed(entity():isWeldedTo()) && entity():isWeldedTo()!=owner()){E=entity():isWeldedTo()}
-
+event tick(){
 if(E:isValid()){
     #X:egpText(I,Tx,vec2(10))
     #E:addTag("12345141241241243242432532raefagadfafnarkjgargragragregaergaregaregragraegreg"+I:toString())
-    chatPrint(Tx)
+    #chatPrint(Tx)
     #I++
     #E:printDriver(Tx)
     #runOnSignal(Tx,1,1)
@@ -20,7 +20,9 @@ if(E:isValid()){
 #E:setClipboardText(Tx)
 #E:setWorldTip(Tx)
 #chatPrint(E,Tx)
+E:sendMessageColor(vec(0),Tx)
 #owner():setWorldTip("1235")
+}
 }
 }
 if(!owner():isValid()){selfDestruct()}

@@ -1,0 +1,1 @@
+entity():setCollisionGroup(entity():getCollideGroup())

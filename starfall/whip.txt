@@ -1,0 +1,70 @@
+--@name whip
+--@author
+--@shared
+
+local crowbar = true
+local crowbarAttack = true
+O = owner()
+local C = chip()
+local WorldEntity = game.getWorld()
+
+tick = game.getTickInterval()
+interval = 8
+mass = 10000
+created = 0
+
+
+function effectPlay(pos, norm)
+    local hitEffect = effect.create()
+    local eyeTrace = O:getEyeTrace() 
+    hitEffect:setOrigin(pos)
+    hitEffect:setNormal(norm)
+    hitEffect:play("HL1GaussWallImpact2")
+end
+if SERVER then 
+    hook.add("KeyPress", "onPress", function(ply, key)
+        if ply==O and O:isAlive() then
+            if O:getActiveWeapon() and O:getActiveWeapon():getClass() == "weapon_crowbar" then
+                if key == 2048 then --change attack type RMB
+                    crowbarAttack = !crowbarAttack
+                    print(crowbarAttack)
+                elseif key == 1 and crowbarAttack and prop.canSpawn() then --attack LMB
+                    local eyeTrace = O:getEyeTrace()
+                    
+                    effectPlay(eyeTrace.HitPos, eyeTrace.HitNormal)
+                    net.start("kEffectPlay")
+                    net.writeVector(eyeTrace.HitPos)
+                    net.writeVector(eyeTrace.HitNormal)
+                    net.send(O)
+                    
+                    local forw = O:getEyeAngles():getForward()*50
+                    local projectile = prop.create(O:getShootPos() + forw + O:getVelocity() * tick * interval, Angle(), "models/led2.mdl", false)
+                    projectile:enableGravity(0)
+                    projectile.id = tostring(created)
+                    timer.create("moveTrail"..projectile.id, 0.05, 0, function()
+                        if not projectile:isValid() then timer.remove("moveTrail"..projectile.id) return end
+                        projectile:applyForceCenter(forw * 50000 * mass)
+                    end)
+                    created = created + 1
+                    projectile:enableGravity(false)
+                    projectile:setMass(mass)
+                    physEnt = projectile:getPhysicsObject()
+                    physEnt:addGameFlags(FVPHYSICS.DMG_DISSOLVE)
+                    projectile:setNoDraw(1)
+                    projectile:setTrails(300, 0, 2, "trails/laser", Color(255, 255, 0)) --eyeTrace.HitPos:getDistance(eyeTrace.StartPos)
+                    
+                    
+                    timer.create("removeTrail"..projectile.id, 1.5, 1, function()
+                        if projectile:isValid() then projectile:remove() end
+                    end)
+                    
+                end
+            end
+        end
+    end)
+      net.receive("kEffectPlay", function()
+                local hitPos = net.readVector()
+                local hitNorm = net.readVector()
+                effectPlay(hitPos, hitNorm)
+     end)
+end

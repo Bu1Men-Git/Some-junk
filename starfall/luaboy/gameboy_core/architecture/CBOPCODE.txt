@@ -1,0 +1,1952 @@
+function CBOPCODE_0x00 (parentObj)
+    parentObj.FCarry = (parentObj.registerB > 0x7F)
+    parentObj.registerB = bit.bor(bit.band(bit.lshift(parentObj.registerB, 1), 0xFF), (parentObj.FCarry and 1 or 0))
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerB == 0)
+end
+
+function CBOPCODE_0x01 (parentObj)
+    parentObj.FCarry = (parentObj.registerC > 0x7F)
+    parentObj.registerC = bit.bor(bit.band(bit.lshift(parentObj.registerC, 1), 0xFF), (parentObj.FCarry and 1 or 0))
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerC == 0)
+end
+
+function CBOPCODE_0x02 (parentObj)
+    parentObj.FCarry = (parentObj.registerD > 0x7F)
+    parentObj.registerD = bit.bor(bit.band(bit.lshift(parentObj.registerD, 1), 0xFF), (parentObj.FCarry and 1 or 0))
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerD == 0)
+end
+
+function CBOPCODE_0x03 (parentObj)
+    parentObj.FCarry = (parentObj.registerE > 0x7F)
+    parentObj.registerE = bit.bor(bit.band(bit.lshift(parentObj.registerE, 1), 0xFF), (parentObj.FCarry and 1 or 0))
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerE == 0)
+end
+
+function CBOPCODE_0x04 (parentObj)
+    parentObj.FCarry = (parentObj.registersHL > 0x7FFF)
+    parentObj.registersHL = bit.bor(bit.band(bit.lshift(parentObj.registersHL, 1), 0xFE00), (parentObj.FCarry and 0x100 or 0), bit.band(parentObj.registersHL, 0xFF))
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registersHL < 0x100)
+end
+
+function CBOPCODE_0x05 (parentObj)
+    parentObj.FCarry = (bit.band(parentObj.registersHL, 0x80) == 0x80)
+    parentObj.registersHL = bit.bor(bit.band(parentObj.registersHL, 0xFF00), bit.band(bit.lshift(parentObj.registersHL, 1), 0xFF), (parentObj.FCarry and 1 or 0))
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registersHL, 0xFF) == 0)
+end
+
+function CBOPCODE_0x06 (parentObj)
+    temp_= parentObj.memoryReader[parentObj.registersHL](parentObj, parentObj.registersHL)
+    parentObj.FCarry = (temp_> 0x7F)
+    temp_= bit.bor(bit.band(bit.lshift(temp_var, 1), 0xFF), (parentObj.FCarry and 1 or 0))
+    parentObj.memoryWriter[parentObj.registersHL](parentObj, parentObj.registersHL, temp_var)
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (temp_== 0)
+end
+
+function CBOPCODE_0x07 (parentObj)
+    parentObj.FCarry = (parentObj.registerA > 0x7F)
+    parentObj.registerA = bit.bor(bit.band(bit.lshift(parentObj.registerA, 1), 0xFF), (parentObj.FCarry and 1 or 0))
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerA == 0)
+end
+
+function CBOPCODE_0x08 (parentObj)
+    parentObj.FCarry = (bit.band(parentObj.registerB, 0x01) == 0x01)
+    parentObj.registerB = bit.bor((parentObj.FCarry and 0x80 or 0), bit.rshift(parentObj.registerB, 1))
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerB == 0)
+end
+
+function CBOPCODE_0x09 (parentObj)
+    parentObj.FCarry = (bit.band(parentObj.registerC, 0x01) == 0x01)
+    parentObj.registerC = bit.bor((parentObj.FCarry and 0x80 or 0), bit.rshift(parentObj.registerC, 1))
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerC == 0)
+end
+
+function CBOPCODE_0x0A (parentObj)
+    parentObj.FCarry = (bit.band(parentObj.registerD, 0x01) == 0x01)
+    parentObj.registerD = bit.bor((parentObj.FCarry and 0x80 or 0), bit.rshift(parentObj.registerD, 1))
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerD == 0)
+end
+
+function CBOPCODE_0x0B (parentObj)
+    parentObj.FCarry = (bit.band(parentObj.registerE, 0x01) == 0x01)
+    parentObj.registerE = bit.bor((parentObj.FCarry and 0x80 or 0), bit.rshift(parentObj.registerE, 1))
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerE == 0)
+end
+
+function CBOPCODE_0x0C (parentObj)
+    parentObj.FCarry = (bit.band(parentObj.registersHL, 0x0100) == 0x0100)
+    parentObj.registersHL = bit.bor((parentObj.FCarry and 0x8000 or 0), bit.band(bit.rshift(parentObj.registersHL, 1), 0xFF00), bit.band(parentObj.registersHL, 0xFF))
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registersHL < 0x100)
+end
+
+function CBOPCODE_0x0D (parentObj)
+    parentObj.FCarry = (bit.band(parentObj.registersHL, 0x01) == 0x01)
+    parentObj.registersHL = bit.bor(bit.band(parentObj.registersHL, 0xFF00), (parentObj.FCarry and 0x80 or 0), bit.rshift(bit.band(parentObj.registersHL, 0xFF), 1))
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registersHL, 0xFF) == 0)
+end
+
+function CBOPCODE_0x0E (parentObj)
+    temp_= parentObj.memoryReader[parentObj.registersHL](parentObj, parentObj.registersHL)
+    parentObj.FCarry = (bit.band(temp_var, 0x01) == 0x01)
+    temp_= bit.bor((parentObj.FCarry and 0x80 or 0), bit.rshift(temp_var, 1))
+    parentObj.memoryWriter[parentObj.registersHL](parentObj, parentObj.registersHL, temp_var)
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (temp_== 0)
+end
+
+function CBOPCODE_0x0F (parentObj)
+    parentObj.FCarry = (bit.band(parentObj.registerA, 0x01) == 0x01)
+    parentObj.registerA = bit.bor((parentObj.FCarry and 0x80 or 0), bit.rshift(parentObj.registerA, 1))
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerA == 0)
+end
+
+function CBOPCODE_0x10 (parentObj)
+    newFCarry = (parentObj.registerB > 0x7F)
+    parentObj.registerB = bit.bor(bit.band(bit.lshift(parentObj.registerB, 1), 0xFF), (parentObj.FCarry and 1 or 0))
+    parentObj.FCarry = newFCarry
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerB == 0)
+end
+
+function CBOPCODE_0x11 (parentObj)
+    newFCarry = (parentObj.registerC > 0x7F)
+    parentObj.registerC = bit.bor(bit.band(bit.lshift(parentObj.registerC, 1), 0xFF), (parentObj.FCarry and 1 or 0))
+    parentObj.FCarry = newFCarry
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerC == 0)
+end
+
+function CBOPCODE_0x12 (parentObj)
+    newFCarry = (parentObj.registerD > 0x7F)
+    parentObj.registerD = bit.bor(bit.band(bit.lshift(parentObj.registerD, 1), 0xFF), (parentObj.FCarry and 1 or 0))
+    parentObj.FCarry = newFCarry
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerD == 0)
+end
+
+function CBOPCODE_0x13 (parentObj)
+    newFCarry = (parentObj.registerE > 0x7F)
+    parentObj.registerE = bit.bor(bit.band(bit.lshift(parentObj.registerE, 1), 0xFF), (parentObj.FCarry and 1 or 0))
+    parentObj.FCarry = newFCarry
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerE == 0)
+end
+
+function CBOPCODE_0x14 (parentObj)
+    newFCarry = (parentObj.registersHL > 0x7FFF)
+    parentObj.registersHL = bit.bor(bit.band(bit.lshift(parentObj.registersHL, 1), 0xFE00), (parentObj.FCarry and 0x100 or 0), bit.band(parentObj.registersHL, 0xFF))
+    parentObj.FCarry = newFCarry
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registersHL < 0x100)
+end
+
+function CBOPCODE_0x15 (parentObj)
+    newFCarry = (bit.band(parentObj.registersHL, 0x80) == 0x80)
+    parentObj.registersHL = bit.bor(bit.band(parentObj.registersHL, 0xFF00), bit.band(bit.lshift(parentObj.registersHL, 1), 0xFF), (parentObj.FCarry and 1 or 0))
+    parentObj.FCarry = newFCarry
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registersHL, 0xFF) == 0)
+end
+
+function CBOPCODE_0x16 (parentObj)
+    temp_= parentObj.memoryReader[parentObj.registersHL](parentObj, parentObj.registersHL)
+    newFCarry = (temp_> 0x7F)
+    temp_= bit.bor(bit.band(bit.lshift(temp_var, 1), 0xFF), (parentObj.FCarry and 1 or 0))
+    parentObj.FCarry = newFCarry
+    parentObj.memoryWriter[parentObj.registersHL](parentObj, parentObj.registersHL, temp_var)
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (temp_== 0)
+end
+
+function CBOPCODE_0x17 (parentObj)
+    newFCarry = (parentObj.registerA > 0x7F)
+    parentObj.registerA = bit.bor(bit.band(bit.lshift(parentObj.registerA, 1), 0xFF), (parentObj.FCarry and 1 or 0))
+    parentObj.FCarry = newFCarry
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerA == 0)
+end
+
+function CBOPCODE_0x18 (parentObj)
+    newFCarry = (bit.band(parentObj.registerB, 0x01) == 0x01)
+    parentObj.registerB = bit.bor((parentObj.FCarry and 0x80 or 0), bit.rshift(parentObj.registerB, 1))
+    parentObj.FCarry = newFCarry
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerB == 0)
+end
+
+function CBOPCODE_0x19 (parentObj)
+    newFCarry = (bit.band(parentObj.registerC, 0x01) == 0x01)
+    parentObj.registerC = bit.bor((parentObj.FCarry and 0x80 or 0), bit.rshift(parentObj.registerC, 1))
+    parentObj.FCarry = newFCarry
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerC == 0)
+end
+
+function CBOPCODE_0x1A (parentObj)
+    newFCarry = (bit.band(parentObj.registerD, 0x01) == 0x01)
+    parentObj.registerD = bit.bor((parentObj.FCarry and 0x80 or 0), bit.rshift(parentObj.registerD, 1))
+    parentObj.FCarry = newFCarry
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerD == 0)
+end
+
+function CBOPCODE_0x1B (parentObj)
+    newFCarry = (bit.band(parentObj.registerE, 0x01) == 0x01)
+    parentObj.registerE = bit.bor((parentObj.FCarry and 0x80 or 0), bit.rshift(parentObj.registerE, 1))
+    parentObj.FCarry = newFCarry
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerE == 0)
+end
+
+function CBOPCODE_0x1C (parentObj)
+    newFCarry = (bit.band(parentObj.registersHL, 0x0100) == 0x0100)
+    parentObj.registersHL = bit.bor((parentObj.FCarry and 0x8000 or 0), bit.band(bit.rshift(parentObj.registersHL, 1), 0xFF00), bit.band(parentObj.registersHL, 0xFF))
+    parentObj.FCarry = newFCarry
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registersHL < 0x100)
+end
+
+function CBOPCODE_0x1D (parentObj)
+    newFCarry = (bit.band(parentObj.registersHL, 0x01) == 0x01)
+    parentObj.registersHL = bit.bor(bit.band(parentObj.registersHL, 0xFF00), (parentObj.FCarry and 0x80 or 0), bit.rshift(bit.band(parentObj.registersHL, 0xFF), 1))
+    parentObj.FCarry = newFCarry
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registersHL, 0xFF) == 0)
+end
+
+function CBOPCODE_0x1E (parentObj)
+    temp_= parentObj.memoryReader[parentObj.registersHL](parentObj, parentObj.registersHL)
+    newFCarry = (bit.band(temp_var, 0x01) == 0x01)
+    temp_= bit.bor((parentObj.FCarry and 0x80 or 0), bit.rshift(temp_var, 1))
+    parentObj.FCarry = newFCarry
+    parentObj.memoryWriter[parentObj.registersHL](parentObj, parentObj.registersHL, temp_var)
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (temp_== 0)
+end
+
+function CBOPCODE_0x1F (parentObj)
+    newFCarry = (bit.band(parentObj.registerA, 0x01) == 0x01)
+    parentObj.registerA = bit.bor((parentObj.FCarry and 0x80 or 0), bit.rshift(parentObj.registerA, 1))
+    parentObj.FCarry = newFCarry
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerA == 0)
+end
+
+function CBOPCODE_0x20 (parentObj)
+    parentObj.FCarry = (parentObj.registerB > 0x7F)
+    parentObj.registerB = bit.band(bit.lshift(parentObj.registerB, 1), 0xFF)
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerB == 0)
+end
+
+function CBOPCODE_0x21 (parentObj)
+    parentObj.FCarry = (parentObj.registerC > 0x7F)
+    parentObj.registerC = bit.band(bit.lshift(parentObj.registerC, 1), 0xFF)
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerC == 0)
+end
+
+function CBOPCODE_0x22 (parentObj)
+    parentObj.FCarry = (parentObj.registerD > 0x7F)
+    parentObj.registerD = bit.band(bit.lshift(parentObj.registerD, 1), 0xFF)
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerD == 0)
+end
+
+function CBOPCODE_0x23 (parentObj)
+    parentObj.FCarry = (parentObj.registerE > 0x7F)
+    parentObj.registerE = bit.band(bit.lshift(parentObj.registerE, 1), 0xFF)
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerE == 0)
+end
+
+function CBOPCODE_0x24 (parentObj)
+    parentObj.FCarry = (parentObj.registersHL > 0x7FFF)
+    parentObj.registersHL = bit.bor(bit.band(bit.lshift(parentObj.registersHL, 1), 0xFE00), bit.band(parentObj.registersHL, 0xFF))
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registersHL < 0x100)
+end
+
+function CBOPCODE_0x25 (parentObj)
+    parentObj.FCarry = (bit.band(parentObj.registersHL, 0x0080) == 0x0080)
+    parentObj.registersHL = bit.bor(bit.band(parentObj.registersHL, 0xFF00), bit.band(bit.lshift(parentObj.registersHL, 1), 0xFF))
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registersHL, 0xFF) == 0)
+end
+
+function CBOPCODE_0x26 (parentObj)
+    temp_= parentObj.memoryReader[parentObj.registersHL](parentObj, parentObj.registersHL)
+    parentObj.FCarry = (temp_> 0x7F)
+    temp_= bit.band(bit.lshift(temp_var, 1), 0xFF)
+    parentObj.memoryWriter[parentObj.registersHL](parentObj, parentObj.registersHL, temp_var)
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (temp_== 0)
+end
+
+function CBOPCODE_0x27 (parentObj)
+    parentObj.FCarry = (parentObj.registerA > 0x7F)
+    parentObj.registerA = bit.band(bit.lshift(parentObj.registerA, 1), 0xFF)
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerA == 0)
+end
+
+function CBOPCODE_0x28 (parentObj)
+    parentObj.FCarry = (bit.band(parentObj.registerB, 0x01) == 0x01)
+    parentObj.registerB = bit.bor(bit.band(parentObj.registerB, 0x80), bit.rshift(parentObj.registerB, 1))
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerB == 0)
+end
+
+function CBOPCODE_0x29 (parentObj)
+    parentObj.FCarry = (bit.band(parentObj.registerC, 0x01) == 0x01)
+    parentObj.registerC = bit.bor(bit.band(parentObj.registerC, 0x80), bit.rshift(parentObj.registerC, 1))
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerC == 0)
+end
+
+function CBOPCODE_0x2A (parentObj)
+    parentObj.FCarry = (bit.band(parentObj.registerD, 0x01) == 0x01)
+    parentObj.registerD = bit.bor(bit.band(parentObj.registerD, 0x80), bit.rshift(parentObj.registerD, 1))
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerD == 0)
+end
+
+function CBOPCODE_0x2B (parentObj)
+    parentObj.FCarry = (bit.band(parentObj.registerE, 0x01) == 0x01)
+    parentObj.registerE = bit.bor(bit.band(parentObj.registerE, 0x80), bit.rshift(parentObj.registerE, 1))
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerE == 0)
+end
+
+function CBOPCODE_0x2C (parentObj)
+    parentObj.FCarry = (bit.band(parentObj.registersHL, 0x0100) == 0x0100)
+    parentObj.registersHL = bit.bor(bit.band(bit.rshift(parentObj.registersHL, 1), 0xFF00), bit.band(parentObj.registersHL, 0x80FF))
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registersHL < 0x100)
+end
+
+function CBOPCODE_0x2D (parentObj)
+    parentObj.FCarry = (bit.band(parentObj.registersHL, 0x0001) == 0x0001)
+    parentObj.registersHL = bit.bor(bit.band(parentObj.registersHL, 0xFF80), bit.rshift(bit.band(parentObj.registersHL, 0xFF), 1))
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registersHL, 0xFF) == 0)
+end
+
+function CBOPCODE_0x2E (parentObj)
+    temp_= parentObj.memoryReader[parentObj.registersHL](parentObj, parentObj.registersHL)
+    parentObj.FCarry = (bit.band(temp_var, 0x01) == 0x01)
+    temp_= bit.bor(bit.band(temp_var, 0x80), bit.rshift(temp_var, 1))
+    parentObj.memoryWriter[parentObj.registersHL](parentObj, parentObj.registersHL, temp_var)
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (temp_== 0)
+end
+
+function CBOPCODE_0x2F (parentObj)
+    parentObj.FCarry = (bit.band(parentObj.registerA, 0x01) == 0x01)
+    parentObj.registerA = bit.bor(bit.band(parentObj.registerA, 0x80), bit.rshift(parentObj.registerA, 1))
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerA == 0)
+end
+
+function CBOPCODE_0x30 (parentObj)
+    parentObj.registerB = bit.bor(bit.lshift(bit.band(parentObj.registerB, 0xF), 4), bit.rshift(parentObj.registerB, 4))
+    parentObj.FZero = (parentObj.registerB == 0)
+    parentObj.FCarry = false
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+end
+
+function CBOPCODE_0x31 (parentObj)
+    parentObj.registerC = bit.bor(bit.lshift(bit.band(parentObj.registerC, 0xF), 4), bit.rshift(parentObj.registerC, 4))
+    parentObj.FZero = (parentObj.registerC == 0)
+    parentObj.FCarry = false
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+end
+
+function CBOPCODE_0x32 (parentObj)
+    parentObj.registerD = bit.bor(bit.lshift(bit.band(parentObj.registerD, 0xF), 4), bit.rshift(parentObj.registerD, 4))
+    parentObj.FZero = (parentObj.registerD == 0)
+    parentObj.FCarry = false
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+end
+
+function CBOPCODE_0x33 (parentObj)
+    parentObj.registerE = bit.bor(bit.lshift(bit.band(parentObj.registerE, 0xF), 4), bit.rshift(parentObj.registerE, 4))
+    parentObj.FZero = (parentObj.registerE == 0)
+    parentObj.FCarry = false
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+end
+
+function CBOPCODE_0x34 (parentObj)
+    parentObj.registersHL = bit.bor(bit.lshift(bit.band(parentObj.registersHL, 0xF00), 4), bit.rshift(bit.band(parentObj.registersHL, 0xF000), 4), bit.band(parentObj.registersHL, 0xFF))
+    parentObj.FZero = (parentObj.registersHL < 0x100)
+    parentObj.FCarry = false
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+end
+
+function CBOPCODE_0x35 (parentObj)
+    parentObj.registersHL = bit.bor(bit.band(parentObj.registersHL, 0xFF00), bit.lshift(bit.band(parentObj.registersHL, 0xF), 4), bit.rshift(bit.band(parentObj.registersHL, 0xF0), 4))
+    parentObj.FZero = (bit.band(parentObj.registersHL, 0xFF) == 0)
+    parentObj.FCarry = false
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+end
+
+function CBOPCODE_0x36 (parentObj)
+    temp_= parentObj.memoryReader[parentObj.registersHL](parentObj, parentObj.registersHL)
+    temp_= bit.bor(bit.lshift(bit.band(temp_var, 0xF), 4), bit.rshift(temp_var, 4))
+    parentObj.memoryWriter[parentObj.registersHL](parentObj, parentObj.registersHL, temp_var)
+    parentObj.FZero = (temp_== 0)
+    parentObj.FCarry = false
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+end
+
+function CBOPCODE_0x37 (parentObj)
+    parentObj.registerA = bit.bor(bit.lshift(bit.band(parentObj.registerA, 0xF), 4), bit.rshift(parentObj.registerA, 4))
+    parentObj.FZero = (parentObj.registerA == 0)
+    parentObj.FCarry = false
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+end
+
+function CBOPCODE_0x38 (parentObj)
+    parentObj.FCarry = (bit.band(parentObj.registerB, 0x01) == 0x01)
+    parentObj.registerB = bit.rshift(parentObj.registerB, 1)
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerB == 0)
+end
+
+function CBOPCODE_0x39 (parentObj)
+    parentObj.FCarry = (bit.band(parentObj.registerC, 0x01) == 0x01)
+    parentObj.registerC = bit.rshift(parentObj.registerC, 1)
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerC == 0)
+end
+
+function CBOPCODE_0x3A (parentObj)
+    parentObj.FCarry = (bit.band(parentObj.registerD, 0x01) == 0x01)
+    parentObj.registerD = bit.rshift(parentObj.registerD, 1)
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerD == 0)
+end
+
+function CBOPCODE_0x3B (parentObj)
+    parentObj.FCarry = (bit.band(parentObj.registerE, 0x01) == 0x01)
+    parentObj.registerE = bit.rshift(parentObj.registerE, 1)
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerE == 0)
+end
+
+function CBOPCODE_0x3C (parentObj)
+    parentObj.FCarry = (bit.band(parentObj.registersHL, 0x0100) == 0x0100)
+    parentObj.registersHL = bit.bor(bit.band(bit.rshift(parentObj.registersHL, 1), 0xFF00), bit.band(parentObj.registersHL, 0xFF))
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registersHL < 0x100)
+end
+
+function CBOPCODE_0x3D (parentObj)
+    parentObj.FCarry = (bit.band(parentObj.registersHL, 0x0001) == 0x0001)
+    parentObj.registersHL = bit.bor(bit.band(parentObj.registersHL, 0xFF00), bit.rshift(bit.band(parentObj.registersHL, 0xFF), 1))
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registersHL, 0xFF) == 0)
+end
+
+function CBOPCODE_0x3E (parentObj)
+    temp_= parentObj.memoryReader[parentObj.registersHL](parentObj, parentObj.registersHL)
+    parentObj.FCarry = (bit.band(temp_var, 0x01) == 0x01)
+    parentObj.memoryWriter[parentObj.registersHL](parentObj, parentObj.registersHL, bit.rshift(temp_var, 1))
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (temp_< 2)
+end
+
+function CBOPCODE_0x3F (parentObj)
+    parentObj.FCarry = (bit.band(parentObj.registerA, 0x01) == 0x01)
+    parentObj.registerA = bit.rshift(parentObj.registerA, 1)
+    parentObj.FHalfCarry = false
+    parentObj.FSubtract = false
+    parentObj.FZero = (parentObj.registerA == 0)
+end
+
+function CBOPCODE_0x40 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerB, 0x01) == 0)
+end
+
+function CBOPCODE_0x41 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerC, 0x01) == 0)
+end
+
+function CBOPCODE_0x42 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerD, 0x01) == 0)
+end
+
+function CBOPCODE_0x43 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerE, 0x01) == 0)
+end
+
+function CBOPCODE_0x44 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registersHL, 0x0100) == 0)
+end
+
+function CBOPCODE_0x45 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registersHL, 0x0001) == 0)
+end
+
+function CBOPCODE_0x46 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.memoryReader[parentObj.registersHL](parentObj, parentObj.registersHL), 0x01) == 0)
+end
+
+function CBOPCODE_0x47 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerA, 0x01) == 0)
+end
+
+function CBOPCODE_0x48 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerB, 0x02) == 0)
+end
+
+function CBOPCODE_0x49 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerC, 0x02) == 0)
+end
+
+function CBOPCODE_0x4A (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerD, 0x02) == 0)
+end
+
+function CBOPCODE_0x4B (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerE, 0x02) == 0)
+end
+
+function CBOPCODE_0x4C (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registersHL, 0x0200) == 0)
+end
+
+function CBOPCODE_0x4D (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registersHL, 0x0002) == 0)
+end
+
+function CBOPCODE_0x4E (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.memoryReader[parentObj.registersHL](parentObj, parentObj.registersHL), 0x02) == 0)
+end
+
+function CBOPCODE_0x4F (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerA, 0x02) == 0)
+end
+
+function CBOPCODE_0x50 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerB, 0x04) == 0)
+end
+
+function CBOPCODE_0x51 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerC, 0x04) == 0)
+end
+
+function CBOPCODE_0x52 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerD, 0x04) == 0)
+end
+
+function CBOPCODE_0x53 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerE, 0x04) == 0)
+end
+
+function CBOPCODE_0x54 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registersHL, 0x0400) == 0)
+end
+
+function CBOPCODE_0x55 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registersHL, 0x0004) == 0)
+end
+
+function CBOPCODE_0x56 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.memoryReader[parentObj.registersHL](parentObj, parentObj.registersHL), 0x04) == 0)
+end
+
+function CBOPCODE_0x57 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerA, 0x04) == 0)
+end
+
+function CBOPCODE_0x58 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerB, 0x08) == 0)
+end
+
+function CBOPCODE_0x59 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerC, 0x08) == 0)
+end
+
+function CBOPCODE_0x5A (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerD, 0x08) == 0)
+end
+
+function CBOPCODE_0x5B (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerE, 0x08) == 0)
+end
+
+function CBOPCODE_0x5C (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registersHL, 0x0800) == 0)
+end
+
+function CBOPCODE_0x5D (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registersHL, 0x0008) == 0)
+end
+
+function CBOPCODE_0x5E (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.memoryReader[parentObj.registersHL](parentObj, parentObj.registersHL), 0x08) == 0)
+end
+
+function CBOPCODE_0x5F (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerA, 0x08) == 0)
+end
+
+function CBOPCODE_0x60 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerB, 0x10) == 0)
+end
+
+function CBOPCODE_0x61 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerC, 0x10) == 0)
+end
+
+function CBOPCODE_0x62 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerD, 0x10) == 0)
+end
+
+function CBOPCODE_0x63 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerE, 0x10) == 0)
+end
+
+function CBOPCODE_0x64 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registersHL, 0x1000) == 0)
+end
+
+function CBOPCODE_0x65 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registersHL, 0x0010) == 0)
+end
+
+function CBOPCODE_0x66 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.memoryReader[parentObj.registersHL](parentObj, parentObj.registersHL), 0x10) == 0)
+end
+
+function CBOPCODE_0x67 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerA, 0x10) == 0)
+end
+
+function CBOPCODE_0x68 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerB, 0x20) == 0)
+end
+
+function CBOPCODE_0x69 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerC, 0x20) == 0)
+end
+
+function CBOPCODE_0x6A (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerD, 0x20) == 0)
+end
+
+function CBOPCODE_0x6B (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerE, 0x20) == 0)
+end
+
+function CBOPCODE_0x6C (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registersHL, 0x2000) == 0)
+end
+
+function CBOPCODE_0x6D (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registersHL, 0x0020) == 0)
+end
+
+function CBOPCODE_0x6E (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.memoryReader[parentObj.registersHL](parentObj, parentObj.registersHL), 0x20) == 0)
+end
+
+function CBOPCODE_0x6F (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerA, 0x20) == 0)
+end
+
+function CBOPCODE_0x70 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerB, 0x40) == 0)
+end
+
+function CBOPCODE_0x71 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerC, 0x40) == 0)
+end
+
+function CBOPCODE_0x72 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerD, 0x40) == 0)
+end
+
+function CBOPCODE_0x73 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerE, 0x40) == 0)
+end
+
+function CBOPCODE_0x74 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registersHL, 0x4000) == 0)
+end
+
+function CBOPCODE_0x75 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registersHL, 0x0040) == 0)
+end
+
+function CBOPCODE_0x76 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.memoryReader[parentObj.registersHL](parentObj, parentObj.registersHL), 0x40) == 0)
+end
+
+function CBOPCODE_0x77 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerA, 0x40) == 0)
+end
+
+function CBOPCODE_0x78 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerB, 0x80) == 0)
+end
+
+function CBOPCODE_0x79 (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerC, 0x80) == 0)
+end
+
+function CBOPCODE_0x7A (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerD, 0x80) == 0)
+end
+
+function CBOPCODE_0x7B (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerE, 0x80) == 0)
+end
+
+function CBOPCODE_0x7C (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registersHL, 0x8000) == 0)
+end
+
+function CBOPCODE_0x7D (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registersHL, 0x0080) == 0)
+end
+
+function CBOPCODE_0x7E (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.memoryReader[parentObj.registersHL](parentObj, parentObj.registersHL), 0x80) == 0)
+end
+
+function CBOPCODE_0x7F (parentObj)
+    parentObj.FHalfCarry = true
+    parentObj.FSubtract = false
+    parentObj.FZero = (bit.band(parentObj.registerA, 0x80) == 0)
+end
+
+function CBOPCODE_0x80 (parentObj)
+    parentObj.registerB = bit.band(parentObj.registerB, 0xFE)
+end
+
+function CBOPCODE_0x81 (parentObj)
+    parentObj.registerC = bit.band(parentObj.registerC, 0xFE)
+end
+
+function CBOPCODE_0x82 (parentObj)
+    parentObj.registerD = bit.band(parentObj.registerD, 0xFE)
+end
+
+function CBOPCODE_0x83 (parentObj)
+    parentObj.registerE = bit.band(parentObj.registerE, 0xFE)
+end
+
+function CBOPCODE_0x84 (parentObj)
+    parentObj.registersHL = bit.band(parentObj.registersHL, 0xFEFF)
+end
+
+function CBOPCODE_0x85 (parentObj)
+    parentObj.registersHL = bit.band(parentObj.registersHL, 0xFFFE)
+end
+
+function CBOPCODE_0x86 (parentObj)
+    parentObj.memoryWriter[parentObj.registersHL](bit.band(parentObj, parentObj.registersHL, parentObj.memoryReader[parentObj.registersHL](parentObj, parentObj.registersHL), 0xFE))
+end
+
+function CBOPCODE_0x87 (parentObj)
+    parentObj.registerA = bit.band(parentObj.registerA, 0xFE)
+end
+
+function CBOPCODE_0x88 (parentObj)
+    parentObj.registerB = bit.band(parentObj.registerB, 0xFD)
+end
+
+function CBOPCODE_0x89 (parentObj)
+    parentObj.registerC = bit.band(parentObj.registerC, 0xFD)
+end
+
+function CBOPCODE_0x8A (parentObj)
+    parentObj.registerD = bit.band(parentObj.registerD, 0xFD)
+end
+
+function CBOPCODE_0x8B (parentObj)
+    parentObj.registerE = bit.band(parentObj.registerE, 0xFD)
+end
+
+function CBOPCODE_0x8C (parentObj)
+    parentObj.registersHL = bit.band(parentObj.registersHL, 0xFDFF)
+end
+
+function CBOPCODE_0x8D (parentObj)
+    parentObj.registersHL = bit.band(parentObj.registersHL, 0xFFFD)
+end
+
+function CBOPCODE_0x8E (parentObj)
+    parentObj.memoryWriter[parentObj.registersHL](bit.band(parentObj, parentObj.registersHL, parentObj.memoryReader[parentObj.registersHL](parentObj, parentObj.registersHL), 0xFD))
+end
+
+function CBOPCODE_0x8F (parentObj)
+    parentObj.registerA = bit.band(parentObj.registerA, 0xFD)
+end
+
+function CBOPCODE_0x90 (parentObj)
+    parentObj.registerB = bit.band(parentObj.registerB, 0xFB)
+end
+
+function CBOPCODE_0x91 (parentObj)
+    parentObj.registerC = bit.band(parentObj.registerC, 0xFB)
+end
+
+function CBOPCODE_0x92 (parentObj)
+    parentObj.registerD = bit.band(parentObj.registerD, 0xFB)
+end
+
+function CBOPCODE_0x93 (parentObj)
+    parentObj.registerE = bit.band(parentObj.registerE, 0xFB)
+end
+
+function CBOPCODE_0x94 (parentObj)
+    parentObj.registersHL = bit.band(parentObj.registersHL, 0xFBFF)
+end
+
+function CBOPCODE_0x95 (parentObj)
+    parentObj.registersHL = bit.band(parentObj.registersHL, 0xFFFB)
+end
+
+function CBOPCODE_0x96 (parentObj)
+    parentObj.memoryWriter[parentObj.registersHL](bit.band(parentObj, parentObj.registersHL, parentObj.memoryReader[parentObj.registersHL](parentObj, parentObj.registersHL), 0xFB))
+end
+
+function CBOPCODE_0x97 (parentObj)
+    parentObj.registerA = bit.band(parentObj.registerA, 0xFB)
+end
+
+function CBOPCODE_0x98 (parentObj)
+    parentObj.registerB = bit.band(parentObj.registerB, 0xF7)
+end
+
+function CBOPCODE_0x99 (parentObj)
+    parentObj.registerC = bit.band(parentObj.registerC, 0xF7)
+end
+
+function CBOPCODE_0x9A (parentObj)
+    parentObj.registerD = bit.band(parentObj.registerD, 0xF7)
+end
+
+function CBOPCODE_0x9B (parentObj)
+    parentObj.registerE = bit.band(parentObj.registerE, 0xF7)
+end
+
+function CBOPCODE_0x9C (parentObj)
+    parentObj.registersHL = bit.band(parentObj.registersHL, 0xF7FF)
+end
+
+function CBOPCODE_0x9D (parentObj)
+    parentObj.registersHL = bit.band(parentObj.registersHL, 0xFFF7)
+end
+
+function CBOPCODE_0x9E (parentObj)
+    parentObj.memoryWriter[parentObj.registersHL](bit.band(parentObj, parentObj.registersHL, parentObj.memoryReader[parentObj.registersHL](parentObj, parentObj.registersHL), 0xF7))
+end
+
+function CBOPCODE_0x9F (parentObj)
+    parentObj.registerA = bit.band(parentObj.registerA, 0xF7)
+end
+
+function CBOPCODE_0xA0 (parentObj)
+    parentObj.registerB = bit.band(parentObj.registerB, 0xEF)
+end
+
+function CBOPCODE_0xA1 (parentObj)
+    parentObj.registerC = bit.band(parentObj.registerC, 0xEF)
+end
+
+function CBOPCODE_0xA2 (parentObj)
+    parentObj.registerD = bit.band(parentObj.registerD, 0xEF)
+end
+
+function CBOPCODE_0xA3 (parentObj)
+    parentObj.registerE = bit.band(parentObj.registerE, 0xEF)
+end
+
+function CBOPCODE_0xA4 (parentObj)
+    parentObj.registersHL = bit.band(parentObj.registersHL, 0xEFFF)
+end
+
+function CBOPCODE_0xA5 (parentObj)
+    parentObj.registersHL = bit.band(parentObj.registersHL, 0xFFEF)
+end
+
+function CBOPCODE_0xA6 (parentObj)
+    parentObj.memoryWriter[parentObj.registersHL](bit.band(parentObj, parentObj.registersHL, parentObj.memoryReader[parentObj.registersHL](parentObj, parentObj.registersHL), 0xEF))
+end
+
+function CBOPCODE_0xA7 (parentObj)
+    parentObj.registerA = bit.band(parentObj.registerA, 0xEF)
+end
+
+function CBOPCODE_0xA8 (parentObj)
+    parentObj.registerB = bit.band(parentObj.registerB, 0xDF)
+end
+
+function CBOPCODE_0xA9 (parentObj)
+    parentObj.registerC = bit.band(parentObj.registerC, 0xDF)
+end
+
+function CBOPCODE_0xAA (parentObj)
+    parentObj.registerD = bit.band(parentObj.registerD, 0xDF)
+end
+
+function CBOPCODE_0xAB (parentObj)
+    parentObj.registerE = bit.band(parentObj.registerE, 0xDF)
+end
+
+function CBOPCODE_0xAC (parentObj)
+    parentObj.registersHL = bit.band(parentObj.registersHL, 0xDFFF)
+end
+
+function CBOPCODE_0xAD (parentObj)
+    parentObj.registersHL = bit.band(parentObj.registersHL, 0xFFDF)
+end
+
+function CBOPCODE_0xAE (parentObj)
+    parentObj.memoryWriter[parentObj.registersHL](bit.band(parentObj, parentObj.registersHL, parentObj.memoryReader[parentObj.registersHL](parentObj, parentObj.registersHL), 0xDF))
+end
+
+function CBOPCODE_0xAF (parentObj)
+    parentObj.registerA = bit.band(parentObj.registerA, 0xDF)
+end
+
+function CBOPCODE_0xB0 (parentObj)
+    parentObj.registerB = bit.band(parentObj.registerB, 0xBF)
+end
+
+function CBOPCODE_0xB1 (parentObj)
+    parentObj.registerC = bit.band(parentObj.registerC, 0xBF)
+end
+
+function CBOPCODE_0xB2 (parentObj)
+    parentObj.registerD = bit.band(parentObj.registerD, 0xBF)
+end
+
+function CBOPCODE_0xB3 (parentObj)
+    parentObj.registerE = bit.band(parentObj.registerE, 0xBF)
+end
+
+function CBOPCODE_0xB4 (parentObj)
+    parentObj.registersHL = bit.band(parentObj.registersHL, 0xBFFF)
+end
+
+function CBOPCODE_0xB5 (parentObj)
+    parentObj.registersHL = bit.band(parentObj.registersHL, 0xFFBF)
+end
+
+function CBOPCODE_0xB6 (parentObj)
+    parentObj.memoryWriter[parentObj.registersHL](bit.band(parentObj, parentObj.registersHL, parentObj.memoryReader[parentObj.registersHL](parentObj, parentObj.registersHL), 0xBF))
+end
+
+function CBOPCODE_0xB7 (parentObj)
+    parentObj.registerA = bit.band(parentObj.registerA, 0xBF)
+end
+
+function CBOPCODE_0xB8 (parentObj)
+    parentObj.registerB = bit.band(parentObj.registerB, 0x7F)
+end
+
+function CBOPCODE_0xB9 (parentObj)
+    parentObj.registerC = bit.band(parentObj.registerC, 0x7F)
+end
+
+function CBOPCODE_0xBA (parentObj)
+    parentObj.registerD = bit.band(parentObj.registerD, 0x7F)
+end
+
+function CBOPCODE_0xBB (parentObj)
+    parentObj.registerE = bit.band(parentObj.registerE, 0x7F)
+end
+
+function CBOPCODE_0xBC (parentObj)
+    parentObj.registersHL = bit.band(parentObj.registersHL, 0x7FFF)
+end
+
+function CBOPCODE_0xBD (parentObj)
+    parentObj.registersHL = bit.band(parentObj.registersHL, 0xFF7F)
+end
+
+function CBOPCODE_0xBE (parentObj)
+    parentObj.memoryWriter[parentObj.registersHL](bit.band(parentObj, parentObj.registersHL, parentObj.memoryReader[parentObj.registersHL](parentObj, parentObj.registersHL), 0x7F))
+end
+
+function CBOPCODE_0xBF (parentObj)
+    parentObj.registerA = bit.band(parentObj.registerA, 0x7F)
+end
+
+function CBOPCODE_0xC0 (parentObj)
+    parentObj.registerB = bit.bor(parentObj.registerB, 0x01)
+end
+
+function CBOPCODE_0xC1 (parentObj)
+    parentObj.registerC = bit.bor(parentObj.registerC, 0x01)
+end
+
+function CBOPCODE_0xC2 (parentObj)
+    parentObj.registerD = bit.bor(parentObj.registerD, 0x01)
+end
+
+function CBOPCODE_0xC3 (parentObj)
+    parentObj.registerE = bit.bor(parentObj.registerE, 0x01)
+end
+
+function CBOPCODE_0xC4 (parentObj)
+    parentObj.registersHL = bit.bor(parentObj.registersHL, 0x0100)
+end
+
+function CBOPCODE_0xC5 (parentObj)
+    parentObj.registersHL = bit.bor(parentObj.registersHL, 0x01)
+end
+
+function CBOPCODE_0xC6 (parentObj)
+    parentObj.memoryWriter[parentObj.registersHL](bit.bor(parentObj, parentObj.registersHL, parentObj.memoryReader[parentObj.registersHL](parentObj, parentObj.registersHL), 0x01))
+end
+
+function CBOPCODE_0xC7 (parentObj)
+    parentObj.registerA = bit.bor(parentObj.registerA, 0x01)
+end
+
+function CBOPCODE_0xC8 (parentObj)
+    parentObj.registerB = bit.bor(parentObj.registerB, 0x02)
+end
+
+function CBOPCODE_0xC9 (parentObj)
+    parentObj.registerC = bit.bor(parentObj.registerC, 0x02)
+end
+
+function CBOPCODE_0xCA (parentObj)
+    parentObj.registerD = bit.bor(parentObj.registerD, 0x02)
+end
+
+function CBOPCODE_0xCB (parentObj)
+    parentObj.registerE = bit.bor(parentObj.registerE, 0x02)
+end
+
+function CBOPCODE_0xCC (parentObj)
+    parentObj.registersHL = bit.bor(parentObj.registersHL, 0x0200)
+end
+
+function CBOPCODE_0xCD (parentObj)
+    parentObj.registersHL = bit.bor(parentObj.registersHL, 0x02)
+end
+
+function CBOPCODE_0xCE (parentObj)
+    parentObj.memoryWriter[parentObj.registersHL](bit.bor(parentObj, parentObj.registersHL, parentObj.memoryReader[parentObj.registersHL](parentObj, parentObj.registersHL), 0x02))
+end
+
+function CBOPCODE_0xCF (parentObj)
+    parentObj.registerA = bit.bor(parentObj.registerA, 0x02)
+end
+
+function CBOPCODE_0xD0 (parentObj)
+    parentObj.registerB = bit.bor(parentObj.registerB, 0x04)
+end
+
+function CBOPCODE_0xD1 (parentObj)
+    parentObj.registerC = bit.bor(parentObj.registerC, 0x04)
+end
+
+function CBOPCODE_0xD2 (parentObj)
+    parentObj.registerD = bit.bor(parentObj.registerD, 0x04)
+end
+
+function CBOPCODE_0xD3 (parentObj)
+    parentObj.registerE = bit.bor(parentObj.registerE, 0x04)
+end
+
+function CBOPCODE_0xD4 (parentObj)
+    parentObj.registersHL = bit.bor(parentObj.registersHL, 0x0400)
+end
+
+function CBOPCODE_0xD5 (parentObj)
+    parentObj.registersHL = bit.bor(parentObj.registersHL, 0x04)
+end
+
+function CBOPCODE_0xD6 (parentObj)
+    parentObj.memoryWriter[parentObj.registersHL](bit.bor(parentObj, parentObj.registersHL, parentObj.memoryReader[parentObj.registersHL](parentObj, parentObj.registersHL), 0x04))
+end
+
+function CBOPCODE_0xD7 (parentObj)
+    parentObj.registerA = bit.bor(parentObj.registerA, 0x04)
+end
+
+function CBOPCODE_0xD8 (parentObj)
+    parentObj.registerB = bit.bor(parentObj.registerB, 0x08)
+end
+
+function CBOPCODE_0xD9 (parentObj)
+    parentObj.registerC = bit.bor(parentObj.registerC, 0x08)
+end
+
+function CBOPCODE_0xDA (parentObj)
+    parentObj.registerD = bit.bor(parentObj.registerD, 0x08)
+end
+
+function CBOPCODE_0xDB (parentObj)
+    parentObj.registerE = bit.bor(parentObj.registerE, 0x08)
+end
+
+function CBOPCODE_0xDC (parentObj)
+    parentObj.registersHL = bit.bor(parentObj.registersHL, 0x0800)
+end
+
+function CBOPCODE_0xDD (parentObj)
+    parentObj.registersHL = bit.bor(parentObj.registersHL, 0x08)
+end
+
+function CBOPCODE_0xDE (parentObj)
+    parentObj.memoryWriter[parentObj.registersHL](bit.bor(parentObj, parentObj.registersHL, parentObj.memoryReader[parentObj.registersHL](parentObj, parentObj.registersHL), 0x08))
+end
+
+function CBOPCODE_0xDF (parentObj)
+    parentObj.registerA = bit.bor(parentObj.registerA, 0x08)
+end
+
+function CBOPCODE_0xE0 (parentObj)
+    parentObj.registerB = bit.bor(parentObj.registerB, 0x10)
+end
+
+function CBOPCODE_0xE1 (parentObj)
+    parentObj.registerC = bit.bor(parentObj.registerC, 0x10)
+end
+
+function CBOPCODE_0xE2 (parentObj)
+    parentObj.registerD = bit.bor(parentObj.registerD, 0x10)
+end
+
+function CBOPCODE_0xE3 (parentObj)
+    parentObj.registerE = bit.bor(parentObj.registerE, 0x10)
+end
+
+function CBOPCODE_0xE4 (parentObj)
+    parentObj.registersHL = bit.bor(parentObj.registersHL, 0x1000)
+end
+
+function CBOPCODE_0xE5 (parentObj)
+    parentObj.registersHL = bit.bor(parentObj.registersHL, 0x10)
+end
+
+function CBOPCODE_0xE6 (parentObj)
+    parentObj.memoryWriter[parentObj.registersHL](bit.bor(parentObj, parentObj.registersHL, parentObj.memoryReader[parentObj.registersHL](parentObj, parentObj.registersHL), 0x10))
+end
+
+function CBOPCODE_0xE7 (parentObj)
+    parentObj.registerA = bit.bor(parentObj.registerA, 0x10)
+end
+
+function CBOPCODE_0xE8 (parentObj)
+    parentObj.registerB = bit.bor(parentObj.registerB, 0x20)
+end
+
+function CBOPCODE_0xE9 (parentObj)
+    parentObj.registerC = bit.bor(parentObj.registerC, 0x20)
+end
+
+function CBOPCODE_0xEA (parentObj)
+    parentObj.registerD = bit.bor(parentObj.registerD, 0x20)
+end
+
+function CBOPCODE_0xEB (parentObj)
+    parentObj.registerE = bit.bor(parentObj.registerE, 0x20)
+end
+
+function CBOPCODE_0xEC (parentObj)
+    parentObj.registersHL = bit.bor(parentObj.registersHL, 0x2000)
+end
+
+function CBOPCODE_0xED (parentObj)
+    parentObj.registersHL = bit.bor(parentObj.registersHL, 0x20)
+end
+
+function CBOPCODE_0xEE (parentObj)
+    parentObj.memoryWriter[parentObj.registersHL](bit.bor(parentObj, parentObj.registersHL, parentObj.memoryReader[parentObj.registersHL](parentObj, parentObj.registersHL), 0x20))
+end
+
+function CBOPCODE_0xEF (parentObj)
+    parentObj.registerA = bit.bor(parentObj.registerA, 0x20)
+end
+
+function CBOPCODE_0xF0 (parentObj)
+    parentObj.registerB = bit.bor(parentObj.registerB, 0x40)
+end
+
+function CBOPCODE_0xF1 (parentObj)
+    parentObj.registerC = bit.bor(parentObj.registerC, 0x40)
+end
+
+function CBOPCODE_0xF2 (parentObj)
+    parentObj.registerD = bit.bor(parentObj.registerD, 0x40)
+end
+
+function CBOPCODE_0xF3 (parentObj)
+    parentObj.registerE = bit.bor(parentObj.registerE, 0x40)
+end
+
+function CBOPCODE_0xF4 (parentObj)
+    parentObj.registersHL = bit.bor(parentObj.registersHL, 0x4000)
+end
+
+function CBOPCODE_0xF5 (parentObj)
+    parentObj.registersHL = bit.bor(parentObj.registersHL, 0x40)
+end
+
+function CBOPCODE_0xF6 (parentObj)
+    parentObj.memoryWriter[parentObj.registersHL](bit.bor(parentObj, parentObj.registersHL, parentObj.memoryReader[parentObj.registersHL](parentObj, parentObj.registersHL), 0x40))
+end
+
+function CBOPCODE_0xF7 (parentObj)
+    parentObj.registerA = bit.bor(parentObj.registerA, 0x40)
+end
+
+function CBOPCODE_0xF8 (parentObj)
+    parentObj.registerB = bit.bor(parentObj.registerB, 0x80)
+end
+
+function CBOPCODE_0xF9 (parentObj)
+    parentObj.registerC = bit.bor(parentObj.registerC, 0x80)
+end
+
+function CBOPCODE_0xFA (parentObj)
+    parentObj.registerD = bit.bor(parentObj.registerD, 0x80)
+end
+
+function CBOPCODE_0xFB (parentObj)
+    parentObj.registerE = bit.bor(parentObj.registerE, 0x80)
+end
+
+function CBOPCODE_0xFC (parentObj)
+    parentObj.registersHL = bit.bor(parentObj.registersHL, 0x8000)
+end
+
+function CBOPCODE_0xFD (parentObj)
+    parentObj.registersHL = bit.bor(parentObj.registersHL, 0x80)
+end
+
+function CBOPCODE_0xFE (parentObj)
+    parentObj.memoryWriter[parentObj.registersHL](bit.bor(parentObj, parentObj.registersHL, parentObj.memoryReader[parentObj.registersHL](parentObj, parentObj.registersHL), 0x80))
+end
+
+function CBOPCODE_0xFF (parentObj)
+    parentObj.registerA = bit.bor(parentObj.registerA, 0x80)
+end
+
+CBOPCODE = {
+    CBOPCODE_0x00,
+    
+    CBOPCODE_0x01,
+    
+    CBOPCODE_0x02,
+    
+    CBOPCODE_0x03,
+    
+    CBOPCODE_0x04,
+    
+    CBOPCODE_0x05,
+    
+    CBOPCODE_0x06,
+    
+    CBOPCODE_0x07,
+    
+    CBOPCODE_0x08,
+    
+    CBOPCODE_0x09,
+    
+    CBOPCODE_0x0A,
+    
+    CBOPCODE_0x0B,
+    
+    CBOPCODE_0x0C,
+    
+    CBOPCODE_0x0D,
+    
+    CBOPCODE_0x0E,
+    
+    CBOPCODE_0x0F,
+    
+    CBOPCODE_0x10,
+    
+    CBOPCODE_0x11,
+    
+    CBOPCODE_0x12,
+    
+    CBOPCODE_0x13,
+    
+    CBOPCODE_0x14,
+    
+    CBOPCODE_0x15,
+    
+    CBOPCODE_0x16,
+    
+    CBOPCODE_0x17,
+    
+    CBOPCODE_0x18,
+    
+    CBOPCODE_0x19,
+    
+    CBOPCODE_0x1A,
+    
+    CBOPCODE_0x1B,
+    
+    CBOPCODE_0x1C,
+    
+    CBOPCODE_0x1D,
+    
+    CBOPCODE_0x1E,
+    
+    CBOPCODE_0x1F,
+    
+    CBOPCODE_0x20,
+    
+    CBOPCODE_0x21,
+    
+    CBOPCODE_0x22,
+    
+    CBOPCODE_0x23,
+    
+    CBOPCODE_0x24,
+    
+    CBOPCODE_0x25,
+    
+    CBOPCODE_0x26,
+    
+    CBOPCODE_0x27,
+    
+    CBOPCODE_0x28,
+    
+    CBOPCODE_0x29,
+    
+    CBOPCODE_0x2A,
+    
+    CBOPCODE_0x2B,
+    
+    CBOPCODE_0x2C,
+    
+    CBOPCODE_0x2D,
+    
+    CBOPCODE_0x2E,
+    
+    CBOPCODE_0x2F,
+    
+    CBOPCODE_0x30,
+    
+    CBOPCODE_0x31,
+    
+    CBOPCODE_0x32,
+    
+    CBOPCODE_0x33,
+    
+    CBOPCODE_0x34,
+    
+    CBOPCODE_0x35,
+    
+    CBOPCODE_0x36,
+    
+    CBOPCODE_0x37,
+    
+    CBOPCODE_0x38,
+    
+    CBOPCODE_0x39,
+    
+    CBOPCODE_0x3A,
+    
+    CBOPCODE_0x3B,
+    
+    CBOPCODE_0x3C,
+    
+    CBOPCODE_0x3D,
+    
+    CBOPCODE_0x3E,
+    
+    CBOPCODE_0x3F,
+    
+    CBOPCODE_0x40,
+    
+    CBOPCODE_0x41,
+    
+    CBOPCODE_0x42,
+    
+    CBOPCODE_0x43,
+    
+    CBOPCODE_0x44,
+    
+    CBOPCODE_0x45,
+    
+    CBOPCODE_0x46,
+    
+    CBOPCODE_0x47,
+    
+    CBOPCODE_0x48,
+    
+    CBOPCODE_0x49,
+    
+    CBOPCODE_0x4A,
+    
+    CBOPCODE_0x4B,
+    
+    CBOPCODE_0x4C,
+    
+    CBOPCODE_0x4D,
+    
+    CBOPCODE_0x4E,
+    
+    CBOPCODE_0x4F,
+    
+    CBOPCODE_0x50,
+    
+    CBOPCODE_0x51,
+    
+    CBOPCODE_0x52,
+    
+    CBOPCODE_0x53,
+    
+    CBOPCODE_0x54,
+    
+    CBOPCODE_0x55,
+    
+    CBOPCODE_0x56,
+    
+    CBOPCODE_0x57,
+    
+    CBOPCODE_0x58,
+    
+    CBOPCODE_0x59,
+    
+    CBOPCODE_0x5A,
+    
+    CBOPCODE_0x5B,
+    
+    CBOPCODE_0x5C,
+    
+    CBOPCODE_0x5D,
+    
+    CBOPCODE_0x5E,
+    
+    CBOPCODE_0x5F,
+    
+    CBOPCODE_0x60,
+    
+    CBOPCODE_0x61,
+    
+    CBOPCODE_0x62,
+    
+    CBOPCODE_0x63,
+    
+    CBOPCODE_0x64,
+    
+    CBOPCODE_0x65,
+    
+    CBOPCODE_0x66,
+    
+    CBOPCODE_0x67,
+    
+    CBOPCODE_0x68,
+    
+    CBOPCODE_0x69,
+    
+    CBOPCODE_0x6A,
+    
+    CBOPCODE_0x6B,
+    
+    CBOPCODE_0x6C,
+    
+    CBOPCODE_0x6D,
+    
+    CBOPCODE_0x6E,
+    
+    CBOPCODE_0x6F,
+    
+    CBOPCODE_0x70,
+    
+    CBOPCODE_0x71,
+    
+    CBOPCODE_0x72,
+    
+    CBOPCODE_0x73,
+    
+    CBOPCODE_0x74,
+    
+    CBOPCODE_0x75,
+    
+    CBOPCODE_0x76,
+    
+    CBOPCODE_0x77,
+    
+    CBOPCODE_0x78,
+    
+    CBOPCODE_0x79,
+    
+    CBOPCODE_0x7A,
+    
+    CBOPCODE_0x7B,
+    
+    CBOPCODE_0x7C,
+    
+    CBOPCODE_0x7D,
+    
+    CBOPCODE_0x7E,
+    
+    CBOPCODE_0x7F,
+    
+    CBOPCODE_0x80,
+    
+    CBOPCODE_0x81,
+    
+    CBOPCODE_0x82,
+    
+    CBOPCODE_0x83,
+    
+    CBOPCODE_0x84,
+    
+    CBOPCODE_0x85,
+    
+    CBOPCODE_0x86,
+    
+    CBOPCODE_0x87,
+    
+    CBOPCODE_0x88,
+    
+    CBOPCODE_0x89,
+    
+    CBOPCODE_0x8A,
+    
+    CBOPCODE_0x8B,
+    
+    CBOPCODE_0x8C,
+    
+    CBOPCODE_0x8D,
+    
+    CBOPCODE_0x8E,
+    
+    CBOPCODE_0x8F,
+    
+    CBOPCODE_0x90,
+    
+    CBOPCODE_0x91,
+    
+    CBOPCODE_0x92,
+    
+    CBOPCODE_0x93,
+    
+    CBOPCODE_0x94,
+    
+    CBOPCODE_0x95,
+    
+    CBOPCODE_0x96,
+    
+    CBOPCODE_0x97,
+    
+    CBOPCODE_0x98,
+    
+    CBOPCODE_0x99,
+    
+    CBOPCODE_0x9A,
+    
+    CBOPCODE_0x9B,
+    
+    CBOPCODE_0x9C,
+    
+    CBOPCODE_0x9D,
+    
+    CBOPCODE_0x9E,
+    
+    CBOPCODE_0x9F,
+    
+    CBOPCODE_0xA0,
+    
+    CBOPCODE_0xA1,
+    
+    CBOPCODE_0xA2,
+    
+    CBOPCODE_0xA3,
+    
+    CBOPCODE_0xA4,
+    
+    CBOPCODE_0xA5,
+    
+    CBOPCODE_0xA6,
+    
+    CBOPCODE_0xA7,
+    
+    CBOPCODE_0xA8,
+    
+    CBOPCODE_0xA9,
+    
+    CBOPCODE_0xAA,
+    
+    CBOPCODE_0xAB,
+    
+    CBOPCODE_0xAC,
+    
+    CBOPCODE_0xAD,
+    
+    CBOPCODE_0xAE,
+    
+    CBOPCODE_0xAF,
+    
+    CBOPCODE_0xB0,
+    
+    CBOPCODE_0xB1,
+    
+    CBOPCODE_0xB2,
+    
+    CBOPCODE_0xB3,
+    
+    CBOPCODE_0xB4,
+    
+    CBOPCODE_0xB5,
+    
+    CBOPCODE_0xB6,
+    
+    CBOPCODE_0xB7,
+    
+    CBOPCODE_0xB8,
+    
+    CBOPCODE_0xB9,
+    
+    CBOPCODE_0xBA,
+    
+    CBOPCODE_0xBB,
+    
+    CBOPCODE_0xBC,
+    
+    CBOPCODE_0xBD,
+    
+    CBOPCODE_0xBE,
+    
+    CBOPCODE_0xBF,
+    
+    CBOPCODE_0xC0,
+    
+    CBOPCODE_0xC1,
+    
+    CBOPCODE_0xC2,
+    
+    CBOPCODE_0xC3,
+    
+    CBOPCODE_0xC4,
+    
+    CBOPCODE_0xC5,
+    
+    CBOPCODE_0xC6,
+    
+    CBOPCODE_0xC7,
+    
+    CBOPCODE_0xC8,
+    
+    CBOPCODE_0xC9,
+    
+    CBOPCODE_0xCA,
+    
+    CBOPCODE_0xCB,
+    
+    CBOPCODE_0xCC,
+    
+    CBOPCODE_0xCD,
+    
+    CBOPCODE_0xCE,
+    
+    CBOPCODE_0xCF,
+    
+    CBOPCODE_0xD0,
+    
+    CBOPCODE_0xD1,
+    
+    CBOPCODE_0xD2,
+    
+    CBOPCODE_0xD3,
+    
+    CBOPCODE_0xD4,
+    
+    CBOPCODE_0xD5,
+    
+    CBOPCODE_0xD6,
+    
+    CBOPCODE_0xD7,
+    
+    CBOPCODE_0xD8,
+    
+    CBOPCODE_0xD9,
+    
+    CBOPCODE_0xDA,
+    
+    CBOPCODE_0xDB,
+    
+    CBOPCODE_0xDC,
+    
+    CBOPCODE_0xDD,
+    
+    CBOPCODE_0xDE,
+    
+    CBOPCODE_0xDF,
+    
+    CBOPCODE_0xE0,
+    
+    CBOPCODE_0xE1,
+    
+    CBOPCODE_0xE2,
+    
+    CBOPCODE_0xE3,
+    
+    CBOPCODE_0xE4,
+    
+    CBOPCODE_0xE5,
+    
+    CBOPCODE_0xE6,
+    
+    CBOPCODE_0xE7,
+    
+    CBOPCODE_0xE8,
+    
+    CBOPCODE_0xE9,
+    
+    CBOPCODE_0xEA,
+    
+    CBOPCODE_0xEB,
+    
+    CBOPCODE_0xEC,
+    
+    CBOPCODE_0xED,
+    
+    CBOPCODE_0xEE,
+    
+    CBOPCODE_0xEF,
+    
+    CBOPCODE_0xF0,
+    
+    CBOPCODE_0xF1,
+    
+    CBOPCODE_0xF2,
+    
+    CBOPCODE_0xF3,
+    
+    CBOPCODE_0xF4,
+    
+    CBOPCODE_0xF5,
+    
+    CBOPCODE_0xF6,
+    
+    CBOPCODE_0xF7,
+    
+    CBOPCODE_0xF8,
+    
+    CBOPCODE_0xF9,
+    
+    CBOPCODE_0xFA,
+    
+    CBOPCODE_0xFB,
+    
+    CBOPCODE_0xFC,
+    
+    CBOPCODE_0xFD,
+    
+    CBOPCODE_0xFE,
+    
+    CBOPCODE_0xFF
+}
