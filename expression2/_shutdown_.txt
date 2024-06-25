@@ -1,29 +1,184 @@
-@name HoholAnim ragdoll
-@persist [E O]:entity I V:vector
-if(first()){
-    #O=owner()
-    O=findPlayerByName("Diablo")
-    E = entity():isWeldedTo()
-    E:propFreeze(1)
-    holoCreate(2,entity():pos()-entity():up()*25,vec(1),O:weapon():angles(),vec(255),O:weapon():model())
-    runOnTick(1) 
-    #timer("A",100)
-    E:setPos(entity():pos()+vec(0,0,O:height()/2))
+@name MazeMaker
+
+@persist [SizeX SizeY]:number [RootX RootY]:number RoomSize:number
+@persist AvailableWalls:table UsedWalls:table Graph:table # Directional graph
+@persist NotWallsPoses:table Rem:number
+@persist WallProp:string WallSize:vector
+
+
+function vector cubeSize(Model:string) {
+    Mult = 47.45
+    Dimensions = Model:matchFirst("%d[x%d]+")
+    Dimensions = Dimensions:replace("0", "0.")
+    Sizes = Dimensions:explode("x")
+    if (Sizes:count() < 2) { return vec(0) }
+    if (Sizes:count() == 2) {
+        XYZ = vec(Sizes[1, string]:toNumber() * Mult, Sizes[2, string]:toNumber() * Mult, 3)
+    } else {
+        XYZ = vec(Sizes[1, string]:toNumber() * Mult, Sizes[2, string]:toNumber() * Mult, Sizes[3, string]:toNumber() * Mult)
+    }
+    return XYZ
+}
+
+function string toKey(V2:vector2) {
+    return format("%d,%d", V2:x(), V2:y())
+}
+
+function string toKey(N1:number, N2:number) {
+    return format("%d,%d", N1, N2)
+}
+
+function vector2 fromKey(Key:string) {
+    Nums = Key:explode(",")
+    return vec2(Nums[1, string]:toNumber(), Nums[2, string]:toNumber())
+}
+
+function moveRoot(X:number, Y:number) {
+    Root = vec2(X, Y)
+    Key = toKey(X, Y)
+    Graph:removeVector2(Key)
     
+    Graph[toKey(RootX, RootY)] = Root
+    RootX = X
+    RootY = Y
 }
-#if(clk("A")){E:animate(O:getAnimation())}
-#if(changed(O:isAlive()) && O:isAlive()){O:plySetArmor(9099)}
-#if(changed(O:getAnimation())){
-    E:animate(O:getAnimation())
-#}
-E:setAng(vec(vec2(O:aimPos()-E:pos())):toAngle())
-#print(O:aimPos()-E:pos())
-if(changed(O:weapon():type())){
-    holoModel(2,O:weapon():model())
-    holoPos(2,O:bone(5):pos())
-    holoEntity(2):parentToBone(E,5)
+
+function iterateShuffle() {
+    Chance = table(0, 0, 0, 0, 1)
+    if (RootX > 1) { Chance[1] = randint(0, 100) }
+    if (RootX < SizeX) { Chance[2] = randint(0, 100) }
+    if (RootY > 1) { Chance[3] = randint(0, 100) }
+    if (RootY < SizeY) { Chance[4] = randint(0, 100) }
+    switch (Chance:maxIndex()) {
+        case 1,
+            moveRoot(RootX - 1, RootY)
+            break,
+        case 2,
+            moveRoot(RootX + 1, RootY)
+            break,
+        case 3,
+            moveRoot(RootX, RootY - 1)
+            break,
+        case 4,
+            moveRoot(RootX, RootY + 1)
+    }
 }
-if(changed(O:model())){holoModel(1,O:model())}
-#if((O:getAnimation()>124 && O:getAnimation()<128) || O:getAnimation()==114 || O:getAnimation()==119 || O:getAnimation()==131 || O:getAnimation()==130 ){
-#    holoPos(1,E:pos()+vec(0,0,O:vel():z()/O:mass()*(O:vel():z()>=-190)))
-#}
+
+function calcNotWallPoses() {
+    foreach (Key:string, To:vector2 = Graph) {
+        Diff = To - fromKey(Key)
+        X = Diff:x()
+        Y = Diff:y()
+        print("X = " + X + " | Y = " + Y)
+        if (X != 0) {
+            if (X == 1) { NotWallsPoses[Key] = NotWallsPoses[Key, number] || 1 }
+            else { K = toKey(To) NotWallsPoses[K] = NotWallsPoses[K, number] || 1 }
+        } else {
+            if (Y == 1) { NotWallsPoses[Key] = NotWallsPoses[Key, number] || 2 }
+            else { K = toKey(To) NotWallsPoses[K] = NotWallsPoses[K, number] || 2 }
+        }
+    }
+}
+
+function drawMaze(Pos:vector, Center:vector2) {
+    # For convinience
+    Height = WallSize:y() / 2
+    Thickness = 0 #WallSize:z() / 2
+    #[#
+    foreach (Key:string, To:vector2 = Graph) {
+        Val = NotWallsPoses[Key, number]
+        From = fromKey(Key)
+        if (Val && 1) {
+            Ppos = Pos + vec(From - Center) * RoomSize + vec(RoomSize / 2 + Thickness, 0, Height)
+            Angle = ang(0, 90, 90)
+            E = AvailableWalls:popEntity()
+            E:setAngles(Angle)
+            E:setPos(Ppos)
+        }
+        if (Val && 2) {
+            Ppos = Pos + vec(From - Center) * RoomSize + vec(0, RoomSize / 2 + Thickness, Height)
+            Angle = ang(90, 0, 90)
+            E = AvailableWalls:popEntity()
+            E:setAngles(Angle)
+            E:setPos(Ppos)
+        }
+    }
+    #]#
+    for (X=1, SizeX) {
+        Ppos1 = Pos + vec(vec2(X - 0.5, 0.5) - Center) * RoomSize - vec(Thickness, 0, Height)
+        Ppos2 = Pos + vec(vec2(X, SizeY) - Center) * RoomSize + vec(Thickness, 0, Height)
+        Angle = ang(90, 0, 90)
+        E1 = AvailableWalls:popEntity()
+        E2 = AvailableWalls:popEntity()
+        E1:setAngles(Angle)
+        E1:setPos(Ppos1)
+        E2:setAngles(Angle)
+        E2:setPos(Ppos2)
+    }
+    for (Y=1, SizeY) {
+        Ppos1 = Pos + vec(vec2(0.5, Y) - Center) * RoomSize - vec(0, Thickness, Height)
+        Ppos2 = Pos + vec(vec2(SizeX, Y) - Center) * RoomSize + vec(0, Thickness, Height)
+        Angle = ang(0, 90, 90)
+        E1 = AvailableWalls:popEntity()
+        E2 = AvailableWalls:popEntity()
+        E1:setAngles(Angle)
+        E1:setPos(Ppos1)
+        E2:setAngles(Angle)
+        E2:setPos(Ppos2)
+    }
+}
+
+
+if (first()) {
+    
+    SizeX = 5
+    SizeY = 5
+    WallProp = "models/hunter/blocks/cube3x3x05.mdl"
+    WallSize = cubeSize(WallProp)
+    RoomSize = WallSize:x()# + WallSize:z()
+    
+    # Default maze
+    for (X=1, SizeX) {
+        for (Y=1, SizeY - 1) {
+            Graph[toKey(X, Y)] = vec2(X, Y + 1)
+        }
+    }
+    
+    for (X=1, SizeX - 1) {
+        Graph[toKey(X, SizeY)] = vec2(X + 1, SizeY)
+    }
+    
+    RootX = SizeX
+    RootY = SizeY
+    
+    for (I=1, 100) {
+        iterateShuffle()
+    }
+    
+    Rem = 2 * SizeX + 2 * SizeY + SizeX * SizeY - 1
+timer("draw", 3000)
+timer("createWalls", 100)
+}
+
+if (clk("createWalls")) {
+    while (propCanCreate() & perf()) {
+        E = propSpawn(WallProp, entity():toWorld(vec(0,0,-20)), 1)
+        if (E) {
+            AvailableWalls:pushEntity(E)
+            Rem -= 1
+        }
+    }
+    if (Rem > 0){
+        timer("createWalls", 10)
+    }
+}
+
+if (clk("draw")) {
+    calcNotWallPoses()
+    print(NotWallsPoses)
+    drawMaze(entity():pos(), vec2(3, 3))
+}
+
+event removed(Resetting:number) {
+    propDeleteAll()
+}

@@ -1,0 +1,123 @@
+@name ShowText
+
+@persist Alphabet:table LastHolo:number Material:string
+@persist ToTrack:table Tick:number Timer:number
+
+
+function number entity:showText(Text:string, Pos:vector, FontSize:number, Time:number, Track:number) {
+    FontSize /= 16
+    Offset = Text:length() / 2
+    Index = LastHolo + 1
+    EyeAngles = This:eyeAngles()
+    holoCreate(LastHolo, Pos, vec(0), EyeAngles)
+    holoVisible(LastHolo, players(), 0)
+    Right = EyeAngles:right()
+    foreach (I:number, C:string = Text) {
+        if (!Alphabet:exists(C)) { continue }
+        HoloPos = Pos - Right * (Offset - I + 1) * 12 * FontSize
+        #EyeAngles = (HoloPos - This:shootPos()):toAngle()
+        E = holoCreate(Index, HoloPos, vec(FontSize), ang(0, EyeAngles:yaw() + 90, EyeAngles:pitch()), vec(255), Alphabet[C, string])
+        holoMaterial(Index, Material)
+        holoParent(Index, LastHolo)
+        holoVisible(Index, players(), 0)
+        holoVisible(Index, This, 1)
+        Index++
+    }
+    
+    if (Track) {
+        if (!Timer) {
+            Timer = 1
+            timer("Track", 100)
+        }
+        ToTrack[LastHolo] = This
+    }
+    
+    if (Time > 0) {
+        timer("Delet|"+LastHolo, Time * 1000)
+    }
+    LastHolo += Index
+    return LastHolo - Index
+}
+
+function textDelete(N:number) {
+    holoDelete(N)
+}
+
+Name = clkName()
+if (clk(Name)) {
+    
+    switch (Name:sub(1, 5)) {
+        case "Delet",
+            All = Name:explode("|")
+            I = All[2, string]:toNumber()
+            textDelete(I)
+            if (ToTrack:exists(I)) { ToTrack:removeEntity(I) }
+        break
+        
+        case "Track",
+            Timer = 0
+            foreach (I:number, E:entity = ToTrack) {
+                Timer = 1
+                Ang = E:eyeAngles()
+                holoAng(I, (holoPos(I) - E:shootPos() - E:vel() * Tick * 5):toAngle())
+            }
+            if (Timer) {
+                timer("Track", 100)
+            }
+        break
+    }
+}
+
+if (first()) {
+    Tick = tickInterval()
+    LastHolo = 1
+    Material = "sprops/trans/wheels/wheel_d_rim1"
+    Alphabet = table()
+    ToTrack = table()
+    
+    # From A to Z
+    for (I=65, 90){
+        Chr = toChar(I)
+        Alphabet[Chr] = "models/sprops/misc/alphanum/alphanum_"+Chr:lower()+".mdl"
+    }
+    
+    # From a to z
+    for (I=97, 122){
+        Chr = toChar(I)
+        Alphabet[Chr] = "models/sprops/misc/alphanum/alphanum_l_"+Chr:lower()+".mdl"
+    }
+    
+    # From 0 to 9
+    for (I=48, 57){
+        Chr = toChar(I)
+        Alphabet[Chr] = "models/sprops/misc/alphanum/alphanum_"+Chr:lower()+".mdl"
+    }
+    
+    # Special symbols
+    Alphabet["."] = "models/sprops/misc/alphanum/alphanum_prd.mdl"
+    Alphabet[","] = "models/sprops/misc/alphanum/alphanum_com.mdl"
+    Alphabet[":"] = "models/sprops/misc/alphanum/alphanum_colon.mdl"
+    Alphabet[";"] = "models/sprops/misc/alphanum/alphanum_scolon.mdl"
+    Alphabet["?"] = "models/sprops/misc/alphanum/alphanum_qmark.mdl"
+    Alphabet["!"] = "models/sprops/misc/alphanum/alphanum_xmark.mdl"
+    Alphabet["\""] = "models/sprops/misc/alphanum/alphanum_quote.mdl"
+    Alphabet["'"] = "models/sprops/misc/alphanum/alphanum_apost.mdl"
+    Alphabet["_"] = "models/sprops/misc/alphanum/alphanum_underscore.mdl"
+    Alphabet["("] = "models/sprops/misc/alphanum/alphanum_lpar.mdl"
+    Alphabet[")"] = "models/sprops/misc/alphanum/alphanum_rpar.mdl"
+    Alphabet["["] = "models/sprops/misc/alphanum/alphanum_lbracket.mdl"
+    Alphabet["]"] = "models/sprops/misc/alphanum/alphanum_rbracket.mdl"
+    Alphabet["{"] = "models/sprops/misc/alphanum/alphanum_lcbracket.mdl"
+    Alphabet["}"] = "models/sprops/misc/alphanum/alphanum_rcbracket.mdl"
+    Alphabet["|"] = "models/sprops/misc/alphanum/alphanum_bar.mdl"
+    Alphabet["+"] = "models/sprops/misc/alphanum/alphanum_plu.mdl"
+    Alphabet["-"] = "models/sprops/misc/alphanum/alphanum_min.mdl"
+    Alphabet["*"] = "models/sprops/misc/alphanum/alphanum_ast.mdl"
+    Alphabet["/"] = "models/sprops/misc/alphanum/alphanum_div.mdl"
+    Alphabet["="] = "models/sprops/misc/alphanum/alphanum_equal.mdl"
+    Alphabet["#"] = "models/sprops/misc/alphanum/alphanum_pdsign.mdl"
+    Alphabet["%"] = "models/sprops/misc/alphanum/alphanum_pcnt.mdl"
+    Alphabet["^"] = "models/sprops/misc/alphanum/alphanum_crt.mdl"
+    Alphabet["&"] = "models/sprops/misc/alphanum/alphanum_and.mdl"
+    Alphabet["~"] = "models/sprops/misc/alphanum/alphanum_tilde.mdl"
+}

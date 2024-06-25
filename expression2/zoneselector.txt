@@ -1,0 +1,12 @@
+@name ZoneSelector
+
+@persist 
+#include "ShowText"
+
+function entity:zoneSelector() {
+    This:showText("Define a zone by 2 points", This:shootPos() + This:eye() * 45, 16, 5, 1)
+}
+
+if (first()) {
+    owner():zoneSelector()
+}
